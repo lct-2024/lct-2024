@@ -37,7 +37,7 @@
 
 
 (defun auth-log (message &rest arguments)
-  (with-output-to-file (s "/home/art/lct23-auth.log"
+  (with-output-to-file (s "/home/art/lct24-auth.log"
                           :if-exists :append
                           :if-does-not-exist :create)
     (format s "[~A]: ~A~%"

@@ -1,0 +1,11 @@
+[Unit]
+Description=LCT 2024 Frontend
+
+[Service]
+Restart=always
+RestartSec=1
+WorkingDirectory=/home/art/projects/lct-2024/frontend
+ExecStart=docker run --rm -p 10110:80 lct24-frontend
+
+[Install]
+WantedBy=default.target

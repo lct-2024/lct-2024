@@ -13,6 +13,7 @@ CREATE TABLE passport.user (
     avatar_url TEXT DEFAULT 'http://www.gravatar.com/avatar/501a6ae10e3fc3956ad1052cfc6d38d9?s=200',
     admin BOOLEAN DEFAULT False,
     position text,
+    banned BOOLEAN Default False,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ
 );
