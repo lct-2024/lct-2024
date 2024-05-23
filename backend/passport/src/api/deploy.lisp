@@ -66,7 +66,7 @@
   (:result string)
 
   (cond
-    ((string-equal (uiop:getenv "DEPLOY_TOKEN")
+    ((string-equal (uiop:getenv "DEPLOY_SECRET")
                    token)
   
      (deploy-in-thread))
