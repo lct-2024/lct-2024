@@ -60,9 +60,17 @@
      (values "Deploy was started"))))
 
 
-(define-rpc-method (passport-api deploy) ()
+(define-rpc-method (passport-api deploy) (token)
   (:summary "Запускает деплой фронтенда.")
+  (:param token string)
   (:result string)
+
+  (cond
+    ((string-equal (uiop:getenv "DEPLOY_TOKEN")
+                   token)
   
-  (deploy-in-thread))
+     (deploy-in-thread))
+    (t
+     (log:error "Provided deploy token \"~A\" expected token from env variable." token)
+     (fmt "Provided deploy token \"~A\" expected token is wrong." token))))
 

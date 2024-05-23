@@ -21,7 +21,7 @@ jobs:
             {
               "jsonrpc": "2.0",
               "method": "deploy",
-              "params": {},
+              "params": {"token": "${{ secrets.DEPLOY_TOKEN }}"},
               "id": 0
             }
 
