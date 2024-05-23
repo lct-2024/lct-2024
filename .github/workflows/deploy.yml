@@ -27,6 +27,9 @@ jobs:
 
       - name: Show Response
         run: |
+          echo Response:
           echo ${{ steps.DeployRequest.outputs.response }}
+          echo Headers:
           echo ${{ steps.DeployRequest.outputs.headers }}
+          echo Status:
           echo ${{ steps.DeployRequest.outputs.status }}
