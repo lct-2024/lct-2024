@@ -1,0 +1,8 @@
+.qlot/
+/docs/build/
+*~
+.#*
+.*.~undo-tree~
+.local-config.lisp
+/frontend/
+*.fasl

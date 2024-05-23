@@ -1,0 +1,123 @@
+# client_max_body_size 20M;
+
+server {
+    listen 80 ;
+    listen [::]:80 ;
+    server_name lct24.dev.40ants.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 80 ;
+    listen [::]:80 ;
+    server_name passport.lct24.dev.40ants.com;
+    return 301 https://$host$request_uri;
+}
+
+
+server {
+    root /var/www/html/lct24;
+    server_name lct24.dev.40ants.com; # managed by Certbot
+
+    location /favicon.ico {
+      root /var/www/html/lct24;
+    }
+    location /images/ {
+      root /var/www/html/lct24;
+    }
+
+    # location /admin/ {
+    #   limit_req zone=mylimit burst=10;
+
+    #   proxy_pass http://localhost:10087;
+    #   proxy_http_version 1.1;
+    #   proxy_set_header Upgrade $http_upgrade;
+    #   proxy_set_header Connection $connection_upgrade;
+    #   proxy_set_header Host $host;
+    #   proxy_set_header X-Real-IP $remote_addr;
+    #   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #   proxy_set_header X-Forwarded-Proto $scheme;
+    #   proxy_set_header X-Forwarded-Port $server_port;
+    #   proxy_pass_request_headers on;
+    # }
+
+    # location /static/ {
+    #   limit_req zone=mylimit burst=10;
+
+    #   proxy_pass http://localhost:10087;
+    #   proxy_http_version 1.1;
+    #   proxy_set_header Upgrade $http_upgrade;
+    #   proxy_set_header Connection $connection_upgrade;
+    #   proxy_set_header Host $host;
+    #   proxy_set_header X-Real-IP $remote_addr;
+    #   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #   proxy_set_header X-Forwarded-Proto $scheme;
+    #   proxy_set_header X-Forwarded-Port $server_port;
+    #   proxy_pass_request_headers on;
+    # }
+    # location /websocket {
+    #   limit_req zone=mylimit burst=10;
+
+    #   proxy_pass http://localhost:10087;
+    #   proxy_http_version 1.1;
+    #   proxy_set_header Upgrade $http_upgrade;
+    #   proxy_set_header Connection $connection_upgrade;
+    #   proxy_set_header Host $host;
+    #   proxy_set_header X-Real-IP $remote_addr;
+    #   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #   proxy_set_header X-Forwarded-Proto $scheme;
+    #   proxy_set_header X-Forwarded-Port $server_port;
+    #   proxy_pass_request_headers on;
+    # }
+
+    location / {
+      limit_req zone=mylimit burst=10;
+
+      proxy_pass http://localhost:10110;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $connection_upgrade;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Port $server_port;
+      proxy_pass_request_headers on;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/lct24.dev.40ants.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/lct24.dev.40ants.com/privkey.pem; # managed by Certbot
+}
+
+
+server {
+    root /var/www/html/lct24;
+    server_name passport.lct24.dev.40ants.com; # managed by Certbot
+
+    location / {
+      limit_req zone=mylimit burst=10;
+
+      proxy_pass http://localhost:10111;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $connection_upgrade;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Port $server_port;
+      proxy_pass_request_headers on;
+    }
+
+    location /favicon.ico {
+      root /var/www/html/lct24;
+    }
+    location /images/ {
+      root /var/www/html/lct24;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/lct24.dev.40ants.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/lct24.dev.40ants.com/privkey.pem; # managed by Certbot
+}
