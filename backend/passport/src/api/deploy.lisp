@@ -72,5 +72,5 @@
      (deploy-in-thread))
     (t
      (log:error "Provided deploy token \"~A\" expected token from env variable." token)
-     (fmt "Provided deploy token \"~A\" expected token is wrong." token))))
+     (fmt "Provided deploy token \"~A\" is wrong." token))))
 
