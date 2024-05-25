@@ -1,7 +1,12 @@
+import React, { useState } from "react"
+import SignupForm from "./components/SignUpForm";
+import UserProfile from "./components/UserProfile";
+
 function App() {
   return (
     <div className="App">
-      <p>Hello world!</p>
+      <SignupForm />
+      <UserProfile />
     </div>
   );
 }
