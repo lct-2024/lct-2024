@@ -21,7 +21,7 @@ const SignupForm = () => {
                 id: 0,
             });
 
-            console.log('Response:', response.data);
+            console.log('Response:', response.data.result);
             // Сохраняем токен в куках
             document.cookie = `token=${response.data.result}`;
         } catch (error) {
