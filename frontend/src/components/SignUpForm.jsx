@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react"
+import axios from "axios"
 
 const SignupForm = () => {
-    const [email, setEmail] = useState('');
-    const [fio, setFio] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('')
+    const [fio, setFio] = useState('')
+    const [password, setPassword] = useState('')
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
         try {
             const response = await axios.post('https://passport.lct24.dev.40ants.com/api/signup', {
@@ -19,15 +19,14 @@ const SignupForm = () => {
                     password,
                 },
                 id: 0,
-            });
+            })
 
-            console.log('Response:', response.data.result);
-            // Сохраняем токен в куках
-            document.cookie = `token=${response.data.result}`;
+            console.log('Response:', response.data.result)
+            document.cookie = `token=${response.data.result}`
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error:', error)
         }
-    };
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -63,7 +62,7 @@ const SignupForm = () => {
             </div>
             <button type="submit">Зарегистрироваться</button>
         </form>
-    );
-};
+    )
+}
 
-export default SignupForm;
+export default SignupForm
