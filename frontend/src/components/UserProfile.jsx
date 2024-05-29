@@ -8,7 +8,7 @@ const UserProfile = () => {
         const fetchUserProfile = async () => {
             try {
                 const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, '$1');
-                const response = await axios.post('https://passport.lct24.dev.40ants.com//api/my_profile', {
+                const response = await axios.post('https://passport.lct24.dev.40ants.com/api/my_profile', {
                     jsonrpc: '2.0',
                     method: 'my_profile',
                     params: {},
