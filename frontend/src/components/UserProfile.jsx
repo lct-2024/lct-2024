@@ -26,10 +26,8 @@ const UserProfile = () => {
                     // Если токен отсутствует, просто выходим из функции
                     return
                 }
-
-                const headers = {}
-                if (token) {
-                    headers["Authorization"] = `Bearer${token}`
+                const headers = {
+                    "Authorization": `Bearer ${token}`
                 }
 
                 const response = await axios.post(
