@@ -1,57 +1,46 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const UserProfile = () => {
-    const [userProfile, setUserProfile] = useState(null)
+    const [profile, setProfile] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const token = document.cookie.replace(
-                    /(?:(?:^|.*;s*)tokens*=s*([^;]*).*$)|^.*$/,
-                    "$1"
-                )
+        fetchProfile();
+    }, []);
 
-                if (!token) {
-                    // Если токен отсутствует, просто выходим из функции
-                    return
-                }
-                const headers = {
-                    "Authorization": `Bearer ${token}`
-                }
+    const fetchProfile = async () => {
+        try {
+            const response = await axios.get(
+                "https://passport.lct24.dev.40ants.com/api/my_profile"
+            );
 
-                const response = await axios.get(
-                    `https://passport.lct24.dev.40ants.com/api/my_profile`,
-                    {
-                        jsonrpc: "2.0",
-                        method: "my_profile",
-                        params: {},
-                        id: 0
-                    },
-                    {
-                        headers: headers
-                    }
-                )
-                console.log(response)
-                setUserProfile(response.data.result)
-            } catch (error) {
-                console.error("Error:", error)
-            }
+            setProfile(response.data);
+        } catch (error) {
+            setError("Произошла ошибка. Попробуйте позже.");
+            console.error("Error:", error);
         }
+    };
 
-        fetchUserProfile()
-    }, [])
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
-    if (!userProfile) {
-        return <div>Loading...</div>
+    if (!profile) {
+        return <div>Loading...</div>;
     }
 
     return (
         <div>
-            <h2>Профиль пользователя</h2>
-            <p>ФИО: {userProfile.fio}</p>
+            <h2>Мой профиль</h2>
+            <p>
+                Имя: {profile.fio}<br />
+                Email: {profile.email}<br />
+                Должность: {profile.position}<br />
+                Администратор: {profile.admin ? "Да" : "Нет"}<br />
+            </p>
         </div>
-    )
-}
+    );
+};
 
-export default UserProfile
+export default UserProfile;

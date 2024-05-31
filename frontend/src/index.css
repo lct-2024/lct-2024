@@ -2,3 +2,27 @@
   margin: 0;
   padding: 0;
 }
+
+input {
+  width: 400px;
+  height: 20px;
+  padding: 5px;
+  border-radius: 10px;
+  border: 2px solid black;
+  margin: 10px;
+}
+
+button {
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  width: 140px;
+  height: 40px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.App {
+  padding: 10px;
+}
