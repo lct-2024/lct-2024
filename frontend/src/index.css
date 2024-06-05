@@ -26,3 +26,17 @@ button {
 .App {
   padding: 10px;
 }
+
+.alarm {
+  position: absolute;
+  bottom: 20px;
+  background-color: #539114;
+  border-radius: 10px;
+  font-size: 18px;
+  width: 200px;
+  height: 50px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

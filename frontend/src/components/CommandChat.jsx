@@ -8,12 +8,15 @@ const CommandChat = () => {
     const [title, setTitle] = useState("")
     const [isPrivate, setIsPrivate] = useState(false)
     const [error, setError] = useState(null);
+    const [chatId, setChatId] = useState(1);
+    const [succes, setSucces] = useState(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError(null)
 
         try {
+
             const response = await axios.post('https://chat.lct24.dev.40ants.com/api/create_chat', {
                 jsonrpc: '2.0',
                 method: 'create_chat',
@@ -23,9 +26,15 @@ const CommandChat = () => {
                     title,
                     private: isPrivate
                 },
+                id: chatId
             })
 
-            console.log('Response:', response)
+            console.log('Response:', response.data)
+            setChatId(chatId + 1);
+            setSucces(true)
+            setTimeout(() => {
+                setSucces(false)
+            }, 2000);
         } catch (error) {
             setError('Произошла ошибка. Попробуйте позже.');
             console.error('Error:', error)
@@ -56,6 +65,7 @@ const CommandChat = () => {
             </div>
             {error && <div className="error">{error}</div>}
             <button type="submit">Зарегистрироваться</button>
+            {succes && <div className='alarm'><p>Чат успешно создан</p></div>}
         </form>
     )
 }
