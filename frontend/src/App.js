@@ -1,21 +1,12 @@
-import React, { useState } from "react"
+import React from "react"
 import CommandChat from "./components/CommandChat";
+import VacancyPage from "./components/VacancyPage";
 
 function App() {
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
-
   return (
     <div className="App">
       <CommandChat />
+      <VacancyPage />
     </div>
   );
 }

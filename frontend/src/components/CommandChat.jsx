@@ -25,7 +25,7 @@ const CommandChat = () => {
                     title,
                     private: isPrivate
                 },
-                id: chatId
+                id: 0
             })
 
             console.log('Response:', response.data)

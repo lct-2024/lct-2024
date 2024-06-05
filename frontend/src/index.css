@@ -21,6 +21,7 @@ button {
   height: 40px;
   padding: 5px;
   cursor: pointer;
+  margin: 10px 2px;
 }
 
 .App {
