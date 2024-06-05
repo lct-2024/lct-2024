@@ -77,9 +77,11 @@
     (issue-token payload)))
 
 
-(defun get-next-user-id ()
-  (let* ((rows (sql-fetch-all "select coalesce(max(id), 0) + 1 as next_id from passport.user")))
-    (getf (first rows) :|next_id|)))
+;; Не помню зачем я так странно выбирал id пользователя, когда там автоинкремент прекрасно справляется
+;; А такой способ вызывает проблемы при параллельном выполнении запросов:
+;; (defun get-next-user-id ()
+;;   (let* ((rows (sql-fetch-all "select coalesce(max(id), 0) + 1 as next_id from passport.user")))
+;;     (getf (first rows) :|next_id|)))
 
 
 (defun is-email-available-p (email)

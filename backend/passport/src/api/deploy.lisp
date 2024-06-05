@@ -16,7 +16,7 @@
                 #:user-password-hash
                 #:get-user-by
                 #:issue-token-for
-                #:get-next-user-id
+                ;; #:get-next-user-id
                 #:is-email-available-p
                 #:user)
   (:import-from #:passport/avatar
@@ -45,7 +45,12 @@
   (log:info "Deploying a new version of the frontend.")
   
   (unwind-protect
-       (uiop:run-program "~/projects/lct-2024/deploy/update-frontend.sh")
+       (loop repeat 10
+             do (handler-case (progn (uiop:run-program "~/projects/lct-2024/deploy/update-frontend.sh")
+                                     (return-from deploy-new-version))
+                  (uiop/run-program:subprocess-error ()
+                    (log:error "Unable to call update-frontend.sh")
+                    (sleep 5))))
     (setf *thread* nil)))
 
 

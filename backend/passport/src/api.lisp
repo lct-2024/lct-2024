@@ -15,7 +15,7 @@
                 #:user-password-hash
                 #:get-user-by
                 #:issue-token-for
-                #:get-next-user-id
+                ;; #:get-next-user-id
                 #:is-email-available-p
                 #:user)
   (:import-from #:passport/avatar
