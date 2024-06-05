@@ -8,7 +8,6 @@ const CommandChat = () => {
     const [title, setTitle] = useState("")
     const [isPrivate, setIsPrivate] = useState(false)
     const [error, setError] = useState(null);
-    const [chatId, setChatId] = useState(1);
     const [succes, setSucces] = useState(false)
 
     const handleSubmit = async (e) => {
@@ -16,7 +15,7 @@ const CommandChat = () => {
         setError(null)
 
         try {
-
+            const chatId = `${content_type}-${content_id}`
             const response = await axios.post('https://chat.lct24.dev.40ants.com/api/create_chat', {
                 jsonrpc: '2.0',
                 method: 'create_chat',
@@ -30,7 +29,6 @@ const CommandChat = () => {
             })
 
             console.log('Response:', response.data)
-            setChatId(chatId + 1);
             setSucces(true)
             setTimeout(() => {
                 setSucces(false)
