@@ -16,7 +16,7 @@
            (uiop:getenv "DB_PASSWORD"))))
 
 (task "build" ()
-      (cl:loop for service in (cl:list "passport")
+      (cl:loop for service in (cl:list "passport" "chat" "ats")
             do (sh (fmt "qlot exec ros build ~A/roswell/~A.ros"
                         service
                         service))))

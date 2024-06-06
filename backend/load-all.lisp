@@ -16,9 +16,13 @@
 
 (defun start-all ()
   "Запускает все сервисы в режиме разработки."
-  (passport:start))
+  (passport:start)
+  (ats:start)
+  (chat/server:start-me))
 
 
 (defun stop-all ()
   "Останавливает все сервисы."
-  (passport:stop))
+  (passport:stop)
+  (ats:stop)
+  (chat/server:stop-me))

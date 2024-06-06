@@ -21,3 +21,7 @@
 
 (defun stop-me ()
   (40ants-openrpc/server:stop :port *port*))
+
+
+(defun start-in-production ()
+  (40ants-openrpc/server:start-in-production :api chat-api))
