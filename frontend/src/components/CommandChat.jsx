@@ -54,6 +54,25 @@ const CommandChat = ({ id }) => {
                     required
                 />
             </div>
+            <div>
+                <label htmlFor="contentId">ID контента (optional):</label>
+                <input
+                    type="text"
+                    id="contentId"
+                    value={contentId}
+                    onChange={(e) => setContentId(e.target.value)}
+                />
+            </div>
+
+            <div>
+                <label htmlFor="contentType">Тип контента (optional):</label>
+                <input
+                    type="text"
+                    id="contentType"
+                    value={contentType}
+                    onChange={(e) => setContentType(e.target.value)}
+                />
+            </div>
 
             <div>
                 <label htmlFor="isPrivate">Приватный:</label>
@@ -67,7 +86,7 @@ const CommandChat = ({ id }) => {
 
             {error && <div className="error">{error}</div>}
             {success && <div className="alarm"><p>Чат успешно создан</p></div>}
-            <button type="submit">Зарегистрироваться</button>
+            <button type="submit">Создать чат</button>
             <VacancyPage id={chatId} />
         </form>
     );

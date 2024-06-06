@@ -8,7 +8,7 @@ const VacancyPage = ({ id }) => {
     const handleChat = async (e) => {
         e.preventDefault();
         setError(null);
-        setChatData(null); // Clear previous data
+        setChatData(null);
 
         try {
             const response = await axios.post('https://chat.lct24.dev.40ants.com/api/get_chat', {
@@ -17,9 +17,10 @@ const VacancyPage = ({ id }) => {
                 params: {
                     id,
                 },
+                id: 1
             });
-
-            setChatData(response.data);
+            console.log(response)
+            setChatData(response.data.result);
         } catch (error) {
             setError('Произошла ошибка. Попробуйте позже.');
             console.error('Error:', error);
@@ -37,6 +38,7 @@ const VacancyPage = ({ id }) => {
                 params: {
                     id,
                 },
+                id: 1
             });
 
             console.log('Response:', response.data);
