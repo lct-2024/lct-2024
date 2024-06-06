@@ -1,43 +1,46 @@
-import React, { useState } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react';
+import axios from 'axios';
+import VacancyPage from './VacancyPage';
 
-const CommandChat = () => {
-
-    const [content_id, setContentId] = useState(null)
-    const [content_type, setContentType] = useState(null)
-    const [title, setTitle] = useState("")
-    const [isPrivate, setIsPrivate] = useState(false)
+const CommandChat = ({ id }) => {
+    const [contentId, setContentId] = useState(null);
+    const [contentType, setContentType] = useState(null);
+    const [title, setTitle] = useState('');
+    const [isPrivate, setIsPrivate] = useState(false);
     const [error, setError] = useState(null);
-    const [succes, setSucces] = useState(false)
+    const [success, setSuccess] = useState(false); // Corrected variable name
+    const [chatId, setChatId] = useState(null);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        setError(null)
+        e.preventDefault();
+        setError(null);
+        setSuccess(false);
 
         try {
-            const chatId = `${content_type}-${content_id}`
             const response = await axios.post('https://chat.lct24.dev.40ants.com/api/create_chat', {
                 jsonrpc: '2.0',
                 method: 'create_chat',
                 params: {
-                    content_id,
-                    content_type,
+                    content_id: contentId, // Pass content_id even if it's null
+                    content_type: contentType, // Pass content_type even if it's null
                     title,
-                    private: isPrivate
+                    private: isPrivate,
                 },
-                id: 0
-            })
+                id: 1, // Assuming 'id' is the command ID for your API
+            });
 
-            console.log('Response:', response.data)
-            setSucces(true)
+            console.log('Response:', response.data);
+            setSuccess(true); // Set success message
+            setChatId(response.data.result.id);
+            console.log(chatId)
             setTimeout(() => {
-                setSucces(false)
+                setSuccess(false);
             }, 2000);
         } catch (error) {
             setError('Произошла ошибка. Попробуйте позже.');
-            console.error('Error:', error)
+            console.error('Error:', error);
         }
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit}>
@@ -61,11 +64,13 @@ const CommandChat = () => {
                     onChange={(e) => setIsPrivate(e.target.checked)}
                 />
             </div>
-            {error && <div className="error">{error}</div>}
-            <button type="submit">Зарегистрироваться</button>
-            {succes && <div className='alarm'><p>Чат успешно создан</p></div>}
-        </form>
-    )
-}
 
-export default CommandChat
+            {error && <div className="error">{error}</div>}
+            {success && <div className="alarm"><p>Чат успешно создан</p></div>}
+            <button type="submit">Зарегистрироваться</button>
+            <VacancyPage id={chatId} />
+        </form>
+    );
+};
+
+export default CommandChat;
