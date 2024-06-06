@@ -7,5 +7,9 @@
   :defsystem-depends-on ("40ants-asdf-system")
   :pathname "src"
   :depends-on ("passport/core"
-               "passport/api/users")
+               "passport/api/users"
+               "passport/api/deploy")
   :in-order-to ((test-op (test-op "passport-tests"))))
+
+
+(asdf:register-system-packages "bordeaux-threads" '(#:bordeaux-threads-2))

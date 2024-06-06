@@ -16,7 +16,7 @@
                 #:user-password-hash
                 #:get-user-by
                 #:issue-token-for
-                #:get-next-user-id
+                ;; #:get-next-user-id
                 #:is-email-available-p
                 #:user)
   (:import-from #:passport/avatar
@@ -81,7 +81,6 @@
       ((is-email-available-p email)
        (auth-log "User tried to sign up: ~A" email)
        (let* ((user (mito:create-dao 'user
-                                     :id (get-next-user-id)
                                      :fio fio
                                      :email email
                                      :avatar-url (get-avatar-url-for email)

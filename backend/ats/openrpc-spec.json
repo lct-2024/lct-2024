@@ -1,0 +1,147 @@
+{
+  "methods": [
+    {
+      "name": "rpc.discover",
+      "params": [],
+      "result": {
+        "name": "OpenRPC Schema",
+        "schema": {
+          "$ref": "https://raw.githubusercontent.com/open-rpc/meta-schema/master/schema.json"
+        }
+      }
+    },
+    {
+      "name": "login",
+      "params": [
+        {
+          "name": "email",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "name": "password",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "result": {
+        "name": "login_result",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "summary": "Позволяет залогиниться пользователю по email и паролю.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "signup",
+      "params": [
+        {
+          "name": "email",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "name": "password",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "name": "fio",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "result": {
+        "name": "signup_result",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "summary": "Регистрирует новую учётку с указанным email и паролем.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "my_profile",
+      "params": [],
+      "result": {
+        "name": "my_profile_result",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "created_at": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "x-cl-class": "T",
+              "x-cl-package": "COMMON-LISP"
+            },
+            "updated_at": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "x-cl-class": "T",
+              "x-cl-package": "COMMON-LISP"
+            },
+            "synced": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "fio": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "password_hash": {
+              "type": "string"
+            },
+            "avatar_url": {
+              "type": "string"
+            },
+            "admin": {
+              "type": "boolean",
+              "description": "Если этот признак True, то пользователь считается админом и может позволить себе больше, чем простые смертные."
+            }
+          },
+          "required": [
+            "avatar_url",
+            "password_hash",
+            "email",
+            "fio",
+            "id",
+            "updated_at",
+            "created_at"
+          ],
+          "x-cl-class": "USER",
+          "x-cl-package": "PASSPORT/MODELS/USER"
+        }
+      },
+      "summary": "Отдаёт профиль текущего залогиненого пользователя.",
+      "paramStructure": "by-name"
+    }
+  ],
+  "openrpc": "1.0.0",
+  "info": {
+    "title": "Passport API",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "name": "default",
+      "url": "https://localhost/"
+    }
+  ]
+}

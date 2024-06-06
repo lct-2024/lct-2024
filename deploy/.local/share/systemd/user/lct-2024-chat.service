@@ -1,0 +1,14 @@
+[Unit]
+Description=LCT 2024 Chat Microservice
+
+[Service]
+Restart=always
+RestartSec=1
+WorkingDirectory=/home/art/projects/lct-2024/backend
+ExecStart=/home/art/projects/lct-2024/backend/chat/roswell/chat
+Environment=SLYNK_PORT=9412
+Environment=APP_PORT=10112
+Environment=APP_INTERFACE=localhost
+
+[Install]
+WantedBy=default.target
