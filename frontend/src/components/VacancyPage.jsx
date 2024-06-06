@@ -56,14 +56,13 @@ const VacancyPage = ({ id }) => {
             {chatData && (
                 <div>
                     <h2>Информация о чате:</h2>
-                    <p>ID: {chatData.id}</p>
                     <p>Название: {chatData.title}</p>
-                    <p>Создан: {chatData.created_at}</p>
-                    <p>Обновлен: {chatData.updated_at}</p>
+                    <p>Создан: {new Date(chatData.created_at).toLocaleString()}</p>
+                    <p>Обновлен: {new Date(chatData.updated_at).toLocaleString()}</p>
                     <p>Приватный: {chatData.private ? 'Да' : 'Нет'}</p>
                     <p>Архивирован: {chatData.archived ? 'Да' : 'Нет'}</p>
-                    <p>Тип контента: {chatData.content_type}</p>
-                    <p>ID контента: {chatData.content_id}</p>
+                    {chatData.content_type && <p>Тип контента: {chatData.content_type}</p>}
+                    {chatData.content_id && <p>ID контента: {chatData.content_id}</p>}
                 </div>
             )}
 

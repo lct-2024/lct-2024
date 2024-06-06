@@ -8,7 +8,7 @@ const CommandChat = ({ id }) => {
     const [title, setTitle] = useState('');
     const [isPrivate, setIsPrivate] = useState(false);
     const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false); // Corrected variable name
+    const [success, setSuccess] = useState(false);
     const [chatId, setChatId] = useState(null);
 
     const handleSubmit = async (e) => {
