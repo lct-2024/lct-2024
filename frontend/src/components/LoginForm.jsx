@@ -64,7 +64,7 @@ const LoginForm = ({ onLogin }) => {
                     required
                 />
             </div>
-            {error && <div className="error">{error}</div>} {/* Вывод ошибки */}
+            {error && <div className="error">{error}</div>}
             <button type="submit">Войти</button>
         </form>
     );
