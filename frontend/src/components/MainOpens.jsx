@@ -5,43 +5,7 @@ const MainOpens = () => {
     return (
         <div className='container'>
             <div className={style.main}>
-                <h2>Ответы на вопросы</h2>
-                <div>
-                    <div className={style.block}>
-                        <div>
-                            <h3>Вакансии - больше чем статичные документы с описанием</h3>
-                            <h4>В Reksoft мы ценим открытость и прозрачность. Под каждой вакансией вы можете сразу задать вопросы о ней и получить ответы</h4>
-                        </div>
-                        <div>
-                            <h3>фото</h3>
-                        </div>
-                        <div>
-                            <h3>Нет отказов</h3>
-                            <h4>Если у вас не хватает каких-либо компетенций, мы предложим рекомендации по их улучшению в учебных программах Академии Рексофт для последующего найма.                            </h4>
-                        </div>
-                        <div>
-                            <h3>фото</h3>
-                        </div>
-                    </div>
-                    <div className={style.block}>
-                        <div>
-                            <h3>фото</h3>
-                        </div>
-                        <div>
-                            <h3>Структура управления предприятием ОТП Банка</h3>
-                            <h4>Внедрение системы управления архитектурой предприятия для ОТП Банка</h4>
-                        </div>
-
-                        <div>
-                            <h3>фото</h3>
-                        </div>
-                        <div>
-                            <h3>DevOps для S7 Airlines</h3>
-                            <h4>Автоматизация процессов DevOps для контентной платформы S7 Airlines. Разработка DevOps-платформы</h4>
-                        </div>
-                    </div>
-                </div>
-                <h2>открытые вакансии</h2>
+                <h2>ОТВЕТЫ НА ВОПРОСЫ</h2>
                 <div className={style.mainText}>
                     <div className={style.smallBlock}>
                         <div>
@@ -56,26 +20,40 @@ const MainOpens = () => {
                         <div>
                             <p>Оформление и полис ДМС</p>
                         </div>
-                        <div>
-                            <p>Профессиональное обучение и сертификация</p>
-                        </div>
-                        <div>
-                            <p>Гибкий график и возможность работать удаленно</p>
-                        </div>
                     </div>
                     <div className={style.text}>
-                        <p>«Рексофт» использует лучшие инструменты, чтобы расти, удивлять и развиваться.
-
-                            ENTERPRISE BUSINESS APPLICATION:
-                            Java EE, Spring, ActiveMQ, Liferay, RabbitMQ, Jaspersoft, Oracle, C#, PostgreSQL, Pentaho, Microsoft.NET, SQL Server, .NET Cоre, Visual Studio, Intellij Idea, Node.JS, Swagger, Freemarker.
-
-                            FRONTEND:
-                            HTML, CSS, Vue.js, JS, WebStorm, Jest, TypeScript, PHP, Angular, React, Redux, Next.js, Webpack.
-
-                            MOBILE:
-                            Android, iOS, Java, Objective-C, Kotlin, Swift, Android Studio, Xcode, React Native, SQLite, Firebase.
+                        <p>Для этого вам нужно успешно пройти несколько шагов:
+                            Найти подходящую вашему опыту и интересам вакансию;
+                            Откликнуться на интересующую вакансию и прикрепить резюме;
+                            Если ваше резюме нам подходит — пройти интервью со специалистом по подбору персонала и руководителем направления, в котором открыта эта вакансия;
+                            Получить официальное предложение о работе.
                         </p>
                     </div>
+                </div>
+                <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, чтобы получить ответ:</h2>
+                <div className={style.comments}>
+                    <div className={style.comment}>
+                        <div>
+                            <h4>Иванов Иван Иванович</h4>
+                            <p>21.01.24  21.00</p>
+                        </div>
+                        <p>Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании.</p>
+                    </div>
+                    <div className={style.comment}>
+                        <div>
+                            <h4>Егоров Александр Петрович</h4>
+                            <p>21.01.24  21.00</p>
+                        </div>
+                        <p>Здравствуйте! Можно ли совмещать работу с учебой?</p>
+                    </div>
+                    <button className={style.btn}>Написать комментарий</button>
+                </div>
+                <h2>ОТКРЫТЫЕ ВАКАНСИИ</h2>
+                <div className={style.vacansies}>
+                    <p>здесь будут карточки вакансий, которые еще не готовы</p>
+                    <button className={style.btn}>Смотреть все вакансии  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.00195 12H19.002M19.002 12L12.002 5M19.002 12L12.002 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg></button>
                 </div>
             </div>
         </div>

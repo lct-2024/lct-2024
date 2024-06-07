@@ -5,6 +5,7 @@ import OurProjects from '../OurProjects'
 import Video from '../Video'
 import ReksWork from '../ReksWork'
 import MainOpens from '../MainOpens'
+import MainFooter from '../MainFooter'
 
 const MainPage = () => {
     return (
@@ -66,6 +67,7 @@ const MainPage = () => {
                 link="https://www.youtube.com/watch?v=9pZLCAIEUHM"
             />
             <MainOpens />
+            <MainFooter />
         </>
     )
 }

@@ -16,42 +16,10 @@
     flex-direction: column;
 }
 
-.block h4 {
-    font-size: 18px;
-    font-weight: 400;
-}
-
-.block h3 {
-    font-size: 24px;
-    font-weight: 400;
-}
-
-.block p {
-    font-size: 18px;
-}
-
-.block button {
-    width: 100px;
-    padding: 10px;
-    border: none;
-}
-
 .main h2 {
     font-size: 36px;
     font-weight: 400;
-    text-transform: uppercase;
     margin: 20px 0 -200px 0;
-}
-
-.block div {
-    border: 1px solid black;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    padding: 20px;
-    height: 300px;
-    width: 540px;
-    background-color: #D9D9D9;
 }
 
 .btn {
@@ -62,8 +30,8 @@
     border: none;
     padding: 20px;
     width: 280px;
-    margin: 0 auto;
     font-size: 16px;
+    margin-top: 10px;
 }
 
 .btn svg {
@@ -92,7 +60,44 @@
 .text {
     display: flex;
     align-items: center;
-    padding: 100px;
+    padding: 50px;
     background-color: #D9D9D9;
     font-size: 30px;
+}
+
+.comments {
+    border: 1px solid black;
+    padding: 20px;
+}
+
+.comment {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100px;
+}
+
+.comment h4 {
+    font-size: 20px;
+}
+
+.comment p {
+    font-size: 18px;
+}
+
+.comment div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.vacansies {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.vacansies button {
+    background-color: black;
+    color: white;
 }
