@@ -33,6 +33,14 @@ CREATE TABLE ats.project (
     updated_at TIMESTAMPTZ
 );
 
+
+CREATE TABLE ats.city (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
 

@@ -9,5 +9,9 @@
   :depends-on ("ats/core"
                "ats/api/jobs"
                "ats/api/applicants"
-               "ats/api/projects")
+               "ats/api/projects"
+               "ats/api/cities")
   :in-order-to ((test-op (test-op "ats-tests"))))
+
+
+(asdf:register-system-packages "dexador" '("DEX"))
