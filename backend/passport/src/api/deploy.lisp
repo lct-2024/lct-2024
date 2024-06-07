@@ -43,11 +43,22 @@
 
 (defun deploy-new-version ()
   (log:info "Deploying a new version of the frontend.")
+
+  (setf (uiop:getenv "SSH_AUTH_SOCK")
+        "/home/art/.ssh_auth_sock")
   
   (unwind-protect
        (loop repeat 10
-             do (handler-case (progn (uiop:run-program "~/projects/lct-2024/deploy/update-frontend.sh")
-                                     (return-from deploy-new-version))
+             do (handler-case
+                    (multiple-value-bind (output error-output status-code)
+                        (uiop:run-program  "~/projects/lct-2024/deploy/update-frontend.sh")
+                      (declare (ignore output))
+
+                      (unless (zerop status-code)
+                        (error "Unable to execute update-fronted.sh~%Here is it's output:~2%~A~%"
+                               error-output))
+                      
+                      (return-from deploy-new-version))
                   (uiop/run-program:subprocess-error ()
                     (log:error "Unable to call update-frontend.sh")
                     (sleep 5))))
@@ -61,7 +72,8 @@
      (values "Deployment is already in progress."))
     (t
      (setf *thread*
-           (make-thread #'deploy-new-version))
+           (make-thread #'deploy-new-version
+                        :name "Deploying frontend"))
      (values "Deploy was started"))))
 
 
