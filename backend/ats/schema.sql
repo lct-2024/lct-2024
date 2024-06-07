@@ -72,6 +72,28 @@ CREATE TABLE ats.skill (
 );
 
 create unique index skill_title_idx on ats.skill(title collate "ru_RU");
+
+
+CREATE TABLE ats.job_programming_language (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    job_id BIGINT NOT NULL references ats.job(id) on delete cascade,
+    programming_language_id BIGINT not null references ats.programming_language on delete cascade,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
+
+CREATE TABLE ats.job_skill (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    job_id BIGINT NOT NULL references ats.job(id) on delete cascade,
+    skill_id BIGINT not null references ats.skill on delete cascade,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
 
+
+alter table ats.job add column project_id BIGINT NOT NULL references ats.project(id) on delete cascade;
+alter table ats.job add column speciality_id BIGINT NOT NULL references ats.speciality(id) on delete set null;
