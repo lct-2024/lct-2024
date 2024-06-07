@@ -25,12 +25,7 @@
   ((title :initarg :title
           :type string
           :col-type :text
-          :accessor city-title)
-   ;; (lowercased-title :initarg :lowercased-title
-   ;;                   :type string
-   ;;                   :col-type :text
-   ;;                   :documentation "Название, приведённое к нижнему регистру, чтобы делать регистро")
-   )
+          :accessor city-title))
   (:table-name "ats.city"))
 
 
@@ -47,7 +42,8 @@
                         "
 select *
 from ats.city
-where title COLLATE \"ru_RU\" ilike ?"
+where title COLLATE \"ru_RU\" ilike ?
+order by title COLLATE \"ru_RU\""
                         :binds (list (fmt "%~A%" query)))))
 
 
@@ -55,6 +51,9 @@ where title COLLATE \"ru_RU\" ilike ?"
   ;; https://gist.github.com/helart/96225136a784f8a3987398be96456dce
   (with-connection ()
     (loop with data = (dex:get "https://gist.githubusercontent.com/helart/96225136a784f8a3987398be96456dce/raw/8d4b63baf056ca0680c6fc18fc76f17c83525c28/txt-cities-russia.txt")
-          for title in (split #\Newline data :omit-nulls t)
+          for title in (remove-duplicates
+                        (sort (split #\Newline data :omit-nulls t)
+                              #'string<)
+                        :test #'string-equal)
           do (create-dao 'city
                          :title (trim title)))))
