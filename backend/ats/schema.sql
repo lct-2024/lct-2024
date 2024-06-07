@@ -52,6 +52,26 @@ CREATE TABLE ats.speciality (
 );
 
 create unique index speciality_title_idx on ats.speciality(title collate "ru_RU");
+
+
+CREATE TABLE ats.programming_language (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
+create unique index programming_language_title_idx on ats.programming_language(title collate "ru_RU");
+
+
+CREATE TABLE ats.skill (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
+create unique index skill_title_idx on ats.skill(title collate "ru_RU");
 ---------------
 -- Migrations:
 
