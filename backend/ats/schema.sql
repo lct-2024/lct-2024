@@ -24,5 +24,15 @@ CREATE TABLE ats.applicant (
     updated_at TIMESTAMPTZ
 );
 
+
+CREATE TABLE ats.project (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
+

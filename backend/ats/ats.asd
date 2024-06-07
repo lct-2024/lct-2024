@@ -8,5 +8,6 @@
   :pathname "src"
   :depends-on ("ats/core"
                "ats/api/jobs"
-               "ats/api/applicants")
+               "ats/api/applicants"
+               "ats/api/projects")
   :in-order-to ((test-op (test-op "ats-tests"))))
