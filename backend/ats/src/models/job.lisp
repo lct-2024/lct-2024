@@ -33,7 +33,13 @@
    (speciality :initarg :speciality
                :type (or null speciality)
                :col-type (or :null speciality)
-               :accessor job-speciality))
+               :accessor job-speciality)
+   (type-of-employment :initarg :type-of-employment
+                       :initform "Полная"
+                       :type string
+                       :col-type :text
+                       :documentation "Вид занятости, например: \"Полная\", \"Частичная\", \"Стажировка\"."
+                       :accessor job-type-of-employment))
   (:table-name "ats.job"))
 
 
