@@ -1,12 +1,11 @@
 import React, { useState } from "react"
-import CommandChat from "./components/CommandChat";
-import VacancyPage from "./components/VacancyPage";
+import MainPage from "./components/Pages/MainPage";
 
 function App() {
 
   return (
     <div className="App">
-      <CommandChat />
+      <MainPage />
     </div>
   );
 }
