@@ -19,7 +19,6 @@
   (:param title string "Название вакансии")
   (:param description string "Описание вакансии")
   (:result job)
-  (break)
   (with-connection ()
     (with-session (user-id)
       (declare (ignore user-id))
