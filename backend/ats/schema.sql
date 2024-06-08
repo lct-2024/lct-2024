@@ -91,6 +91,14 @@ CREATE TABLE ats.job_skill (
     updated_at TIMESTAMPTZ
 );
 
+CREATE TABLE ats.applicant_skill (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    applicant_id BIGINT NOT NULL references ats.applicant(id) on delete cascade,
+    skill_id BIGINT NOT NULL references ats.skill(id) on delete cascade,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
 
