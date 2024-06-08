@@ -29,6 +29,7 @@
    (project :initarg :project
             :type project
             :col-type project
+            :documentation "Проект к которому привязана джоба."
             :accessor job-project)
    (speciality :initarg :speciality
                :type (or null speciality)

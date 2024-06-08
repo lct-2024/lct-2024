@@ -9,8 +9,39 @@
                 #:object-id
                 #:dao-table-class)
   (:import-from #:40ants-pg/query
-                #:sql-fetch-all))
+                #:sql-fetch-all)
+  (:import-from #:yason
+                #:with-output-to-string*))
 (in-package #:ats/models/applicant)
+
+
+(defclass contact ()
+  ((type :initarg :type
+         :type string
+         :accessor contact-type)
+   (value :initarg :value
+          :type string
+          :accessor contact-value)))
+
+
+(deftype contacts ()
+  '(soft-list-of contact))
+
+
+(defun contacts-to-json (contacts)
+  (with-output-to-string* ()
+    (yason:encode
+     (loop for contact in contacts
+           collect (dict "type" (contact-type contact)
+                         "value" (contact-type contact))))))
+
+(defun contacts-from-json (string)
+  (let ((items (yason:parse string)))
+    (loop for item in items
+          collect
+             (make-instance 'contact
+                            :type (gethash "type" item "unknown")
+                            :value (gethash "value" item "unknown")))))
 
 
 (deftable applicant ()
@@ -22,11 +53,30 @@
    (name :initarg :name
          :type string
          :col-type :text
+         :initform ""
          :accessor applicant-name)
    (email :initarg :email
           :type string
           :col-type :text
-          :accessor applicant-email))
+          :initform ""
+          :accessor applicant-email)
+   (experience :initarg :experience
+               :type string
+               :col-type :text
+               :initform ""
+               :accessor applicant-experience)
+   (about :initarg :about
+          :type string
+          :col-type :text
+          :initform ""
+          :accessor applicant-about)
+   (contacts :initarg :contacts
+             :type (soft-list-of contact)
+             :col-type :jsonb
+             :initform nil
+             :inflate #'contacts-from-json
+             :deflate #'contacts-to-json
+             :accessor applicant-contacts))
   (:table-name "ats.applicant"))
 
 

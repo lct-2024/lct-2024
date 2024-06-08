@@ -51,16 +51,21 @@
        (loop repeat 10
              do (handler-case
                     (multiple-value-bind (output error-output status-code)
-                        (uiop:run-program  "~/projects/lct-2024/deploy/update-frontend.sh")
-                      (declare (ignore output))
-
+                        (uiop:run-program  "~/projects/lct-2024/deploy/update-frontend.sh"
+                                           :output :string
+                                           :error-output :output
+                                           :ignore-error-status t)
+                      (declare (ignore error-output))
+                      
                       (unless (zerop status-code)
+                        (log:error "Unable to execute update-fronted.sh"
+                                   output)
                         (error "Unable to execute update-fronted.sh~%Here is it's output:~2%~A~%"
-                               error-output))
+                               output))
                       
                       (return-from deploy-new-version))
-                  (uiop/run-program:subprocess-error ()
-                    (log:error "Unable to call update-frontend.sh")
+                  (error ()
+                    (log:error "Retrying call update-frontend.sh")
                     (sleep 5))))
     (setf *thread* nil)))
 

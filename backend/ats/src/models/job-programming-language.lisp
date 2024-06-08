@@ -13,7 +13,11 @@
   (:import-from #:ats/models/job
                 #:job)
   (:import-from #:ats/models/programming-language
-                #:programming-language))
+                #:programming-language)
+  (:import-from #:40ants-pg/transactions
+                #:with-transaction)
+  (:export
+   #:bind-job-to-programming-languages))
 (in-package #:ats/models/job-programming-language)
 
 
@@ -36,3 +40,11 @@
             (job obj)
             (programming-language obj))))
 
+
+(defun bind-job-to-programming-languages (job programming-language-ids)
+  (with-transaction
+      (loop for programming-language-id in programming-language-ids
+            for link = (mito:create-dao 'job-programming-language
+                                        :job job
+                                        :programming-language-id programming-language-id)
+            collect (programming-language link))))

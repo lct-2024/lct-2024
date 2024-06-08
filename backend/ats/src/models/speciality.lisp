@@ -17,7 +17,9 @@
                 #:with-connection)
   (:import-from #:str
                 #:split
-                #:trim))
+                #:trim)
+  (:export
+   #:get-speciality-by-id))
 (in-package #:ats/models/speciality)
 
 
@@ -72,3 +74,8 @@ order by title COLLATE \"ru_RU\""
           for title in data
           do (create-dao 'speciality
                          :title (trim title)))))
+
+
+(defun get-speciality-by-id (id)
+  (mito:find-dao 'speciality
+                 :id id))

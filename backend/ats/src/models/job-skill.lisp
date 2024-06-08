@@ -13,7 +13,11 @@
   (:import-from #:ats/models/job
                 #:job)
   (:import-from #:ats/models/skill
-                #:skill))
+                #:skill)
+  (:import-from #:40ants-pg/transactions
+                #:with-transaction)
+  (:export
+   #:bind-job-to-skills))
 (in-package #:ats/models/job-skill)
 
 
@@ -36,3 +40,12 @@
             (job obj)
             (skill obj))))
 
+
+
+(defun bind-job-to-skills (job skill-ids)
+  (with-transaction
+      (loop for skill-id in skill-ids
+            for link = (mito:create-dao 'job-skill
+                                        :job job
+                                        :skill-id skill-id)
+            collect (skill link))))

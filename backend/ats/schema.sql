@@ -98,3 +98,7 @@ CREATE TABLE ats.job_skill (
 alter table ats.job add column project_id BIGINT NOT NULL references ats.project(id) on delete cascade;
 alter table ats.job add column speciality_id BIGINT NOT NULL references ats.speciality(id) on delete set null;
 alter table ats.job add column type_of_employment TEXT NOT NULL default 'Полная';
+
+alter table ats.job add column experience TEXT NOT NULL default '';
+alter table ats.job add column about TEXT NOT NULL default '';
+alter table ats.job add column contacts TEXT NOT NULL default '[]';
