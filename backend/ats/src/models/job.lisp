@@ -9,7 +9,11 @@
                 #:object-id
                 #:dao-table-class)
   (:import-from #:40ants-pg/query
-                #:sql-fetch-all))
+                #:sql-fetch-all)
+  (:import-from #:ats/models/project
+                #:project)
+  (:import-from #:ats/models/speciality
+                #:speciality))
 (in-package #:ats/models/job)
 
 
@@ -21,7 +25,22 @@
    (description :initarg :description
                 :type string
                 :col-type :text
-                :accessor job-description))
+                :accessor job-description)
+   (project :initarg :project
+            :type project
+            :col-type project
+            :documentation "Проект к которому привязана джоба."
+            :accessor job-project)
+   (speciality :initarg :speciality
+               :type (or null speciality)
+               :col-type (or :null speciality)
+               :accessor job-speciality)
+   (type-of-employment :initarg :type-of-employment
+                       :initform "Полная"
+                       :type string
+                       :col-type :text
+                       :documentation "Вид занятости, например: \"Полная\", \"Частичная\", \"Стажировка\"."
+                       :accessor job-type-of-employment))
   (:table-name "ats.job"))
 
 

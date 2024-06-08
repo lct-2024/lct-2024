@@ -6,12 +6,15 @@
   :class :40ants-asdf-system
   :defsystem-depends-on ("40ants-asdf-system")
   :pathname "src"
-  :depends-on ("ats/core"
+  :depends-on ("common"
+               "ats/core"
                "ats/api/jobs"
                "ats/api/applicants"
                "ats/api/projects"
                "ats/api/cities"
-               "ats/api/specialities")
+               "ats/api/specialities"
+               "ats/api/programming-languages"
+               "ats/api/skills")
   :in-order-to ((test-op (test-op "ats-tests"))))
 
 

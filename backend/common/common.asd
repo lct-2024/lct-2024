@@ -6,7 +6,8 @@
   :class :40ants-asdf-system
   :defsystem-depends-on ("40ants-asdf-system")
   :pathname "src"
-  :depends-on ("common/search")
+  :depends-on ("common/search"
+               "common/rpc")
   :in-order-to ((test-op (test-op "common-tests"))))
 
 

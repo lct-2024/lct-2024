@@ -9,7 +9,9 @@
                 #:object-id
                 #:dao-table-class)
   (:import-from #:40ants-pg/query
-                #:sql-fetch-all))
+                #:sql-fetch-all)
+  (:export
+   #:get-project-by-id))
 (in-package #:ats/models/project)
 
 
@@ -31,3 +33,8 @@
             (object-id project)
             (project-title project))))
 
+
+
+(defun get-project-by-id (id)
+  (mito:find-dao 'project
+                 :id id))
