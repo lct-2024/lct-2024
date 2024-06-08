@@ -5,6 +5,7 @@
 }
 
 .main img {
+    cursor: pointer;
     width: 187px;
 }
 

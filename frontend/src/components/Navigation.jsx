@@ -1,12 +1,15 @@
 import React from 'react'
 import style from "./Navigation.module.css"
+import { Link } from 'react-router-dom'
 
 const Navigation = () => {
     return (
         <div className={style.main}>
-            <img src="logo.png" alt="лого" />
+            <Link to="/">
+                <img src="logo.png" alt="лого" />
+            </Link>
             <div className={style.items}>
-                <a href="#  ">Вакансии</a>
+                <Link to="/vacansy-page" className='link'>Вакансии</Link>
                 <a href="#">Проекты</a>
                 <a href="#">Новости</a>
                 <a href="#">О компании</a>
