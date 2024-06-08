@@ -45,7 +45,7 @@
 
 
 (deftable applicant ()
-  ((user-id :initform :user-id
+  ((user-id :initarg :user-id
             :documentation "ID пользователя из микросервиса Passport."
             :type integer
             :col-type :bigint

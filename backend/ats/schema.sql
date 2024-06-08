@@ -99,6 +99,19 @@ CREATE TABLE ats.applicant_skill (
     updated_at TIMESTAMPTZ
 );
 
+
+CREATE TABLE ats.education (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
+    title TEXT NOT NULL,
+    speciality_id BIGINT references ats.speciality on delete set null,
+    type TEXT NOT NULL,
+    "from" DATE NOT NULL,
+    "to" DATE,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
 
