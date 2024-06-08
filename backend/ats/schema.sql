@@ -112,6 +112,19 @@ CREATE TABLE ats.education (
     updated_at TIMESTAMPTZ
 );
 
+
+CREATE TABLE ats.recommendation (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
+    fio TEXT NOT NULL default '',
+    position TEXT NOT NULL default '',
+    company TEXT NOT NULL default '',
+    email TEXT NOT NULL default '',
+    phone TEXT NOT NULL default '',
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
 
