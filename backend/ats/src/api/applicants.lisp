@@ -18,7 +18,9 @@
                 #:select-dao)
   (:import-from #:sxql
                 #:where
-                #:order-by))
+                #:order-by)
+  (:import-from #:ats/models/recommendation
+                #:recommendation))
 (in-package #:ats/api/applicants)
 
 
@@ -43,6 +45,10 @@
        (find-dao 'applicant
                  :id applicant-id)))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Education
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
 
 (define-rpc-method (ats-api get-applicant-education) (applicant-id)
   (:summary "Отдаёт записи об образовании кандидата")
@@ -84,7 +90,7 @@
 
 
 (define-rpc-method (ats-api delete-applicant-education) (education-id)
-  (:summary "Добавляет новую запись об образовании кандидата")
+  (:summary "Удаляет запись об образовании кандидата")
   (:param education-id integer "ID записи об образовании.")
   (:result nil)
   (with-connection ()
@@ -94,4 +100,59 @@
                         (list education-id))
       (values nil))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Recommendations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define-rpc-method (ats-api get-applicant-recommendations) (applicant-id)
+  (:summary "Отдаёт записи об рекоммендациях кандидата")
+  (:param applicant-id integer "ID кандидата из списка отдаваемого get-applicants")
+  (:result (serapeum:soft-list-of recommendation))
+  (with-connection ()
+    (with-session (user-id)
+      (declare (ignore user-id))
+      (values
+       (select-dao 'recommendation
+         (where (:= :id applicant-id))
+         (order-by :fio))))))
+
+
+(define-rpc-method (ats-api add-applicant-recommendation) (applicant-id fio &key
+                                                                        (position "")
+                                                                        (company "")
+                                                                        (email "")
+                                                                        (phone ""))
+  (:summary "Добавляет новую запись о рекомендации кандидата")
+  (:param applicant-id integer "ID кандидата из списка отдаваемого get-applicants")
+  (:param fio string "ФИО")
+  (:param position string "Должность")
+  (:param company string "Компания")
+  (:param email string "Email")
+  (:param phone string "Телефон")
+  (:result recommendation)
+  (with-connection ()
+    (with-session (user-id)
+      (declare (ignore user-id))
+      (values
+       (mito:create-dao 'recommendation
+                        :applicant-id applicant-id
+                        :fio fio
+                        :position position
+                        :company company
+                        :email email
+                        :phone phone)))))
+
+
+(define-rpc-method (ats-api delete-applicant-recommendation) (recommendation-id)
+  (:summary "Удаляет запись о рекомендации кандидата")
+  (:param recommendation-id integer "ID рекомендации")
+  (:result nil)
+  (with-connection ()
+    (with-session (user-id)
+      (declare (ignore user-id))
+      (mito:execute-sql "delete from ats.recommendation where id = ?"
+                        (list recommendation-id))
+      (values nil))))
 

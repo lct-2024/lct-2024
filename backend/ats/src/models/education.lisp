@@ -43,13 +43,13 @@
          :documentation "Тип образования: высшее, среднее, незаконенное высше, курс, и тд."
          :accessor education-type)
    (from :initarg :from
-         :type local-time:date
+         :type local-time:timestamp
          :col-type :date
          :initform ""
          :documentation "Дата начала обучения"
          :accessor education-from)
    (to :initarg :to
-       :type (or null local-time:date)
+       :type (or null local-time:timestamp)
        :col-type (or :null :date)
        :initform nil
        :documentation "Дата окончания обучения или none, если ещё учится."

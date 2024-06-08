@@ -6,7 +6,8 @@
   :class :40ants-asdf-system
   :defsystem-depends-on ("40ants-asdf-system")
   :pathname "src"
-  :depends-on ("ats/core"
+  :depends-on ("common"
+               "ats/core"
                "ats/api/jobs"
                "ats/api/applicants"
                "ats/api/projects"

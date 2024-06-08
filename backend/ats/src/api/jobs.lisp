@@ -29,7 +29,7 @@
 (deftable job (ats/models/job::job)
   ((skills :initarg :skills
            :reader job-skills
-           :type (soft-list-of 'skill)
+           :type (soft-list-of skill)
            :documentation "Список объектов типа Skill."
            :col-type :array)
    (programming-languages :initarg :programming-languages
