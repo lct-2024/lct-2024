@@ -1,13 +1,19 @@
 import React, { useState } from "react"
-import CommandChat from "./components/CommandChat";
-import VacancyPage from "./components/VacancyPage";
+import MainPage from "./components/Pages/MainPage";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import VacancyPage from "./components/VacansyPage.jsx/VacansyPage";
 
 function App() {
 
   return (
-    <div className="App">
-      <CommandChat />
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/vacansy-page" element={<VacancyPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

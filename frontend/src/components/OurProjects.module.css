@@ -1,0 +1,92 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 2700px;
+    padding: 100px 0 200px 0;
+}
+
+.block,
+.smallBlock,
+.smallBlock2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.block h4 {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.block h3 {
+    font-size: 32px;
+    font-weight: 400;
+}
+
+.block p {
+    font-size: 18px;
+}
+
+.block button {
+    width: 100px;
+    padding: 10px;
+    border: none;
+}
+
+.main h2 {
+    font-size: 36px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin: 20px 0 -30px 0;
+}
+
+.block div {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    height: 300px;
+    width: 640px;
+    background-color: #D9D9D9;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #D9D9D9;
+    border: none;
+    padding: 20px;
+    width: 280px;
+    margin: 0 auto;
+    font-size: 16px;
+}
+
+.btn svg {
+    margin-left: 10px;
+}
+
+.smallBlock div,
+.smallBlock2 div {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    width: 660px;
+    background-color: #D9D9D9;
+}
+
+.smallBlock p {
+    text-align: center;
+    width: 350px;
+    font-size: 32px;
+}
+
+.smallBlock2 p {
+    width: 250px;
+    text-align: center;
+    font-size: 20px;
+}

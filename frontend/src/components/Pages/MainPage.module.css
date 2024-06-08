@@ -1,0 +1,88 @@
+.main {
+    width: 100%;
+    background-color: #D9D9D9;
+}
+
+.sect {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 540px;
+    padding: 80px 0 190px 0;
+}
+
+.sect h2 {
+    font-size: 40px;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.sect h2 span {
+    color: #D7272D;
+}
+
+.hello {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 300px;
+    align-items: center;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.search input {
+    width: 538px;
+    height: 30px;
+    font-size: 16px;
+    padding: 15px;
+}
+
+.search div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: white;
+    height: 42px;
+    min-width: 166px;
+    cursor: pointer;
+}
+
+.search button {
+    background-color: black;
+    padding: 15.5px;
+}
+
+.btns {
+    display: flex;
+    align-items: center;
+}
+
+.btns button {
+    width: 240px;
+    height: 63px;
+    font-size: 24px;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+    color: white;
+    padding: 10px;
+    height: 60px;
+    width: 260px;
+    font-size: 16px;
+}
+
+.all svg {
+    margin-left: 5px;
+}

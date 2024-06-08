@@ -1,0 +1,27 @@
+.main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.main img {
+    cursor: pointer;
+    width: 187px;
+}
+
+.items {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 800px;
+}
+
+.items a {
+    text-decoration: none;
+    font-size: 20px;
+    color: black
+}
+
+.items svg {
+    cursor: pointer;
+}
