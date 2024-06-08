@@ -3,10 +3,29 @@ import style from './MainOpens.module.css'
 
 const MainOpens = () => {
 
+    const [comments, setComments] = useState([
+        { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
+        { name: "Егоров Александр Петрович", text: "Здравствуйте! Можно ли совмещать работу с учебой?" }
+    ])
+    const [newCommentText, setNewCommentText] = useState('');
     const [selectedFilter, setSelectedFilter] = useState("Как устроиться на работу в Reksoft?");
+    const [showInput, setShowInput] = useState(false)
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
+    };
+
+    const handleShowInput = () => {
+        setShowInput(true);
+    };
+
+    const handleCommentSubmit = () => {
+        setComments([
+            ...comments,
+            { name: "Николай Семенович", text: newCommentText }
+        ]);
+        setNewCommentText('');
+        setShowInput(false);
     };
 
     return (
@@ -43,21 +62,22 @@ const MainOpens = () => {
                 </div>
                 <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, чтобы получить ответ:</h2>
                 <div className={style.comments}>
-                    <div className={style.comment}>
-                        <div>
-                            <h4>Иванов Иван Иванович</h4>
-                            <p>21.01.24  21.00</p>
+                    {comments.map((comment, i) => {
+                        return <div className={style.comment} key={i}>
+                            <div>
+                                <h4>{comment.name}</h4>
+                                <p>21.01.24  21.00</p>
+                            </div>
+                            <p>{comment.text}</p>
                         </div>
-                        <p>Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании.</p>
-                    </div>
-                    <div className={style.comment}>
-                        <div>
-                            <h4>Егоров Александр Петрович</h4>
-                            <p>21.01.24  21.00</p>
-                        </div>
-                        <p>Здравствуйте! Можно ли совмещать работу с учебой?</p>
-                    </div>
-                    <button className={style.btn}>Написать комментарий</button>
+                    })}
+                    {showInput && (<>
+                        <textarea onChange={(e) => setNewCommentText(e.target.value)} value={newCommentText} placeholder='Комментарий...' />
+                        <button className={style.btn} onClick={handleCommentSubmit}>
+                            Отправить комментарий
+                        </button>
+                    </>)}
+                    {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
                 </div>
                 <h2>ОТКРЫТЫЕ ВАКАНСИИ</h2>
                 <div className={style.vacansies}>
