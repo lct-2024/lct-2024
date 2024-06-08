@@ -1,14 +1,7 @@
 import React, { useState } from 'react'
 import style from './VacansyList.module.css'
 
-const VacansyList = () => {
-
-    const [vacansies, setVacansies] = useState([
-        { title: "Разработчик PLC", salary: "Зарплата по итогам собеседования", date: "8 июня 2024", coincidence: 80 },
-        { title: "Технический архитектор/ Эксперт по технологическим вопросам 1С", salary: "от 120 000 до 250 000 ₽", date: "10 июня 2024", coincidence: 65 },
-        { title: "Разработчик Node.JS", salary: "от 350 000 до 500 000 ₽", date: "18 июня 2024", coincidence: 65 },
-        { title: "Ивент-менеджер", salary: "Зарплата по итогам собеседования", date: "12 июня 2024", coincidence: 10 }
-    ])
+const VacansyList = ({ vacansies }) => {
 
     return (
         <div className='container'>

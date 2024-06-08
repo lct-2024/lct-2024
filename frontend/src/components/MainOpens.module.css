@@ -46,6 +46,7 @@
     height: 120px;
     width: 380px;
     background-color: #D9D9D9;
+    cursor: pointer;
 }
 
 .smallBlock p {
@@ -100,4 +101,8 @@
 .vacansies button {
     background-color: black;
     color: white;
+}
+
+.activeFilter {
+    background-color: white !important;
 }

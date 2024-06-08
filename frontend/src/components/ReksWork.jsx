@@ -1,7 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import style from "./ReksWork.module.css"
 
 const ReksWork = () => {
+
+    const [selectedFilter, setSelectedFilter] = useState("Интересные задачи и передовые технологии");
+
+    const handleFilterClick = (filter) => {
+        setSelectedFilter(filter === selectedFilter ? null : filter);
+    };
+
     return (
         <div className='container'>
             <div className={style.main}>
@@ -41,25 +48,25 @@ const ReksWork = () => {
                         </div>
                     </div>
                 </div>
-                <h2>преимущества работы в «рексофт»</h2>
+                <h2>Преимущества работы в «рексофт»</h2>
                 <div className={style.mainText}>
                     <div className={style.smallBlock}>
-                        <div>
+                        <div className={selectedFilter === 'Интересные задачи и передовые технологии' ? style.activeFilter : ''} onClick={() => handleFilterClick('Интересные задачи и передовые технологии')}>
                             <p>Интересные задачи и передовые технологии</p>
                         </div>
-                        <div>
+                        <div className={selectedFilter === 'Команда профессионалов' ? style.activeFilter : ''} onClick={() => handleFilterClick('Команда профессионалов')}>
                             <p>Команда профессионалов</p>
                         </div>
-                        <div>
+                        <div className={selectedFilter === 'Самореализация в крупной стабильной компании' ? style.activeFilter : ''} onClick={() => handleFilterClick('Самореализация в крупной стабильной компании')}>
                             <p>Самореализация в крупной стабильной компании</p>
                         </div>
-                        <div>
+                        <div className={selectedFilter === 'Оформление и полис ДМС' ? style.activeFilter : ''} onClick={() => handleFilterClick('Оформление и полис ДМС')}>
                             <p>Оформление и полис ДМС</p>
                         </div>
-                        <div>
+                        <div className={selectedFilter === 'Профессиональное обучение и сертификация' ? style.activeFilter : ''} onClick={() => handleFilterClick('Профессиональное обучение и сертификация')}>
                             <p>Профессиональное обучение и сертификация</p>
                         </div>
-                        <div>
+                        <div className={selectedFilter === 'Гибкий график и возможность работать удаленно' ? style.activeFilter : ''} onClick={() => handleFilterClick('Гибкий график и возможность работать удаленно')}>
                             <p>Гибкий график и возможность работать удаленно</p>
                         </div>
                     </div>

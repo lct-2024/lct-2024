@@ -1,24 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react'
 import style from './MainOpens.module.css'
 
 const MainOpens = () => {
+
+    const [selectedFilter, setSelectedFilter] = useState("Как устроиться на работу в Reksoft?");
+
+    const handleFilterClick = (filter) => {
+        setSelectedFilter(filter === selectedFilter ? null : filter);
+    };
+
     return (
         <div className='container'>
             <div className={style.main}>
                 <h2>ОТВЕТЫ НА ВОПРОСЫ</h2>
                 <div className={style.mainText}>
                     <div className={style.smallBlock}>
-                        <div>
-                            <p>Интересные задачи и передовые технологии</p>
+                        <div className={selectedFilter === 'Как устроиться на работу в Reksoft?' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Как устроиться на работу в Reksoft?')}>
+                            <p>Как устроиться на работу в Reksoft?</p>
                         </div>
-                        <div>
-                            <p>Команда профессионалов</p>
+                        <div className={selectedFilter === 'Есть ли помощь иногородним при переезде?' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Есть ли помощь иногородним при переезде?')}>
+                            <p>Есть ли помощь иногородним при переезде?</p>
                         </div>
-                        <div>
-                            <p>Самореализация в крупной стабильной компании</p>
+                        <div className={selectedFilter === 'Я откликнулся на вакансию. Какие дальнейшие действия?' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Я откликнулся на вакансию. Какие дальнейшие действия?')}>
+                            <p>Я откликнулся на вакансию. Какие дальнейшие действия?</p>
                         </div>
-                        <div>
-                            <p>Оформление и полис ДМС</p>
+                        <div className={selectedFilter === 'Можно ли устроиться на стажировку в «Reksoft»?' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Можно ли устроиться на стажировку в «Reksoft»?')}>
+                            <p>Можно ли устроиться на стажировку в «Reksoft»?</p>
                         </div>
                     </div>
                     <div className={style.text}>
@@ -56,7 +67,7 @@ const MainOpens = () => {
                     </svg></button>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

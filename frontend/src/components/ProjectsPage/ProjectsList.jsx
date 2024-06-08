@@ -1,14 +1,7 @@
 import React, { useState } from 'react'
 import style from './ProjectsList.module.css'
 
-const ProjectsList = () => {
-
-    const [projects, setProjects] = useState([
-        { title: "Сортировочные центры «Почты России»", text: "Создание цифровых двойников для автоматизированных сортировочных центров «Почты России»", count: 1 },
-        { title: "Автоматизация вопрос-ответ акционерного сообщества", text: "Создание системы для автоматизации сессии вопрос-ответ на годовом собрании акционеров", count: 9 },
-        { title: "DevOps для S7 Airlines", text: "Автоматизация процессов DevOps для контентной платформы S7 Airlines. Разработка DevOps-платформы", count: 4 },
-        { title: "Структура управления предприятием ОТП Банка", text: "Внедрение системы управления архитектурой предприятия для ОТП Банка", count: 5 },
-    ])
+const ProjectsList = ({ projects }) => {
 
     return (
         <div className='container'>

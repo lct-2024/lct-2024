@@ -6,7 +6,37 @@ import Footer from '../Footer'
 
 const ProjectsPage = () => {
 
+    const [selectedFilter, setSelectedFilter] = useState("Все");
+    const [searchTerm, setSearchTerm] = useState('');
+    const [projects, setProjects] = useState([
+        { title: "Сортировочные центры «Почты России»", text: "Создание цифровых двойников для автоматизированных сортировочных центров «Почты России»", count: 1 },
+        { title: "Автоматизация вопрос-ответ акционерного сообщества", text: "Создание системы для автоматизации сессии вопрос-ответ на годовом собрании акционеров", count: 9 },
+        { title: "DevOps для S7 Airlines", text: "Автоматизация процессов DevOps для контентной платформы S7 Airlines. Разработка DevOps-платформы", count: 4 },
+        { title: "Структура управления предприятием ОТП Банка", text: "Внедрение системы управления архитектурой предприятия для ОТП Банка", count: 5 },
+    ])
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleSearchSubmit = () => {
+        const filteredProjects = projects.filter(project =>
+            project.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setProjects(filteredProjects);
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearchSubmit()
+            setSearchTerm("");
+        }
+    };
+
+
+    const handleFilterClick = (filter) => {
+        setSelectedFilter(filter === selectedFilter ? null : filter);
+    };
 
     return (<>
         <div className={style.main}>
@@ -21,7 +51,7 @@ const ProjectsPage = () => {
             <div className={style.body}>
                 <div>
                     <div className={style.search}>
-                        <input type="text" placeholder='Поиск...' />
+                        <input type="text" placeholder='Поиск...' value={searchTerm} onChange={handleSearchChange} onKeyPress={handleKeyPress} />
                         <button>
                             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M21.5 21.5L17.2 17.2M19.5 11.5C19.5 15.9183 15.9183 19.5 11.5 19.5C7.08172 19.5 3.5 15.9183 3.5 11.5C3.5 7.08172 7.08172 3.5 11.5 3.5C15.9183 3.5 19.5 7.08172 19.5 11.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -29,19 +59,29 @@ const ProjectsPage = () => {
                         </button>
                     </div>
                     <div className={style.filter}>
-                        <p>Все</p>
-                        <p>Финтех</p>
-                        <p>Госсектор</p>
-                        <p>IT</p>
-                        <p>Медиа</p>
-                        <p>Нефть и газ</p>
-                        <p>Ретейл</p>
-                        <p>Коммуникации</p>
-                        <p>Транспорт</p>
-                        <p>Другое</p>
+                        <p className={selectedFilter === 'Все' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Все')}>Все</p>
+                        <p className={selectedFilter === 'Финтех' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Финтех')}> Финтех</p>
+                        <p className={selectedFilter === 'Госсектор' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Госсектор')}>Госсектор</p>
+                        <p className={selectedFilter === 'IT' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('IT')}>IT</p>
+                        <p className={selectedFilter === 'Медиа' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Медиа')}>Медиа</p>
+                        <p className={selectedFilter === 'Нефть и газ' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Нефть и газ')}>Нефть и газ</p>
+                        <p className={selectedFilter === 'Ретейл' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Ретейл')}>Ретейл</p>
+                        <p className={selectedFilter === 'Коммуникации' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Коммуникации')}>Коммуникации</p>
+                        <p className={selectedFilter === 'Транспорт' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Транспорт')}>Транспорт</p>
+                        <p className={selectedFilter === 'Другое' ? style.activeFilter : ''}
+                            onClick={() => handleFilterClick('Другое')}>Другое</p>
                     </div>
                 </div>
-                <ProjectsList />
+                <ProjectsList projects={projects} />
                 <h2>Интересно узнать больше о проектах?</h2>
                 <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
                 <div className={style.comments}>

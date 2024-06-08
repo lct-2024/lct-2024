@@ -132,3 +132,7 @@
     height: 40px;
     cursor: pointer;
 }
+
+.activeFilter {
+    background-color: white !important;
+}
