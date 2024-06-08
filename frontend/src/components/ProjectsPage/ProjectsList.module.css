@@ -1,0 +1,43 @@
+.project {
+    padding: 20px;
+    background: #D9D9D9;
+    height: fit-content;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid black;
+}
+
+.project div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project svg {
+    cursor: pointer;
+}
+
+.project h2 {
+    font-size: 32px;
+}
+
+.project p {
+    margin: 5px 0;
+}
+
+.project button {
+    border: none;
+    width: 80px;
+    height: 30px;
+}
+
+.btn {
+    border: none;
+    width: 240px;
+    height: 63px;
+    font-size: 20px;
+    margin: 20px 40%;
+    background: #D9D9D9;
+}

@@ -9,8 +9,8 @@ const Navigation = () => {
                 <img src="logo.png" alt="лого" />
             </Link>
             <div className={style.items}>
-                <Link to="/vacansy-page" className='link'>Вакансии</Link>
-                <a href="#">Проекты</a>
+                <Link to="/vacansy-page" >Вакансии</Link>
+                <Link to="/projects-page" >Проекты</Link>
                 <a href="#">Новости</a>
                 <a href="#">О компании</a>
                 <a href="#">Личный кабинет</a>
