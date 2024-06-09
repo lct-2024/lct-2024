@@ -12,7 +12,11 @@
   (:import-from #:ats/api
                 #:ats-api)
   (:import-from #:common/auth
-                #:require-role))
+                #:require-role)
+  (:import-from #:mito
+                #:deftable)
+  (:import-from #:serapeum
+                #:soft-list-of))
 (in-package #:ats/api/projects)
 
 
@@ -31,8 +35,28 @@
                        :description description))))
 
 
+(deftable project-with-jobs-count (project)
+  ((jobs-count :initarg :jobs-count
+               :type integer
+               :col-type :integer
+               :documentation "Количество открытых вакансий в проекте."
+               :accessor jobs-count))
+  (:table "ats.project"))
+
+
 (define-rpc-method (ats-api get-projects) ()
   (:summary "Отдаёт все проекты")
-  (:result (serapeum:soft-list-of project))
+  (:result (soft-list-of 'project-with-jobs-count))
   (with-connection ()
-    (mito:select-dao 'project)))
+    (mito:select-by-sql 'project-with-jobs-count
+                        "
+with jobs_counters as (
+select project_id as id, count(*) as jobs_count
+from ats.job
+where active = True
+group by project_id
+)
+select p.*, coalesce(c.jobs_count, 0) as jobs_count
+from ats.project as p
+left outer join jobs_counters as c using (id)
+")))
