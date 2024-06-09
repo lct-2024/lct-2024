@@ -37,7 +37,9 @@
                 #:duration
                 #:timestamp-duration+)
   (:import-from #:local-time-duration
-                #:duration))
+                #:duration)
+  (:import-from #:sxql
+                #:where))
 (in-package #:ats/api/jobs)
 
 
@@ -108,15 +110,18 @@
         (values job)))))
 
 
-(define-rpc-method (ats-api get-jobs) ()
+(define-rpc-method (ats-api get-jobs) (&key show-all)
   (:summary "Отдаёт все вакансии")
+  (:param show-all boolean "Показать все вакансии, даже те что уже закрыты.")
   (:result (serapeum:soft-list-of job))
   (with-connection ()
     (with-session ((user-id) :require nil)
       (values
        (loop for job in (select-dao 'ats/models/job::job
                           (includes 'project)
-                          (includes 'speciality))
+                          (includes 'speciality)
+                          (unless show-all
+                            (where (:= :active 1))))
              collect
                 (change-class job 'job
                               :skills (get-job-skills job)
