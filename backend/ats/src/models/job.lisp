@@ -28,6 +28,12 @@
              :initform "Другое"
              :documentation "Одна из нескольких категорий к которой можно отнести вакансию: Разработка, Аналитика, Тестирование и тд."
              :accessor job-category)
+   (city :initarg :city
+         :type string
+         :col-type :text
+         :initform "Москва"
+         :documentation "Город, в котором идёт набор кандидатов."
+         :accessor job-city)
    (description :initarg :description
                 :type string
                 :col-type :text
@@ -41,6 +47,18 @@
                :type (or null speciality)
                :col-type (or :null speciality)
                :accessor job-speciality)
+   (active :initarg :active
+           :type boolean
+           :col-type :boolean
+           :initform nil
+           :documentation "Признак того, что идёт набор на эту вакансию."
+           :accessor job-active)
+   (active-to :initarg :active-to
+              :type (or null local-time:timestamp)
+              :col-type (or :null :timestamptz)
+              :initform nil
+              :documentation "Признак того, что идёт набор на эту вакансию."
+              :accessor job-active-to)
    (type-of-employment :initarg :type-of-employment
                        :initform "Полная"
                        :type string

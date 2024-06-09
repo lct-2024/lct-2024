@@ -152,3 +152,7 @@ alter table ats.applicant add column contacts JSONB NOT NULL default '[]'::jsonb
 
 
 alter table ats.job add column category TEXT NOT NULL default 'Другое';
+
+alter table ats.job add column city TEXT NOT NULL default 'Москва';
+alter table ats.job add column active BOOLEAN NOT NULL default True;
+alter table ats.job add column active_to TIMESTAMPTZ;

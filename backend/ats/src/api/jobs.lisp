@@ -28,7 +28,9 @@
   (:import-from #:mito
                 #:select-dao
                 #:includes
-                #:deftable))
+                #:deftable)
+  (:import-from #:ats/algorithms/resume-score
+                #:calculate-resume-score))
 (in-package #:ats/api/jobs)
 
 
@@ -40,7 +42,13 @@
            :col-type :array)
    (programming-languages :initarg :programming-languages
                           :reader job-programming-languages
-                          :col-type :array))
+                          :col-type :array)
+   (resume-matching-score :initarg :resume-matching-score
+                          :type integer
+                          :col-type :integer
+                          :default 0
+                          :documentation "На сколько процентов, резюме текущего пользователя соответствует этой вакансии (от 0 до 100)"
+                          :reader resume-matching-score))
   (:table-name "ats.job"))
 
 
@@ -85,11 +93,14 @@
   (:summary "Отдаёт все вакансии")
   (:result (serapeum:soft-list-of job))
   (with-connection ()
-    (values
-     (loop for job in (select-dao 'ats/models/job::job
-                        (includes 'project)
-                        (includes 'speciality))
-           collect
-              (change-class job 'job
-                            :skills (get-job-skills job)
-                            :programming-languages (get-job-programming-languages job))))))
+    (with-session ((user-id) :require nil)
+      (values
+       (loop for job in (select-dao 'ats/models/job::job
+                          (includes 'project)
+                          (includes 'speciality))
+             collect
+                (change-class job 'job
+                              :skills (get-job-skills job)
+                              :programming-languages (get-job-programming-languages job)
+                              :resume-matching-score (when user-id
+                                                       (calculate-resume-score job user-id))))))))
