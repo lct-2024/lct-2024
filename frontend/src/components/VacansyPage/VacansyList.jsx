@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import style from './VacansyList.module.css'
+import { Link } from 'react-router-dom'
 
 const VacansyList = ({ vacansies }) => {
     return (
@@ -22,7 +23,7 @@ const VacansyList = ({ vacansies }) => {
                 })}
             </div>
             <button className={style.btn}>Загрузить ещё</button>
-        </div>
+        </div >
     )
 }
 

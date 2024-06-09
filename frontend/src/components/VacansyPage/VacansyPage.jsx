@@ -5,9 +5,8 @@ import Footer from '../Footer'
 import VacansyList from './VacansyList'
 import axios from 'axios'
 
-const VacansyPage = () => {
+const VacansyPage = ({ vacansies, setVacansies }) => {
 
-    const [vacansies, setVacansies] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {

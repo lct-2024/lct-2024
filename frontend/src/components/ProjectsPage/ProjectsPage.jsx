@@ -1,19 +1,41 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './ProjectsPage.module.css'
 import Navigation from '../Navigation'
 import ProjectsList from './ProjectsList'
 import Footer from '../Footer'
+import axios from 'axios'
 
 const ProjectsPage = () => {
 
     const [selectedFilter, setSelectedFilter] = useState("Все");
     const [searchTerm, setSearchTerm] = useState('');
-    const [projects, setProjects] = useState([
-        { title: "Сортировочные центры «Почты России»", text: "Создание цифровых двойников для автоматизированных сортировочных центров «Почты России»", count: 1 },
-        { title: "Автоматизация вопрос-ответ акционерного сообщества", text: "Создание системы для автоматизации сессии вопрос-ответ на годовом собрании акционеров", count: 9 },
-        { title: "DevOps для S7 Airlines", text: "Автоматизация процессов DevOps для контентной платформы S7 Airlines. Разработка DevOps-платформы", count: 4 },
-        { title: "Структура управления предприятием ОТП Банка", text: "Внедрение системы управления архитектурой предприятия для ОТП Банка", count: 5 },
-    ])
+    const [projects, setProjects] = useState([])
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.post('https://ats.lct24.dev.40ants.com/api/get_projects', {
+                    jsonrpc: '2.0',
+                    method: 'get_projects',
+                    params: [],
+                    id: 1
+                });
+                if (response.data.error) {
+                    console.error('Error fetching data:', response.data.error.message);
+                } else {
+                    console.log(response.data.result)
+                    setProjects(response.data.result);
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     const [comments, setComments] = useState([
         { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
         { name: "Егоров Александр Петрович", text: "Здравствуйте! Можно ли совмещать работу с учебой?" }
