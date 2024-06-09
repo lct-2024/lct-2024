@@ -66,7 +66,8 @@
                                                programming-language-ids
                                                (active t)
                                                active-to 
-                                               skill-ids)
+                                               skill-ids
+                                               salary)
   (:summary "Добавляет в базу новую вакансию")
   (:param title string "Название вакансии")
   (:param category string "Категория вакансии: Разработка, Аналитика, Тестирование, Другое")
@@ -78,6 +79,7 @@
   (:param active boolean "Признак того, ведётся ли набор на вакансию.")
   (:param active-to local-time:timestamp "Время, до которого будет проводиться набор на вакансию.")
   (:param programming-language-ids (soft-list-of integer) "Список ID языков программирования.")
+  (:param salary (or null string) "Примерный оклад, как цифра или диапазон.")
   (:result job)
   
   (with-connection ()
@@ -95,7 +97,8 @@
                                                   (when active
                                                     (timestamp-duration+ (now)
                                                                          (duration :day 30))))
-                                   :type-of-employment type-of-employment))
+                                   :type-of-employment type-of-employment
+                                   :salary salary))
              (skills (bind-job-to-skills job skill-ids))
              (programming-languages (bind-job-to-programming-languages job programming-language-ids)))
 
@@ -118,5 +121,6 @@
                 (change-class job 'job
                               :skills (get-job-skills job)
                               :programming-languages (get-job-programming-languages job)
-                              :resume-matching-score (when user-id
-                                                       (calculate-resume-score job user-id))))))))
+                              :resume-matching-score (if user-id
+                                                         (calculate-resume-score job user-id)
+                                                         0)))))))

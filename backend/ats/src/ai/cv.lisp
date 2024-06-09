@@ -31,40 +31,11 @@
 (in-package #:ats/ai/cv)
 
 
-(defun generate-name ()
-  (let ((token (uiop:getenv "YAGPT_KEY_TOKEN"))
-        (folder-id (uiop:getenv "YAGPT_FOLDER_ID")))
-    (unless token
-      (error "Set YAGPT_KEY_TOKEN to a token for accessing Yandex GPT."))
-    (unless folder-id
-      (error "Set YAGPT_FOLDER_ID to a token for accessing Yandex GPT."))
-  
-    (let* ((payload (dict
-                     "modelUri" (fmt "gpt://~A/yandexgpt-lite"
-                                      folder-id)
-                     "completionOptions" (dict "stream" false
-                                               "temperature" 0.6
-                                               "maxTokens" "2000")
-                     "messages" (list (dict "role" "system"
-                                            "text" "Найди ошибки в тексте и исправь их")
-                                      (dict "role" "user"
-                                            "text" "Ламинат подойдет для укладке на кухне или в детской комнате – он не боиться влаги и механических повреждений благодаря защитному слою из облицованных меламиновых пленок толщиной 0,2 мм и обработанным воском замкам."))))
-           (content (with-output-to-string* ()
-                      (yason:encode payload)))
-           (headers (list (cons "Content-Type" "application/json")
-                          (cons
-                           "Authorization" (fmt"Api-Key ~A"
-                                               token)))))
-      (dex:post "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
-                :headers headers
-                :content content))))
-
-
 (defparameter *cv-parse-prompt*
   (asdf:system-relative-pathname :ats "src/ai/prompts/cv.txt"))
 
 
-(defun parse-cv (filename)
+(defun request-json-response (prompt input)
   (let ((token (uiop:getenv "YAGPT_KEY_TOKEN"))
         (folder-id (uiop:getenv "YAGPT_FOLDER_ID")))
     (unless token
@@ -79,9 +50,9 @@
                                                "temperature" 0.6
                                                "maxTokens" "2000")
                      "messages" (list (dict "role" "system"
-                                            "text" (read-file-into-string *cv-parse-prompt*))
+                                            "text" prompt)
                                       (dict "role" "user"
-                                            "text" (read-file-into-string filename)))))
+                                            "text" input))))
            (content (with-output-to-string* ()
                       (yason:encode payload)))
            (headers (list (cons "Content-Type" "application/json")
@@ -103,8 +74,13 @@
                               (yason:parse (replace-all "```" ""
                                                         (replace-all "```json" ""
                                                                      result))))))
-        (values parsed-result
-                parsed)))))
+        (values parsed-result)))))
+
+
+
+(defun parse-cv (filename)
+  (request-json-response (read-file-into-string *cv-parse-prompt*)
+                         (read-file-into-string filename)))
 
 
 (defun make-random-contacts (user-id)
@@ -213,3 +189,26 @@
                  (process-cv filename))
              (serious-condition ()
                (push filename *processed-with-error*)))))
+
+
+(defun extract-skills (text)
+  (gethash
+   "results"
+   (request-json-response
+    "Выдели из этого текста IT технологии. Сократи каждую технологию до двух-трёх слов. Представь результат в виде JSON документа, где есть ключ \"results\" и извлечённые данные в как список из строк."
+    text)))
+
+
+(defun extract-programming-language (text)
+  (gethash
+   "results"
+   (request-json-response
+    "Выдели из этого текста основной язык программирования. Представь результат в виде JSON документа, где есть ключ \"results\" и извлечённые данные в как строка. Сократи результат до 2-3 слов."
+    text)))
+
+(defun extract-speciality (text)
+  (gethash
+   "results"
+   (request-json-response
+    "Выдели из этого специальность кандидата, которого ищут на работу. Представь результат в виде JSON документа, где есть ключ \"results\" и извлечённые данные в как строка. Сократи результат до 2-3 слов."
+    text)))

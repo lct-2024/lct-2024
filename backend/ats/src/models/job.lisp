@@ -15,9 +15,9 @@
   (:import-from #:ats/models/speciality
                 #:speciality)
   (:import-from #:local-time
-                #:now-duration
-                #:timestamp-duration+)
+                #:now)
   (:import-from #:local-time-duration
+                #:timestamp-duration+
                 #:duration))
 (in-package #:ats/models/job)
 
@@ -70,7 +70,13 @@
                        :type string
                        :col-type :text
                        :documentation "Вид занятости, например: \"Полная\", \"Частичная\", \"Стажировка\"."
-                       :accessor job-type-of-employment))
+                       :accessor job-type-of-employment)
+   (salary :initarg :salary
+           :initform nil
+           :type (or null string)
+           :col-type (or :null :text)
+           :documentation "Примерный оклад, как цифра или диапазон."
+           :accessor job-salary))
   (:table-name "ats.job"))
 
 
