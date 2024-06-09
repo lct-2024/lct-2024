@@ -17,7 +17,8 @@
   (:import-from #:40ants-pg/transactions
                 #:with-transaction)
   (:export
-   #:bind-job-to-programming-languages))
+   #:bind-job-to-programming-languages
+   #:get-job-programming-languages))
 (in-package #:ats/models/job-programming-language)
 
 
@@ -48,3 +49,13 @@
                                         :job job
                                         :programming-language-id programming-language-id)
             collect (programming-language link))))
+
+
+(defun get-job-programming-languages (job)
+  (mito:select-by-sql 'programming-language
+                      "
+select programming_language.*
+from ats.programming_language
+join ats.job_programming_language on programming_language.id = job_programming_language.programming_language_id
+where job_programming_language.job_id = ?"
+                      :binds (list (mito:object-id job))))

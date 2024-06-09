@@ -23,3 +23,6 @@ CREATE UNIQUE INDEX passport_user_email ON passport.user (email);
 
 ---------------
 -- Migrations:
+
+alter table passport.user add column metadata jsonb default '{}'::jsonb;
+alter table passport.user drop column position;

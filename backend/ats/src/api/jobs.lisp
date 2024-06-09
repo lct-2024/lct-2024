@@ -12,16 +12,22 @@
   (:import-from #:serapeum
                 #:soft-list-of)
   (:import-from #:ats/models/project
+                #:project
                 #:get-project-by-id)
   (:import-from #:ats/models/speciality
+                #:speciality
                 #:get-speciality-by-id)
   (:import-from #:ats/models/job-skill
+                #:get-job-skills
                 #:bind-job-to-skills)
   (:import-from #:ats/models/skill
                 #:skill)
   (:import-from #:ats/models/job-programming-language
+                #:get-job-programming-languages
                 #:bind-job-to-programming-languages)
   (:import-from #:mito
+                #:select-dao
+                #:includes
                 #:deftable))
 (in-package #:ats/api/jobs)
 
@@ -34,10 +40,11 @@
            :col-type :array)
    (programming-languages :initarg :programming-languages
                           :reader job-programming-languages
-                          :col-type :array)))
+                          :col-type :array))
+  (:table-name "ats.job"))
 
 
-(define-rpc-method (ats-api create-job) (title description project-id
+(define-rpc-method (ats-api create-job) (title description project-id category
                                                &key
                                                speciality-id
                                                (type-of-employment "Полная")
@@ -45,6 +52,7 @@
                                                skill-ids)
   (:summary "Добавляет в базу новую вакансию")
   (:param title string "Название вакансии")
+  (:param category string "Категория вакансии: Разработка, Аналитика, Тестирование, Другое")
   (:param description string "Описание вакансии")
   (:param type-of-employment string "Вид занятости, например: \"Полная\", \"Частичная\", \"Стажировка\".")
   (:param project-id integer "ID проекта за которым закрепляется вакансия. Можно получить методом get_projects.")
@@ -61,6 +69,7 @@
                                    :title title
                                    :description description
                                    :project (get-project-by-id project-id)
+                                   :category category
                                    :speciality (get-speciality-by-id speciality-id)
                                    :type-of-employment type-of-employment))
              (skills (bind-job-to-skills job skill-ids))
@@ -76,6 +85,11 @@
   (:summary "Отдаёт все вакансии")
   (:result (serapeum:soft-list-of job))
   (with-connection ()
-    (with-session (user-id)
-      (declare (ignore user-id))
-      (mito:select-dao 'job))))
+    (values
+     (loop for job in (select-dao 'ats/models/job::job
+                        (includes 'project)
+                        (includes 'speciality))
+           collect
+              (change-class job 'job
+                            :skills (get-job-skills job)
+                            :programming-languages (get-job-programming-languages job))))))

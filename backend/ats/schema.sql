@@ -100,6 +100,15 @@ CREATE TABLE ats.applicant_skill (
 );
 
 
+CREATE TABLE ats.applicant_programming_language (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
+    programming_language_id BIGINT NOT NULL references ats.programming_language on delete cascade,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
+
 CREATE TABLE ats.education (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
@@ -135,4 +144,11 @@ alter table ats.job add column type_of_employment TEXT NOT NULL default 'Пол�
 
 alter table ats.job add column experience TEXT NOT NULL default '';
 alter table ats.job add column about TEXT NOT NULL default '';
-alter table ats.job add column contacts TEXT NOT NULL default '[]';
+alter table ats.job add column contacts JSONB NOT NULL default '[]'::jsonb;
+
+alter table ats.applicant add column experience TEXT NOT NULL default '';
+alter table ats.applicant add column about TEXT NOT NULL default '';
+alter table ats.applicant add column contacts JSONB NOT NULL default '[]'::jsonb;
+
+
+alter table ats.job add column category TEXT NOT NULL default 'Другое';

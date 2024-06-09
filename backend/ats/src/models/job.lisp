@@ -22,6 +22,12 @@
           :type string
           :col-type :text
           :accessor job-title)
+   (category :initarg :category
+             :type string
+             :col-type :text
+             :initform "Другое"
+             :documentation "Одна из нескольких категорий к которой можно отнести вакансию: Разработка, Аналитика, Тестирование и тд."
+             :accessor job-category)
    (description :initarg :description
                 :type string
                 :col-type :text

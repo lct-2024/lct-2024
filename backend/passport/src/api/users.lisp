@@ -29,6 +29,7 @@
                 #:with-output-to-file
                 #:make-keyword)
   (:import-from #:serapeum
+                #:dict
                 #:fmt)
   (:import-from #:local-time
                 #:now
@@ -66,12 +67,12 @@
 
 (define-rpc-method (passport-api signup) (email password fio
                                                 &key
-                                                my-role)
+                                                metadata)
   (:summary "Регистрирует новую учётку с указанным email и паролем.")
   (:param email string)
   (:param password string)
   (:param fio string)
-  (:param my-role string "Должность текущего пользователя в компании.")
+  (:param metadata hash-table "Словарь с дополнительной информацией о пользователе, нужной остальным сервисам сайта.")
   
   (:result string)
   (log:info "Signup with" email)
@@ -84,8 +85,9 @@
                                      :fio fio
                                      :email email
                                      :avatar-url (get-avatar-url-for email)
-                                     :position my-role
-                                     :password-hash (get-password-hash password))))
+                                     :password-hash (get-password-hash password)
+                                     :metadata (or metadata
+                                                   (dict)))))
          (auth-log "User signed up: ~A" email)
          (issue-token-for user)))
       (t

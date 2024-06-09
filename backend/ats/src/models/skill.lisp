@@ -108,3 +108,14 @@ order by title COLLATE \"ru_RU\""
                         :test #'string-equal)
           do (create-dao 'skill
                          :title (trim title)))))
+
+
+(defun get-skill-ids (skills)
+  (loop for name in skills
+        for lang = (or (first
+                        (mito:select-by-sql 'skill
+                                            "select * from ats.skill where title collate \"ru_RU\" ilike ?"
+                                            :binds (list (trim name))))
+                       (mito:create-dao 'skill
+                                        :title (trim name)))
+        collect (mito:object-id lang)))

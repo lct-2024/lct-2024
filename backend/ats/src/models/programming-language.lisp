@@ -105,3 +105,14 @@ order by title COLLATE \"ru_RU\""
                         :test #'string-equal)
           do (create-dao 'programming-language
                          :title (trim title)))))
+
+
+(defun get-programming-language-ids (languages)
+  (loop for name in languages
+        for lang = (or (first
+                        (mito:select-by-sql 'programming-language
+                                            "select * from ats.programming_language where title collate \"ru_RU\" ilike ?"
+                                            :binds (list (trim name))))
+                       (mito:create-dao 'programming-language
+                                        :title (trim name)))
+        collect (mito:object-id lang)))

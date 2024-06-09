@@ -11,7 +11,10 @@
   (:import-from #:passport/token
                 #:issue-token)
   (:import-from #:40ants-pg/query
-                #:sql-fetch-all))
+                #:sql-fetch-all)
+  (:import-from #:common/utils
+                #:encode-json
+                #:decode-json))
 (in-package #:passport/models/user)
 
 
@@ -29,6 +32,7 @@
           :type string
           :col-type (or :null :text)
           :accessor user-email)
+   ;; TODO: не отдавать поле через API
    (password-hash :initarg :password-hash
                   :type string
                   :col-type (or :null :text)
@@ -43,16 +47,18 @@
           :col-type :boolean
           :accessor adminp
           :documentation "Если этот признак True, то пользователь считается админом и может пользоватся интерфейсом для модерации.")
-   (position :col-type (or :null :text)
-             :initform nil
-             :initarg :position
-             :accessor user-position
-             :documentation "Должность человека в компании.")
    (banned :col-type :boolean
            :type boolean
            :initform nil
            :reader user-banned-p
-           :documentation "Если True, то пользователь забанен и не может логиниться."))
+           :documentation "Если True, то пользователь забанен и не может логиниться.")
+   (metadata :col-type :jsonb
+             :type hash-table
+             :initform (dict)
+             :reader user-metadata
+             :inflate #'decode-json
+             :deflate #'encode-json
+             :documentation "Словарь с дополнительной информацией о пользователе."))
   (:table-name "passport.user"))
 
 
