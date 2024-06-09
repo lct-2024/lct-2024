@@ -100,26 +100,28 @@ const ProjectsPage = () => {
                             onClick={() => handleFilterClick('Другое')}>Другое</p>
                     </div>
                 </div>
-                <ProjectsList projects={projects} />
-                <h2>Интересно узнать больше о проектах?</h2>
-                <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
-                <div className={style.comments}>
-                    {comments.map((comment, i) => {
-                        return <div className={style.comment} key={i}>
-                            <div>
-                                <h4>{comment.name}</h4>
-                                <p>21.01.24  21.00</p>
+                {projects.length === 0 ? <h1 style={{ margin: "0 auto" }}>Проектов нет</h1> : <ProjectsList projects={projects} />}
+                <div>
+                    <h2>Интересно узнать больше о проектах?</h2>
+                    <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
+                    <div className={style.comments}>
+                        {comments.map((comment, i) => {
+                            return <div className={style.comment} key={i}>
+                                <div>
+                                    <h4>{comment.name}</h4>
+                                    <p>21.01.24  21.00</p>
+                                </div>
+                                <p>{comment.text}</p>
                             </div>
-                            <p>{comment.text}</p>
-                        </div>
-                    })}
-                    {showInput && (<>
-                        <textarea onChange={(e) => setNewCommentText(e.target.value)} value={newCommentText} placeholder='Комментарий...' />
-                        <button className={style.btn} onClick={handleCommentSubmit}>
-                            Отправить комментарий
-                        </button>
-                    </>)}
-                    {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
+                        })}
+                        {showInput && (<>
+                            <textarea onChange={(e) => setNewCommentText(e.target.value)} value={newCommentText} placeholder='Комментарий...' />
+                            <button className={style.btn} onClick={handleCommentSubmit}>
+                                Отправить комментарий
+                            </button>
+                        </>)}
+                        {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
+                    </div>
                 </div>
             </div>
         </div>

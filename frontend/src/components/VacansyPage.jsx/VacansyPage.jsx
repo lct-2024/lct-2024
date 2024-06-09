@@ -1,17 +1,37 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import style from "./VacansyPage.module.css"
 import Navigation from '../Navigation'
 import Footer from '../Footer'
 import VacansyList from './VacansyList'
+import axios from 'axios'
 
 const VacansyPage = () => {
 
-    const [vacansies, setVacansies] = useState([
-        { title: "Разработчик PLC", salary: "Зарплата по итогам собеседования", date: "8 июня 2024", coincidence: 80 },
-        { title: "Технический архитектор/ Эксперт по технологическим вопросам 1С", salary: "от 120 000 до 250 000 ₽", date: "10 июня 2024", coincidence: 65 },
-        { title: "Разработчик Node.JS", salary: "от 350 000 до 500 000 ₽", date: "18 июня 2024", coincidence: 65 },
-        { title: "Ивент-менеджер", salary: "Зарплата по итогам собеседования", date: "12 июня 2024", coincidence: 10 }
-    ])
+    const [vacansies, setVacansies] = useState([])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.post('https://ats.lct24.dev.40ants.com/api/get_jobs', {
+                    jsonrpc: '2.0',
+                    method: 'get_jobs',
+                    params: [],
+                    id: 1
+                });
+                if (response.data.error) {
+                    console.error('Error fetching data:', response.data.error.message);
+                } else {
+                    console.log(response.data.result)
+                    setVacansies(response.data.result);
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
     const [searchTerm, setSearchTerm] = useState('');
     const [comments, setComments] = useState([
         { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
@@ -90,26 +110,28 @@ const VacansyPage = () => {
                         </button>
                     </div>
                 </div>
-                <VacansyList vacansies={vacansies} />
-                <h2>Интересно узнать больше о вакансиях?</h2>
-                <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
-                <div className={style.comments}>
-                    {comments.map((comment, i) => {
-                        return <div className={style.comment} key={i}>
-                            <div>
-                                <h4>{comment.name}</h4>
-                                <p>21.01.24  21.00</p>
+                {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Вакансии закончились</h1> : <VacansyList vacansies={vacansies} />}
+                <div>
+                    <h2>Интересно узнать больше о вакансиях?</h2>
+                    <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
+                    <div className={style.comments}>
+                        {comments.map((comment, i) => {
+                            return <div className={style.comment} key={i}>
+                                <div>
+                                    <h4>{comment.name}</h4>
+                                    <p>21.01.24  21.00</p>
+                                </div>
+                                <p>{comment.text}</p>
                             </div>
-                            <p>{comment.text}</p>
-                        </div>
-                    })}
-                    {showInput && (<>
-                        <textarea onChange={(e) => setNewCommentText(e.target.value)} value={newCommentText} placeholder='Комментарий...' />
-                        <button className={style.btn} onClick={handleCommentSubmit}>
-                            Отправить комментарий
-                        </button>
-                    </>)}
-                    {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
+                        })}
+                        {showInput && (<>
+                            <textarea onChange={(e) => setNewCommentText(e.target.value)} value={newCommentText} placeholder='Комментарий...' />
+                            <button className={style.btn} onClick={handleCommentSubmit}>
+                                Отправить комментарий
+                            </button>
+                        </>)}
+                        {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
+                    </div>
                 </div>
             </div>
         </div>

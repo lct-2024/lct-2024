@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import style from './VacansyList.module.css'
 
 const VacansyList = ({ vacansies }) => {
-
     return (
         <div className='container'>
             <div className={style.list}>

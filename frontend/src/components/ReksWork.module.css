@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: space-around;
     height: 2100px;
-    padding: 100px 0;
+    padding: 90px 0;
 }
 
 .block {
@@ -93,9 +93,10 @@
 .text {
     display: flex;
     align-items: center;
-    padding: 100px;
+    padding: 60px;
     background-color: #D9D9D9;
     font-size: 30px;
+    justify-content: center;
 }
 
 .activeFilter {
