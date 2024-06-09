@@ -13,7 +13,12 @@
   (:import-from #:ats/models/project
                 #:project)
   (:import-from #:ats/models/speciality
-                #:speciality))
+                #:speciality)
+  (:import-from #:local-time
+                #:now-duration
+                #:timestamp-duration+)
+  (:import-from #:local-time-duration
+                #:duration))
 (in-package #:ats/models/job)
 
 
@@ -50,13 +55,14 @@
    (active :initarg :active
            :type boolean
            :col-type :boolean
-           :initform nil
+           :initform t
            :documentation "Признак того, что идёт набор на эту вакансию."
            :accessor job-active)
    (active-to :initarg :active-to
               :type (or null local-time:timestamp)
               :col-type (or :null :timestamptz)
-              :initform nil
+              :initform (timestamp-duration+ (now)
+                                             (duration :day 30))
               :documentation "Признак того, что идёт набор на эту вакансию."
               :accessor job-active-to)
    (type-of-employment :initarg :type-of-employment

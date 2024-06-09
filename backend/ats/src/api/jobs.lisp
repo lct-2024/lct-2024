@@ -30,7 +30,14 @@
                 #:includes
                 #:deftable)
   (:import-from #:ats/algorithms/resume-score
-                #:calculate-resume-score))
+                #:calculate-resume-score)
+  (:import-from #:local-time
+                #:now)
+  (:import-from #:local-time-duration
+                #:duration
+                #:timestamp-duration+)
+  (:import-from #:local-time-duration
+                #:duration))
 (in-package #:ats/api/jobs)
 
 
@@ -57,6 +64,8 @@
                                                speciality-id
                                                (type-of-employment "Полная")
                                                programming-language-ids
+                                               (active t)
+                                               active-to 
                                                skill-ids)
   (:summary "Добавляет в базу новую вакансию")
   (:param title string "Название вакансии")
@@ -66,6 +75,8 @@
   (:param project-id integer "ID проекта за которым закрепляется вакансия. Можно получить методом get_projects.")
   (:param speciality-id integer "ID специальности нужной для вакансии. Можно получить методом get_specialities.")
   (:param skill-ids (soft-list-of integer) "Список ID навыков.")
+  (:param active boolean "Признак того, ведётся ли набор на вакансию.")
+  (:param active-to local-time:timestamp "Время, до которого будет проводиться набор на вакансию.")
   (:param programming-language-ids (soft-list-of integer) "Список ID языков программирования.")
   (:result job)
   
@@ -79,6 +90,11 @@
                                    :project (get-project-by-id project-id)
                                    :category category
                                    :speciality (get-speciality-by-id speciality-id)
+                                   :active active
+                                   :active-to (or active-to
+                                                  (when active
+                                                    (timestamp-duration+ (now)
+                                                                         (duration :day 30))))
                                    :type-of-employment type-of-employment))
              (skills (bind-job-to-skills job skill-ids))
              (programming-languages (bind-job-to-programming-languages job programming-language-ids)))
