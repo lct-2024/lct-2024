@@ -6,7 +6,7 @@ const Navigation = () => {
     return (
         <div className={style.main}>
             <Link to="/">
-                <img src="logo.png" alt="лого" />
+                <img src="../logo.png" alt="лого" />
             </Link>
             <div className={style.items}>
                 <Link to="/vacansy-page" >Вакансии</Link>
