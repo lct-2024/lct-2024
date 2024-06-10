@@ -7,7 +7,6 @@ import axios from 'axios'
 
 const VacansyPage = ({ vacansies, setVacansies }) => {
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -30,7 +29,7 @@ const VacansyPage = ({ vacansies, setVacansies }) => {
         };
 
         fetchData();
-    }, []);
+    }, [setVacansies]);
     const [searchTerm, setSearchTerm] = useState('');
     const [comments, setComments] = useState([
         { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
@@ -71,7 +70,7 @@ const VacansyPage = ({ vacansies, setVacansies }) => {
     };
 
 
-    return (<>
+    return (<section>
         <div className={style.main}>
             <div className='container'>
                 <div className={style.head}>
@@ -80,36 +79,38 @@ const VacansyPage = ({ vacansies, setVacansies }) => {
                 </div>
             </div>
         </div>
-        <div className='container'>
-            <div className={style.body}>
-                <div>
-                    <div className={style.search}>
-                        <input type="text" placeholder='Поиск...' value={searchTerm} onChange={handleSearchChange} onKeyPress={handleKeyPress} />
-                        <div>Все категории
-                            <svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 7L12 13L18 7" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </div>
-                        <div>Все специальности<svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className={style.body}>
+            <div className="container">
+                <div className={style.search}>
+                    <input type="text" placeholder='Поиск...' value={searchTerm} onChange={handleSearchChange} onKeyPress={handleKeyPress} />
+                    <div>Все категории
+                        <svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 7L12 13L18 7" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        </div>
-                        <div>Все города<svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 7L12 13L18 7" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        </div>
-                        <div>Все проекты<svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 7L12 13L18 7" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        </div>
-                        <button onClick={handleSearchSubmit}>
-                            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21.5 21.5L17.2 17.2M19.5 11.5C19.5 15.9183 15.9183 19.5 11.5 19.5C7.08172 19.5 3.5 15.9183 3.5 11.5C3.5 7.08172 7.08172 3.5 11.5 3.5C15.9183 3.5 19.5 7.08172 19.5 11.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </button>
                     </div>
+                    <div>Все специальности<svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 7L12 13L18 7" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    </div>
+                    <div>Все города<svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 7L12 13L18 7" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    </div>
+                    <div>Все проекты<svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 7L12 13L18 7" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    </div>
+                    <button onClick={handleSearchSubmit}>
+                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.5 21.5L17.2 17.2M19.5 11.5C19.5 15.9183 15.9183 19.5 11.5 19.5C7.08172 19.5 3.5 15.9183 3.5 11.5C3.5 7.08172 7.08172 3.5 11.5 3.5C15.9183 3.5 19.5 7.08172 19.5 11.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
                 </div>
-                {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Вакансии закончились</h1> : <VacansyList vacansies={vacansies} />}
+            </div>
+            {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Вакансии закончились</h1> : <VacansyList vacansies={vacansies} />}
+
+
+            <div className='container'>
                 <div>
                     <h2>Интересно узнать больше о вакансиях?</h2>
                     <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
@@ -133,9 +134,9 @@ const VacansyPage = ({ vacansies, setVacansies }) => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
-        <Footer />
-    </>
+    </section >
     )
 }
 

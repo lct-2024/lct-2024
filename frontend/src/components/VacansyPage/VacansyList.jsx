@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import style from './VacansyList.module.css'
-import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 
 const VacansyList = ({ vacansies }) => {
@@ -10,10 +9,17 @@ const VacansyList = ({ vacansies }) => {
         navigate(`/vacansy-info/${vacansy.id}`);
     };
 
+    const [showCount, setShowCount] = useState(5);
+
+    const handleLoadMore = () => {
+        setShowCount(showCount + 5);
+    };
+
+
     return (
         <div className='container'>
             <div className={style.list}>
-                {vacansies.map((vacansy, i) => {
+                {vacansies.slice(0, showCount).map((vacansy, i) => {
                     return <div key={vacansy.id} className={style.vacansy}
                         onClick={() => handleVacancyClick(vacansy)}>
                         <h2>{vacansy.title}</h2>
@@ -30,7 +36,7 @@ const VacansyList = ({ vacansies }) => {
                     </div>
                 })}
             </div>
-            <button className={style.btn}>Загрузить ещё</button>
+            <button onClick={handleLoadMore} className={style.btn}>Загрузить ещё</button>
         </div >
     )
 }

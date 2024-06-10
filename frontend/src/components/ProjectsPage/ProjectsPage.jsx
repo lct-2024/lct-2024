@@ -11,7 +11,6 @@ const ProjectsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [projects, setProjects] = useState([])
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {

@@ -37,26 +37,28 @@ const VacansyInfo = ({ vacansies }) => {
         switch (selectedFilter) {
             case 'О проекте':
                 return <div className={style.desc}>
-                    <p>{vacansy.description}</p>
-                    <button className={style.dwnld}>Загрузить ещё</button>
+                    <h3>{vacansy.project.title}</h3>
+                    <p>{vacansy.project.description}</p>
                 </div>;
             case 'Критерии':
                 return <div className={style.desc}>
-                    <p>{vacansy.description}</p>
-                    <button className={style.dwnld}>Загрузить ещё</button>
+                    <p> Языки: {vacansy.programming_languages.map((item) => item.title).join(', ')}</p>
+                    <p> Опыт работы: { }</p>
+                    <p> Навыки: {vacansy.skills.map((item) => item.title).join(', ')}</p>
                 </div>;
             case 'Обязанности':
                 return <div className={style.desc}>
                     <p>{vacansy.description}</p>
-                    <button className={style.dwnld}>Загрузить ещё</button>
                 </div>;
             case 'Условия':
                 return <div className={style.desc}>
-                    <p>{vacansy.description}</p>
-                    <button className={style.dwnld}>Загрузить ещё</button>
+                    <p>Город: {vacansy.city}</p>
+                    <p>Тип занятости: {vacansy.type_of_employment}</p>
                 </div>;
             default:
-                return '';
+                return <div className={style.desc}>
+
+                </div>;
         }
     };
 

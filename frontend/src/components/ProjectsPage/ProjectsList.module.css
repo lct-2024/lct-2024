@@ -43,6 +43,5 @@
 }
 
 .list {
-    max-height: 800px;
-    overflow: auto;
+    min-height: 820px;
 }

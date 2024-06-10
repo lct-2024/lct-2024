@@ -3,10 +3,16 @@ import style from './ProjectsList.module.css'
 
 const ProjectsList = ({ projects }) => {
 
+    const [showCount, setShowCount] = useState(5);
+
+    const handleLoadMore = () => {
+        setShowCount(showCount + 5);
+    };
+
     return (
         <div className='container'>
             <div className={style.list}>
-                {projects.map((project, i) => {
+                {projects.slice(0, showCount).map((project, i) => {
                     return <div className={style.project} key={i}>
                         <div>
                             <h2>{project.title}</h2>
@@ -15,12 +21,12 @@ const ProjectsList = ({ projects }) => {
                             </svg>
                         </div>
                         <p>{project.description}</p>
-                        <p>Открытых вакансий: {project.count}</p>
+                        <p>Открытых вакансий: {project.jobs_count}</p>
                         <button>Другое</button>
                     </div>
                 })}
             </div>
-            <button className={style.btn}>Загрузить ещё</button>
+            <button onClick={handleLoadMore} className={style.btn}>Загрузить ещё</button>
         </div>
     )
 }
