@@ -3,6 +3,7 @@
   (:import-from #:sha1
                 #:sha1-hex)
   (:import-from #:openrpc-server
+                #:type-to-schema
                 #:return-error
                 #:define-rpc-method)
   (:import-from #:40ants-pg/connection
@@ -10,9 +11,11 @@
   (:import-from #:40ants-openrpc/jwt
                 #:with-session)
   (:import-from #:mito
+                #:deftable
                 #:save-dao
                 #:find-dao)
   (:import-from #:passport/models/user
+                #:get-user-roles-and-scopes
                 #:user-password-hash
                 #:get-user-by
                 #:issue-token-for
@@ -29,6 +32,7 @@
                 #:with-output-to-file
                 #:make-keyword)
   (:import-from #:serapeum
+                #:soft-list-of
                 #:dict
                 #:fmt)
   (:import-from #:local-time
@@ -97,14 +101,36 @@
                      :code 2)))))
 
 
+(deftable user-profile (user)
+  ((roles :initarg :roles
+          :type (soft-list-of string)
+          :col-type :array
+          :reader user-roles)
+   (scopes :initarg :scopes
+          :type (soft-list-of string)
+          :col-type :array
+          :reader user-scopes))
+  (:table "passport.user"))
+
+
+(defmethod openrpc-server:slots-to-exclude ((obj (eql (find-class 'user-profile))))
+  (list* "password-hash"
+         (call-next-method)))
+
+
 (define-rpc-method (passport-api my-profile) ()
   (:summary "Отдаёт профиль текущего залогиненого пользователя.")
-  (:result user)
+  (:result user-profile)
   (with-connection ()
     (with-session (user-id)
-      (first
-       (mito:select-dao 'user
-                        (sxql:where (:= :id user-id)))))))
+      (let ((user (mito:find-dao 'user
+                                 :id user-id)))
+        (multiple-value-bind (roles scopes)
+            (get-user-roles-and-scopes user)
+          (change-class user 'user-profile
+                        :roles roles
+                        :scopes scopes)
+          (values user))))))
 
 
 (defun get-password-hash (password)

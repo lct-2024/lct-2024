@@ -11,4 +11,4 @@
   :in-order-to ((test-op (test-op "common-tests"))))
 
 
-(register-system-packages "mito" '("MITO.DAO"))
+(register-system-packages "mito" '("MITO.DAO" "MITO.DAO.TABLE"))
