@@ -134,6 +134,22 @@ CREATE TABLE ats.recommendation (
     updated_at TIMESTAMPTZ
 );
 
+CREATE TABLE ats.theme (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
+
+CREATE TABLE ats.project_theme (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    project_id BIGINT NOT NULL references ats.project on delete cascade,
+    theme_id BIGINT NOT NULL references ats.theme on delete cascade,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
 
