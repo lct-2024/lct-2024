@@ -36,7 +36,7 @@
 
 (defmethod print-object ((obj job-skill) stream)
   (print-unreadable-object (obj stream :type t)
-    (format stream "ID=~A JOB=~A LANG=~A"
+    (format stream "ID=~A JOB=~A SKILL=~A"
             (object-id obj)
             (job obj)
             (skill obj))))

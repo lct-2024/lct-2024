@@ -11,7 +11,11 @@
   (:import-from #:40ants-pg/query
                 #:sql-fetch-all)
   (:import-from #:yason
-                #:with-output-to-string*))
+                #:with-output-to-string*)
+  (:import-from #:common/chat
+                #:create-new-chat)
+  (:import-from #:40ants-pg/connection
+                #:with-connection))
 (in-package #:ats/models/applicant)
 
 
@@ -79,7 +83,13 @@
              :inflate #'contacts-from-json
              :deflate #'contacts-to-json
              :documentation "Список контактов в виде словарей с ключами \"type\" и \"value\", где значениями являются строки. Например: [{\"telegram\": \"telegram-nick\"}]."
-             :accessor applicant-contacts))
+             :accessor applicant-contacts)
+   (chat-id :initarg :chat-id
+            :initform nil
+            :type (or null string)
+            :col-type (or :null :text)
+            :documentation "ID чата, привязанного к объекту."
+            :accessor applicant-chat-id))
   (:table-name "ats.applicant"))
 
 
@@ -89,3 +99,19 @@
             (object-id applicant)
             (applicant-name applicant))))
 
+
+
+(defun fill-chat-ids ()
+  (with-connection ()
+    (loop for applicant in (mito:select-dao 'applicant)
+          do (setf (applicant-chat-id applicant)
+                   (create-new-chat "applicant"
+                                    (princ-to-string (mito:object-id applicant))))
+             (mito:save-dao applicant))))
+
+
+(defmethod mito:insert-dao :after ((obj applicant))
+  (setf (applicant-chat-id obj)
+        (create-new-chat "applicant"
+                         (princ-to-string (mito:object-id obj))))
+  (mito:save-dao obj))

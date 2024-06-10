@@ -76,6 +76,8 @@ insert into passport.role (name) values ('hr');
 insert into passport.scope (name) values ('passport.user.edit');
 insert into passport.scope (name) values ('passport.user.ban');
 
+insert into passport.scope (name) values ('ats.job.create');
+
 
 
 ---------------

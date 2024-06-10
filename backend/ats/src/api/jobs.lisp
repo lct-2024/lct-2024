@@ -1,5 +1,6 @@
 (uiop:define-package #:ats/api/jobs
   (:use #:cl)
+  (:import-from #:ats/models/job-applicant)
   (:import-from #:openrpc-server
                 #:return-error
                 #:define-rpc-method)
@@ -41,7 +42,10 @@
   (:import-from #:sxql
                 #:where)
   (:import-from #:common/auth
-                #:require-role))
+                #:require-scope
+                #:require-role)
+  (:import-from #:ats/models/applicant
+                #:applicant))
 (in-package #:ats/api/jobs)
 
 
@@ -64,8 +68,8 @@
 
 
 (define-rpc-method (ats-api create-job) (title description project-id category
-                                               &key
                                                speciality-id
+                                               &key
                                                (type-of-employment "Полная")
                                                programming-language-ids
                                                (active t)
@@ -87,15 +91,16 @@
   (:result job)
   
   (with-connection ()
-    (with-session ((user-id roles))
-      (require-role user-id roles :admin "create a job")
+    (with-session ((user-id scopes))
+      (require-scope user-id scopes "ats.job.create" "create a job")
       
       (let* ((job (mito:create-dao 'ats/models/job::job
                                    :title title
                                    :description description
                                    :project (get-project-by-id project-id)
                                    :category category
-                                   :speciality (get-speciality-by-id speciality-id)
+                                   :speciality (when speciality-id
+                                                 (get-speciality-by-id speciality-id))
                                    :active active
                                    :active-to (or active-to
                                                   (when active
@@ -137,9 +142,24 @@
   (:summary "Откликнуться на вакансию")
   (:description "Откликнуться может только залогиненый пользователь. Так что для этого метода заголовок Authorization с токеном обязателен.
 
-                 Кроме того, у пользователя должна быть анкета с резюме и заполенной контактной информацией. Эту информацию можно добавить методом `create-cv` или получить методом `my-cv`.")
+Кроме того, у текущего пользователя должна быть анкета с резюме и заполенной контактной информацией. Эту информацию можно добавить методом `create-cv` или получить методом `my-cv`.")
   (:param job-id integer "ID вакансии")
   (:result boolean)
+  
   (with-connection ()
     (with-session ((user-id))
-      (values t))))
+      (let* ((applicant (mito:find-dao 'applicant
+                                       :user-id user-id))
+             (job (mito:find-dao 'job
+                                 :id job-id)))
+        (unless applicant
+          (openrpc-server:return-error "CV does not exists yet."))
+        
+        (unless job
+          (openrpc-server:return-error "Job was not found."))
+        
+        (ats/models/job-applicant::apply-to-the-job
+         job
+         (mito:object-id applicant)
+         :type "self-applied")
+        (values t)))))

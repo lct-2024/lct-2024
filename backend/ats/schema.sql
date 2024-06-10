@@ -150,6 +150,18 @@ CREATE TABLE ats.project_theme (
     updated_at TIMESTAMPTZ
 );
 
+
+CREATE TABLE ats.job_applicant (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    job_id BIGINT NOT NULL references ats.job on delete cascade,
+    type TEXT NOT NULL,
+    applicant_id BIGINT NOT NULL references ats.job on delete cascade,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
+create unique index uniq_job_applicant_idx on ats.job_applicant (job_id, applicant_id);
+
 ---------------
 -- Migrations:
 
@@ -174,3 +186,7 @@ alter table ats.job add column active BOOLEAN NOT NULL default True;
 alter table ats.job add column active_to TIMESTAMPTZ default now() + '1 month'::interval;
 
 alter table ats.job add column salary TEXT;
+
+alter table ats.job add column chat_id TEXT;
+alter table ats.applicant add column chat_id TEXT;
+

@@ -18,7 +18,11 @@
                 #:now)
   (:import-from #:local-time-duration
                 #:timestamp-duration+
-                #:duration))
+                #:duration)
+  (:import-from #:40ants-pg/connection
+                #:with-connection)
+  (:import-from #:common/chat
+                #:create-new-chat))
 (in-package #:ats/models/job)
 
 
@@ -76,7 +80,13 @@
            :type (or null string)
            :col-type (or :null :text)
            :documentation "Примерный оклад, как цифра или диапазон."
-           :accessor job-salary))
+           :accessor job-salary)
+   (chat-id :initarg :chat-id
+           :initform nil
+           :type (or null string)
+           :col-type (or :null :text)
+           :documentation "ID чата, привязанного к объекту."
+           :accessor job-chat-id))
   (:table-name "ats.job"))
 
 
@@ -86,3 +96,19 @@
             (object-id job)
             (job-title job))))
 
+
+
+(defun fill-chat-ids ()
+  (with-connection ()
+    (loop for job in (mito:select-dao 'job)
+          do (setf (job-chat-id job)
+                   (create-new-chat "job"
+                                    (princ-to-string (mito:object-id job))))
+             (mito:save-dao job))))
+
+
+(defmethod mito:insert-dao :after ((obj job))
+  (setf (job-chat-id obj)
+        (create-new-chat "job"
+                         (princ-to-string (mito:object-id obj))))
+  (mito:save-dao obj))
