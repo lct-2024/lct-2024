@@ -64,11 +64,13 @@
                :type string
                :col-type :text
                :initform ""
+               :documentation "Описание опыта работы кандидата."
                :accessor applicant-experience)
    (about :initarg :about
           :type string
           :col-type :text
           :initform ""
+          :documentation "Общее описание кандидата, его увелечения, свойства характера и прочее."
           :accessor applicant-about)
    (contacts :initarg :contacts
              :type (soft-list-of contact)
@@ -76,6 +78,7 @@
              :initform nil
              :inflate #'contacts-from-json
              :deflate #'contacts-to-json
+             :documentation "Список контактов в виде словарей с ключами \"type\" и \"value\", где значениями являются строки. Например: [{\"telegram\": \"telegram-nick\"}]."
              :accessor applicant-contacts))
   (:table-name "ats.applicant"))
 

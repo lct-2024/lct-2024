@@ -120,7 +120,7 @@
 
 (define-rpc-method (passport-api my-profile) ()
   (:summary "Отдаёт профиль текущего залогиненого пользователя.")
-  (:result user-profile)
+  (:result user)
   (with-connection ()
     (with-session (user-id)
       (let ((user (mito:find-dao 'user

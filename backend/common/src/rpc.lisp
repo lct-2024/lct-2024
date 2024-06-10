@@ -8,11 +8,13 @@
   (:import-from #:serapeum
                 #:dict)
   (:import-from #:mito.dao.table
-                #:dao-table-class))
+                #:dao-table-class)
+  (:import-from #:alexandria
+                #:write-string-into-file))
 (in-package #:common/rpc)
 
 
-(defmethod type-to-schema (timestamp)
+(defmethod type-to-schema ((obj timestamp))
   (dict "type" "string"))
 
 

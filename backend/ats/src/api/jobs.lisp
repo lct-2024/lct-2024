@@ -39,7 +39,9 @@
   (:import-from #:local-time-duration
                 #:duration)
   (:import-from #:sxql
-                #:where))
+                #:where)
+  (:import-from #:common/auth
+                #:require-role))
 (in-package #:ats/api/jobs)
 
 
@@ -86,7 +88,7 @@
   
   (with-connection ()
     (with-session ((user-id roles))
-      (common/auth:require-role user-id roles :admin "create a job")
+      (require-role user-id roles :admin "create a job")
       
       (let* ((job (mito:create-dao 'ats/models/job::job
                                    :title title
@@ -129,3 +131,15 @@
                               :resume-matching-score (if user-id
                                                          (calculate-resume-score job user-id)
                                                          0)))))))
+
+
+(define-rpc-method (ats-api apply-to-the-job) (job-id)
+  (:summary "Откликнуться на вакансию")
+  (:description "Откликнуться может только залогиненый пользователь. Так что для этого метода заголовок Authorization с токеном обязателен.
+
+                 Кроме того, у пользователя должна быть анкета с резюме и заполенной контактной информацией. Эту информацию можно добавить методом `create-cv` или получить методом `my-cv`.")
+  (:param job-id integer "ID вакансии")
+  (:result boolean)
+  (with-connection ()
+    (with-session ((user-id))
+      (values t))))

@@ -27,7 +27,9 @@
   (:import-from #:ats/models/speciality
                 #:get-speciality-id)
   (:import-from #:40ants-pg/connection
-                #:with-connection))
+                #:with-connection)
+  (:import-from #:common/dates
+                #:parse-date))
 (in-package #:ats/ai/cv)
 
 
@@ -96,16 +98,6 @@
             (list (make-instance 'contact
                                  :type "linkedin"
                                  :value (fmt "user-~A" user-id))))))
-
-(defun parse-date (date)
-  (local-time:parse-timestring
-   (cond
-     ((and (typep date 'string)
-           (str:containsp "-" date))
-      date)
-     (t
-      ;; Когда указан только год
-      (fmt "~A-01-01" date)))))
 
 
 (defun make-job-profile (parsed-data)
