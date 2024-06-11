@@ -190,3 +190,4 @@ alter table ats.job add column salary TEXT;
 alter table ats.job add column chat_id TEXT;
 alter table ats.applicant add column chat_id TEXT;
 
+alter table ats.job add column required_experience TEXT;

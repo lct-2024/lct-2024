@@ -81,6 +81,12 @@
            :col-type (or :null :text)
            :documentation "Примерный оклад, как цифра или диапазон."
            :accessor job-salary)
+   (required-experience :initarg :required-experience
+           :initform nil
+           :type (or null string)
+           :col-type (or :null :text)
+           :documentation "Опыт работы, лет или месяцев."
+           :accessor job-required-experience)
    (chat-id :initarg :chat-id
            :initform nil
            :type (or null string)

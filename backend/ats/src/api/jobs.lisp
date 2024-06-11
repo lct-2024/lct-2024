@@ -75,7 +75,8 @@
                                                (active t)
                                                active-to 
                                                skill-ids
-                                               salary)
+                                               salary
+                                               required-experience)
   (:summary "Добавляет в базу новую вакансию")
   (:param title string "Название вакансии")
   (:param category string "Категория вакансии: Разработка, Аналитика, Тестирование, Другое")
@@ -88,6 +89,7 @@
   (:param active-to local-time:timestamp "Время, до которого будет проводиться набор на вакансию.")
   (:param programming-language-ids (soft-list-of integer) "Список ID языков программирования.")
   (:param salary (or null string) "Примерный оклад, как цифра или диапазон.")
+  (:param required-experience (or null string) "ID чата, привязанного к объекту.")
   (:result job)
   
   (with-connection ()
@@ -107,6 +109,7 @@
                                                     (timestamp-duration+ (now)
                                                                          (duration :day 30))))
                                    :type-of-employment type-of-employment
+                                   :required-experience required-experience
                                    :salary salary))
              (skills (bind-job-to-skills job skill-ids))
              (programming-languages (bind-job-to-programming-languages job programming-language-ids)))

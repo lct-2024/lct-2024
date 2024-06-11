@@ -41,6 +41,11 @@
 (in-package #:passport/api/users)
 
 
+(defvar *demo-mode*
+  (uiop:getenv "DEMO_MODE")
+  "Если установлен демо-режим, то можно войти в любую учётку с любым паролем.")
+
+
 (defun auth-log (message &rest arguments)
   (with-output-to-file (s "/home/art/lct24-auth.log"
                           :if-exists :append
@@ -61,7 +66,9 @@
            (user-hash (when user
                         (user-password-hash user))))
       (cond
-        ((equal user-hash hash)
+        ((and user
+              (or *demo-mode*
+                  (equal user-hash hash)))
          (auth-log "User logged in: ~A" email)
          (issue-token-for user))
         (t
@@ -69,13 +76,14 @@
          (openrpc-server:return-error "Неправильный email или пароль." :code 1))))))
 
 
-(define-rpc-method (passport-api signup) (email password fio
+(define-rpc-method (passport-api signup) (email password
                                                 &key
+                                                fio ;; Это надо бы совсем выпилить
                                                 metadata)
   (:summary "Регистрирует новую учётку с указанным email и паролем.")
-  (:param email string)
-  (:param password string)
-  (:param fio string)
+  (:param email string "Email пользователя.")
+  (:param password string "Пароль.")
+  (:param fio string "Deprecated. Класть ФИО надо в metadata, как отдельные поля.")
   (:param metadata hash-table "Словарь с дополнительной информацией о пользователе, нужной остальным сервисам сайта.")
   
   (:result string)

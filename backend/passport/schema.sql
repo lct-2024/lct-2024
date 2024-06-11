@@ -77,6 +77,8 @@ insert into passport.scope (name) values ('passport.user.edit');
 insert into passport.scope (name) values ('passport.user.ban');
 
 insert into passport.scope (name) values ('ats.job.create');
+insert into passport.scope (name) values ('ats.project.create');
+
 
 
 

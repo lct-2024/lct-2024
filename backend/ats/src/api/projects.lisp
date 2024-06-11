@@ -12,7 +12,7 @@
   (:import-from #:ats/api
                 #:ats-api)
   (:import-from #:common/auth
-                #:require-role)
+                #:require-scope)
   (:import-from #:mito
                 #:includes
                 #:deftable)
@@ -37,10 +37,10 @@
   (:param description string "Описание проекта")
   (:result project)
   (with-connection ()
-    (with-session ((user-id roles))
-      (require-role user-id roles :admin "create a project")
+    (with-session ((user-id roles scopes))
+      (require-scope user-id scopes "ats.project.create" "create a project")
       
-      (log:info "User" user-id "with roles" roles "creates a project" title)
+      (log:info "User" user-id "with roles" roles "and scopes" scopes "creates a project" title)
       (mito:create-dao 'project
                        :title title
                        :description description))))
@@ -67,7 +67,7 @@
 (define-rpc-method (ats-api get-projects) (&key theme-id)
   (:summary "Отдаёт все проекты")
   (:param theme-id (or null integer) "ID темы по которой нужно выбрать проекты. Если не указано, то будут отданы все.")
-  (:result (soft-list-of 'project-with-themes))
+  (:result (soft-list-of project-with-themes))
   (with-connection ()
     (let* ((query                                          "
 with jobs_counters as (

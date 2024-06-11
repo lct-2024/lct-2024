@@ -14,7 +14,7 @@
 (in-package #:common/rpc)
 
 
-(defmethod type-to-schema ((obj timestamp))
+(defmethod type-to-schema ((obj (eql (find-class 'timestamp))))
   (dict "type" "string"))
 
 
