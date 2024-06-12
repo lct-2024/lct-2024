@@ -15,6 +15,9 @@
   (:import-from #:ats/models/education
                 #:education)
   (:import-from #:mito
+                #:object-id
+                #:select-by-sql
+                #:deftable
                 #:find-dao
                 #:select-dao)
   (:import-from #:sxql
@@ -31,14 +34,78 @@
 (in-package #:ats/api/applicants)
 
 
-(define-rpc-method (ats-api get-applicants) ()
-  (:summary "Отдаёт всех кандидатов")
-  (:result (serapeum:soft-list-of applicant))
+(deftable applicant-with-status ()
+  ((fio :initarg :fio
+        :col-type :text)
+   (date :initarg :date
+         :col-type :text)
+   (step :initarg :step
+         :col-type (or :null :text)
+         :reader application-step)
+   (score :initarg :score
+          :col-type :integer)
+   (application-type :initarg :application-type
+                     :col-type :text
+                     :reader application-type)))
+
+
+(defclass applicant-group ()
+  ((title :initarg :title
+          :type string)
+   (applicants :initarg :applicants
+               :type (soft-list-of applicant-with-status))))
+
+
+(defparameter *retrieve-applicants-query*
+  "
+select ja.id
+     , a.name as fio
+     , ja.updated_at::date::text as date
+     , ast.title as step
+     , (100 * random())::integer as score
+     , ja.type as application_type
+  from ats.applicant as a
+join ats.job_applicant as ja on a.id = ja.applicant_id
+left join ats.application_step as ast on ja.application_step_id = ast.id
+where ja.job_id = ?
+")
+
+(define-rpc-method (ats-api get-applicants) (job-id)
+  (:summary "Отдаёт кандидатов на вакансию.")
+  (:param job-id integer)
+  (:result (soft-list-of applicant-group))
+  
   (with-connection ()
-    (with-session (user-id)
-      (declare (ignore user-id))
-      (values
-       (select-dao 'applicant)))))
+    (loop with groups = (serapeum:dict)
+          for applicant in (select-by-sql 'applicant-with-status
+                                          *retrieve-applicants-query*
+                                          :binds (list job-id))
+          for type = (application-type applicant)
+          for group-id = (cond
+                           ((application-step applicant)
+                            "in-progress")
+                           (t
+                            (cond
+                              ((or (string-equal type
+                                                 "self-applied")
+                                   (string-equal type
+                                                 "recommended"))
+                               type)
+                              (t
+                               (log:warn "Unknown application type " type " for job application " (object-id applicant))
+                               "self-applied"))))
+          do (push applicant
+                   (gethash group-id
+                            groups))
+          finally (return (list (make-instance 'applicant-group
+                                               :title "В работе"
+                                               :applicants (gethash "in-progress" groups))
+                                (make-instance 'applicant-group
+                                               :title "Отклики"
+                                               :applicants (gethash "self-applied" groups))
+                                (make-instance 'applicant-group
+                                               :title "Рекомендации"
+                                               :applicants (gethash "recommended" groups)))))))
 
 
 (define-rpc-method (ats-api get-applicant) (applicant-id)
@@ -361,3 +428,22 @@
                                 (mito:object-id applicant)))
         (values nil)))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Steps
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-rpc-method (ats-api delete-cv-recommendation) (recommendation-id)
+  (:summary "Удаляет запись о рекомендации текущего пользователя")
+  (:param recommendation-id integer "ID рекомендации")
+  (:result null)
+  (with-connection ()
+    (with-session (user-id)
+      (let* ((applicant (mito:find-dao 'applicant
+                                       :user-id user-id)))
+        (unless applicant
+          (openrpc-server:return-error "CV does not exists yet."))
+        (mito:execute-sql "delete from ats.recommendation where id = ? and applicant_id = ?"
+                          (list recommendation-id
+                                (mito:object-id applicant)))
+        (values nil)))))

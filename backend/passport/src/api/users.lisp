@@ -141,5 +141,25 @@
           (values user))))))
 
 
+(define-rpc-method (passport-api get-user-profiles) (user-ids)
+  (:summary "Отдаёт профили пользователей по их id.")
+  (:param user-ids (soft-list-of integer) "Список id пользователей.")
+  (:result (soft-list-of user))
+  (let ((unique-user-ids  (remove-duplicates user-ids)))
+    (when unique-user-ids
+          (with-connection ()
+      
+            (loop for user in (40ants-pg/utils:select-dao-by-ids 'user user-ids)
+                  ;; TODO: так для каждого пользователя получать роли не оптимально,
+                  ;; но на этапе MVP нам это не важно. Сами роли нам нужны
+                  ;; для того, чтобы можно было в чатах подсветить сотрудников компании
+                  collect (multiple-value-bind (roles scopes)
+                              (get-user-roles-and-scopes user)
+                            (change-class user 'user-profile
+                                          :roles roles
+                                          :scopes scopes)
+                            (values user)))))))
+
+
 (defun get-password-hash (password)
   (sha1-hex (string-to-octets password :external-format :utf-8)))

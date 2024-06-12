@@ -37,6 +37,8 @@ CREATE TABLE passport.user_role (
     updated_at TIMESTAMPTZ
 );
 
+create unique index unique_user_role_idx on passport.user_role(user_id, role_id);
+
 CREATE TABLE passport.scope (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -51,6 +53,8 @@ CREATE TABLE passport.role_scope (
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ
 );
+
+create unique index unique_role_scope_idx on passport.role_scope(role_id, scope_id);
 
 CREATE OR REPLACE FUNCTION add_role_scope()
 RETURNS TRIGGER AS $$
@@ -80,6 +84,18 @@ insert into passport.scope (name) values ('ats.job.create');
 insert into passport.scope (name) values ('ats.project.create');
 
 
+INSERT INTO passport.role_scope (role_id, scope_id, created_at, updated_at)
+SELECT role.id, scope.id, NOW(), NOW()
+FROM passport.role, passport.scope
+WHERE role.name = 'hr' and scope.name in ('ats.job.create', 'ats.project.create')
+on conflict do nothing;
+
+
+INSERT INTO passport.role_scope (role_id, scope_id, created_at, updated_at)
+SELECT role.id, scope.id, NOW(), NOW()
+FROM passport.role, passport.scope
+WHERE role.name = 'manager' and scope.name in ('ats.project.create')
+on conflict do nothing;
 
 
 ---------------
@@ -95,3 +111,18 @@ select u.id, r.id, now(), now()
 from passport.user as u
 cross join passport.role as r
 where u.email like '%@svetlyak.ru' and r.name = 'admin';
+
+
+-- Наделяем полномочиями учётку HR
+insert into passport.user_role (user_id, role_id, created_at, updated_at)
+select u.id, r.id, now(), now()
+from passport.user as u
+cross join passport.role as r
+where u.email like 'hr@example.com' and r.name = 'hr';
+
+-- Наделяем полномочиями учётку Нанимающего Менеджера
+insert into passport.user_role (user_id, role_id, created_at, updated_at)
+select u.id, r.id, now(), now()
+from passport.user as u
+cross join passport.role as r
+where u.email like 'manager@example.com' and r.name = 'manager';

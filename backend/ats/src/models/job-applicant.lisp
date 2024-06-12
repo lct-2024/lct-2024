@@ -16,6 +16,8 @@
                 #:applicant)
   (:import-from #:40ants-pg/transactions
                 #:with-transaction)
+  (:import-from #:ats/models/application-step
+                #:application-step)
   (:export
    #:bind-job-to-applicants
    #:get-job-applicants))
@@ -32,10 +34,19 @@
          :col-type :text
          :documentation "Type of the link: self-applied, recommended, parsed"
          :accessor application-type)
+   (status :initarg :status
+           :type (or null string)
+           :col-type (or :null :text)
+           :documentation "Статус отклика: нанят, отказ. Статус ставится только на финальном этапе обработки кандидата."
+           :accessor application-status)
    (applicant :initarg :applicant
               :type applicant
               :col-type applicant
-              :accessor applicant))
+              :accessor applicant)
+   (application-step :initarg :application-step
+                     :type (or null application-step)
+                     :col-type (or :null application-step)
+                     :accessor application-step))
   (:table-name "ats.job_applicant"))
 
 

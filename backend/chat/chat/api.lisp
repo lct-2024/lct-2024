@@ -110,3 +110,17 @@
 
   (with-connection ()
     (mito:retrieve-dao 'chat :content-type content-type)))
+
+
+(define-rpc-method (chat-api get-content-types) ()
+  (:summary "Отдаёт список content-type, в существующих чатах")
+  (:description "Просто вспомогательный метод, чтобы перед использованием get-all-chats можно было посмотреть на типы чатов.")
+  (:result (list-of string))
+
+  (with-connection ()
+    (loop for row in (mito:retrieve-by-sql "
+select distinct(content_type) as content_type
+  from chat.chat
+ where content_type is not null
+")
+          collect (getf row :content-type ))))

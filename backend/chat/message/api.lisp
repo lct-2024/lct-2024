@@ -27,6 +27,8 @@
                 #:with-log-unhandled)
   (:import-from #:chat/chat/model
                 #:chat-archived-p)
+  (:import-from #:40ants-openrpc/jwt
+                #:with-session)
   (:import-from #:mito.dao
                 #:select-by-sql))
 (in-package #:chat/message/api)
@@ -38,22 +40,23 @@
   (:param message string)
   (:result message)
 
-  (with-connection ()
-    
-    (let ((chat (find-dao 'chat/chat/model::chat
-                          :id chat-id)))
-      (unless chat
-        (openrpc-server:return-error (fmt "Чат с id ~S не найден." chat-id)
-                                     :code 10))
-      
-      (when (chat-archived-p chat)
-        (openrpc-server:return-error (fmt "Чат с id ~S в архиве и недоступен на запись." chat-id)
-                                     :code 11))
-      
-      (create-dao 'message
-                  :chat-id chat-id
-                  :user-id user-id
-                  :message message))))
+  
+  (with-session (user-id)
+    (with-connection () 
+      (let ((chat (find-dao 'chat/chat/model::chat
+                            :id chat-id)))
+        (unless chat
+          (openrpc-server:return-error (fmt "Чат с id ~S не найден." chat-id)
+                                       :code 10))
+       
+        (when (chat-archived-p chat)
+          (openrpc-server:return-error (fmt "Чат с id ~S в архиве и недоступен на запись." chat-id)
+                                       :code 11))
+       
+        (create-dao 'message
+                    :chat-id chat-id
+                    :user-id user-id
+                    :message message)))))
 
 
 (defvar *next-phrases*

@@ -162,6 +162,25 @@ CREATE TABLE ats.job_applicant (
 
 create unique index uniq_job_applicant_idx on ats.job_applicant (job_id, applicant_id);
 
+
+CREATE TABLE ats.application_step (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    num INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    created_at TIMESTAMPTZ default now(),
+    updated_at TIMESTAMPTZ default now()
+);
+
+create unique index uniq_step_num_idx on ats.application_step (num);
+
+insert into ats.application_step
+(num, title)
+values
+(1, 'Скрининг'),
+(2, 'Назначено первое собеседование'),
+(3, 'Назначено второе собеседование'),
+(4, 'Отправлен оффер');
+
 ---------------
 -- Migrations:
 
@@ -191,3 +210,7 @@ alter table ats.job add column chat_id TEXT;
 alter table ats.applicant add column chat_id TEXT;
 
 alter table ats.job add column required_experience TEXT;
+
+alter table ats.job_applicant add column application_step_id BIGINT references ats.application_step on delete set null;
+alter table ats.job_applicant add column status TEXT;
+
