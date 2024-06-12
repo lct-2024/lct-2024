@@ -1,22 +1,23 @@
-import React, { useState } from 'react'
-import style from "./Registration.module.css"
-import Navigation from '../Navigation'
-import Footer from '../Footer'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import React, { useState } from 'react';
+import style from "./Registration.module.css";
+import Navigation from '../Navigation';
+import Footer from '../Footer';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Registration = () => {
-
     const [formData, setFormData] = useState({
         email: '',
+        password: '',
         fio: '',
-        metadata: {},
+        specialty: '',
     });
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
 
     const handleChange = (event) => {
-        setFormData({ ...formData, [event.target.name]: event.target.value });
+        const { name, value } = event.target;
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = async (event) => {
@@ -28,26 +29,27 @@ const Registration = () => {
                 method: 'signup',
                 params: {
                     email: formData.email,
-                    fio: formData.fio,
-                    metadata: formData.metadata,
+                    password: formData.password,
+                    metadata: {
+                        full_name: formData.fio,
+                        specialty: formData.specialty
+                    },
                 },
                 id: 1
             });
 
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Успешная регистрация:', data);
-                navigate('/login');
+            if (response.data.error) {
+                setErrorMessage(response.data.error.message || 'Ошибка регистрации');
             } else {
-                const errorData = await response.json();
-                setErrorMessage(errorData.message || 'Ошибка регистрации');
+                console.log('Успешная регистрация:', response.data.result);
+                navigate('/login');
             }
         } catch (error) {
             console.error('Ошибка при отправке данных:', error);
             setErrorMessage('Произошла ошибка при регистрации');
         }
     };
+
     return (
         <>
             <div className={style.main}>
@@ -59,19 +61,46 @@ const Registration = () => {
                 </div>
             </div>
             <div className='container'>
-                <div className={style.body}>
+                <form onSubmit={handleSubmit} className={style.body}>
                     <p>Чтобы оставлять резюме, комментировать и общаться с рекрутерами. <Link to="/login">Уже есть аккаунт, войти</Link></p>
-                    <input type="text" placeholder='Имя' />
-                    <input type="text" placeholder='Фамилия' />
-                    <input type="text" placeholder='Отчество' />
-                    <input type="email" placeholder='Почта' />
-                    <input type="text" placeholder='Специальность' />
-                    <button className={style.btn}>Войти</button>
-                </div>
+                    <input
+                        type="text"
+                        placeholder='ФИО'
+                        name="fio"
+                        value={formData.fio}
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="email"
+                        placeholder='Почта'
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder='Пароль'
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="text"
+                        placeholder='Специальность'
+                        name="specialty"
+                        value={formData.specialty}
+                        onChange={handleChange}
+                    />
+                    <button type="submit" className={style.btn}>Зарегистрироваться</button>
+                </form>
+                {errorMessage && <p className={style.error}>{errorMessage}</p>}
             </div>
             <Footer />
         </>
-    )
+    );
 }
 
-export default Registration
+export default Registration;

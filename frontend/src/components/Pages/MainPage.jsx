@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './MainPage.module.css'
 import Navigation from '../Navigation'
 import OurProjects from '../OurProjects'
@@ -8,6 +8,18 @@ import MainOpens from '../MainOpens'
 import Footer from '../Footer'
 
 const MainPage = () => {
+
+    const texts = ["влияй на своё развитие", "работай в комфорте", "предлагай идеи"];
+    const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCurrentTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
+        }, 2000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
     return (
         <>
             <div className={style.main}>
@@ -15,7 +27,7 @@ const MainPage = () => {
                     <div className={style.sect}>
                         <Navigation />
                         <div className={style.hello}>
-                            <h2>Присоединяйся к команде, <span>предлагай идеи</span></h2>
+                            <h2>Присоединяйся к команде, <span>{texts[currentTextIndex]}</span></h2>
                             <div>
                                 <div className={style.search}>
                                     <input type="text" placeholder='Поиск...' />

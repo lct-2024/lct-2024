@@ -3,6 +3,7 @@ import style from './VacansyInfo.module.css'
 import Footer from '../Footer'
 import Navigation from '../Navigation'
 import { useParams } from 'react-router-dom'
+import ApplyForm from './ApplyForm'
 
 const VacansyInfo = ({ vacansies }) => {
     const { id } = useParams();
@@ -152,6 +153,7 @@ const VacansyInfo = ({ vacansies }) => {
                             {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
                         </div>
                     </div>
+                    <ApplyForm jobId={vacansy.id} />
                 </div>
                 {showAlarm && <p className={style.alarm}>Ваш отклик успешно отправлен! Уведомления об изменениях статуса отклика будут на вашей почте и на сайте</p>}
             </div>
