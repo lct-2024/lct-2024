@@ -6,10 +6,10 @@ import Footer from '../Footer'
 import axios from 'axios'
 
 const ProjectsPage = () => {
-
-    const [selectedFilter, setSelectedFilter] = useState("Все");
-    const [searchTerm, setSearchTerm] = useState('');
     const [projects, setProjects] = useState([])
+    const [filteredProjects, setFilteredProjects] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedFilter, setSelectedFilter] = useState('Все');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,6 +25,7 @@ const ProjectsPage = () => {
                 } else {
                     console.log(response.data.result)
                     setProjects(response.data.result);
+                    setFilteredProjects(response.data.result);
                 }
 
             } catch (error) {
@@ -42,17 +43,41 @@ const ProjectsPage = () => {
     const [newCommentText, setNewCommentText] = useState('');
     const [showInput, setShowInput] = useState(false)
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+        filterProjects();
+    };
+
+    const handleFilterClick = (filter) => {
+        setSelectedFilter(filter);
+        filterProjects();
+    };
+
+    const filterProjects = () => {
+        let filtered = [...projects];
+
+        if (searchTerm.trim() !== '') {
+            filtered = filtered.filter((project) =>
+                project.title.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        if (selectedFilter !== 'Все') {
+            filtered = filtered.filter((project) =>
+                project.themes.some((theme) => theme.title.toLowerCase() === selectedFilter.toLowerCase())
+            );
+        }
+
+        setFilteredProjects(filtered);
+        console.log(filtered)
     };
 
     const handleSearchSubmit = () => {
         const filteredProjects = projects.filter(project =>
             project.title.toLowerCase().includes(searchTerm.toLowerCase())
         );
-        setProjects(filteredProjects);
+        setFilteredProjects(filteredProjects); // Обновляем фильтрованные проекты
     };
-
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSearchSubmit()
@@ -60,10 +85,6 @@ const ProjectsPage = () => {
         }
     };
 
-
-    const handleFilterClick = (filter) => {
-        setSelectedFilter(filter === selectedFilter ? null : filter);
-    };
 
     const handleShowInput = () => {
         setShowInput(true);
@@ -99,29 +120,19 @@ const ProjectsPage = () => {
                         </button>
                     </div>
                     <div className={style.filter}>
-                        <p className={selectedFilter === 'Все' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Все')}>Все</p>
-                        <p className={selectedFilter === 'Финтех' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Финтех')}> Финтех</p>
-                        <p className={selectedFilter === 'Госсектор' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Госсектор')}>Госсектор</p>
-                        <p className={selectedFilter === 'IT' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('IT')}>IT</p>
-                        <p className={selectedFilter === 'Медиа' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Медиа')}>Медиа</p>
-                        <p className={selectedFilter === 'Нефть и газ' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Нефть и газ')}>Нефть и газ</p>
-                        <p className={selectedFilter === 'Ретейл' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Ретейл')}>Ретейл</p>
-                        <p className={selectedFilter === 'Коммуникации' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Коммуникации')}>Коммуникации</p>
-                        <p className={selectedFilter === 'Транспорт' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Транспорт')}>Транспорт</p>
-                        <p className={selectedFilter === 'Другое' ? style.activeFilter : ''}
-                            onClick={() => handleFilterClick('Другое')}>Другое</p>
+                        {['Все', 'Финтех', 'Госсектор', 'IT', 'Медиа', 'Нефть и газ', 'Ретейл', 'Коммуникации', 'Транспорт', 'Другое'].map((filter) => (
+                            <p key={filter}
+                                className={selectedFilter === filter ? style.activeFilter : ''}
+                                onClick={() => handleFilterClick(filter)}>
+                                {filter}
+                            </p>
+                        ))}
                     </div>
-                </div>
-                {projects.length === 0 ? <h1 style={{ margin: "0 auto" }}>Проектов нет</h1> : <ProjectsList projects={projects} />}
+                </div>   {filteredProjects.length === 0 ? (
+                    <h1 style={{ margin: '0 auto' }}>Проектов нет</h1>
+                ) : (
+                    <ProjectsList projects={filteredProjects} />
+                )}
                 <div>
                     <h2>Интересно узнать больше о проектах?</h2>
                     <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
@@ -141,7 +152,7 @@ const ProjectsPage = () => {
                                 Отправить комментарий
                             </button>
                         </>)}
-                        {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
+                        {!showInput && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
                     </div>
                 </div>
             </div>

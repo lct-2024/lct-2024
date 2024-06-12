@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './VacansyInfo.module.css'
 import Footer from '../Footer'
 import Navigation from '../Navigation'
@@ -14,7 +14,9 @@ const VacansyInfo = ({ vacansies }) => {
     const [newCommentText, setNewCommentText] = useState('');
     const [showInput, setShowInput] = useState(false)
     const [selectedFilter, setSelectedFilter] = useState("О проекте");
-
+    const [btnText, setBtnText] = useState("Откликнуться")
+    const [btnClicked, setBtnClicked] = useState(false)
+    const [showAlarm, setShowAlarm] = useState(false);
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
     };
@@ -32,6 +34,10 @@ const VacansyInfo = ({ vacansies }) => {
         setShowInput(false);
     };
 
+    const handleButtonClicked = () => {
+        setBtnClicked(true)
+        setBtnText("Вы откликнулись")
+    }
 
     const getFilterText = () => {
         switch (selectedFilter) {
@@ -63,6 +69,15 @@ const VacansyInfo = ({ vacansies }) => {
     };
 
 
+    useEffect(() => {
+        if (btnClicked) {
+            setShowAlarm(true);
+            setTimeout(() => {
+                setShowAlarm(false);
+            }, 2000);
+        }
+    }, [btnClicked]);
+
     return (
         <div className={style.main}>
             <div className='container'>
@@ -79,7 +94,7 @@ const VacansyInfo = ({ vacansies }) => {
                                 <p>{vacansy.city}</p>
                                 <p>{vacansy.category}</p>
                             </div>
-                            <button className={style.otklik}>Откликнуться</button>
+                            <button style={{ opacity: btnClicked ? "0.5" : "1" }} onClick={handleButtonClicked} className={style.otklik}>{btnText}</button>
                         </div>
                         <div className={style.body2}>
                             {vacansy.resume_matching_score > 40 ? <p>Ваше резюме подходит под описание вакансии</p> : <p>Ваше резюме не подходит под описание вакансии</p>}
@@ -138,9 +153,10 @@ const VacansyInfo = ({ vacansies }) => {
                         </div>
                     </div>
                 </div>
+                {showAlarm && <p className={style.alarm}>Ваш отклик успешно отправлен! Уведомления об изменениях статуса отклика будут на вашей почте и на сайте</p>}
             </div>
             <Footer />
-        </div>
+        </div >
     )
 }
 

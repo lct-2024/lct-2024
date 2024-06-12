@@ -181,3 +181,16 @@
     font-size: 16px;
     margin-top: 10px;
 }
+
+.alarm {
+    position: absolute;
+    padding: 20px;
+    max-width: 500px;
+    color: black;
+    width: 400px;
+    background-color: white;
+    right: 30px;
+    top: 20px;
+    font-size: 20px;
+    border: 1px solid black;
+}

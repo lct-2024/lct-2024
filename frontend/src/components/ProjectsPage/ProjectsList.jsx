@@ -22,7 +22,13 @@ const ProjectsList = ({ projects }) => {
                         </div>
                         <p>{project.description}</p>
                         <p>Открытых вакансий: {project.jobs_count}</p>
-                        <button>Другое</button>
+                        <div className={style.themesContainer}>
+                            {project.themes.map((item) => (
+                                <p key={item.id} className={style.theme}>
+                                    {item.title}
+                                </p>
+                            ))}
+                        </div>
                     </div>
                 })}
             </div>

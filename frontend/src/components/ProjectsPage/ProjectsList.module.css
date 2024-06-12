@@ -45,3 +45,17 @@
 .list {
     min-height: 820px;
 }
+
+.theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background-color: white;
+    margin: 0 15px 0 0 !important;
+}
+
+.themesContainer {
+    justify-content: flex-start !important;
+    width: 500px;
+}

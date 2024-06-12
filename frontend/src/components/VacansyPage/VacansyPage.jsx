@@ -107,7 +107,7 @@ const VacansyPage = ({ vacansies, setVacansies }) => {
                     </button>
                 </div>
             </div>
-            {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Вакансии закончились</h1> : <VacansyList vacansies={vacansies} />}
+            {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Загрузка...</h1> : <VacansyList vacansies={vacansies} />}
 
 
             <div className='container'>
