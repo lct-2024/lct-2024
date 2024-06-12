@@ -28,6 +28,8 @@ CREATE TABLE passport.role (
     updated_at TIMESTAMPTZ
 );
 
+create unique index unique_role_name_idx on passport.role(name);
+
 
 CREATE TABLE passport.user_role (
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -42,9 +44,13 @@ create unique index unique_user_role_idx on passport.user_role(user_id, role_id)
 CREATE TABLE passport.scope (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
+    description TEXT NOT NULL,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ
 );
+
+create unique index unique_scope_name_idx on passport.scope(name);
+
 
 CREATE TABLE passport.role_scope (
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -73,28 +79,52 @@ FOR EACH ROW
 EXECUTE FUNCTION add_role_scope();
 
 
-insert into passport.role (name) values ('admin');
-insert into passport.role (name) values ('manager');
-insert into passport.role (name) values ('hr');
+insert into passport.role (name) values
+('admin'),
+('manager'),
+('hr')
+on conflict do nothing;
 
-insert into passport.scope (name) values ('passport.user.edit');
-insert into passport.scope (name) values ('passport.user.ban');
-
-insert into passport.scope (name) values ('ats.job.create');
-insert into passport.scope (name) values ('ats.project.create');
+insert into passport.scope (name, description, created_at, updated_at) values
+('passport.user.edit', 'Позволяет редактировать профиль любого пользователя.', now(), now()),
+('passport.user.ban', 'Позволяет банить любого пользователя.', now(), now()),
+('ats.job.create', 'Позволяет создавать новые вакансии.', now(), now()),
+('ats.job.edit', 'Позволяет изменять вакансии.', now(), now()),
+('ats.job.delete', 'Позволяет удалять вакансии.', now(), now()),
+('ats.project.create', 'Позволяет создавать новые проекты.', now(), now()),
+('ats.project.edit', 'Позволяет редактировать проекты.', now(), now()),
+('ats.project.delete', 'Позволяет удалять проекты.', now(), now()),
+('ats.news-post.create', 'Позволяет добавлять новые новости', now(), now()),
+('ats.news-post.edit', 'Позволяет редактировать новости.', now(), now()),
+('ats.news-post.delete', 'Позволяет удалять новости.', now(), now())
+on conflict (name)
+do update set description = excluded.description, updated_at=excluded.updated_at;
 
 
 INSERT INTO passport.role_scope (role_id, scope_id, created_at, updated_at)
 SELECT role.id, scope.id, NOW(), NOW()
 FROM passport.role, passport.scope
-WHERE role.name = 'hr' and scope.name in ('ats.job.create', 'ats.project.create')
+WHERE role.name = 'hr' and scope.name in (
+    'ats.job.create',
+    'ats.job.edit',
+    'ats.job.delete',
+    'ats.project.create',
+    'ats.project.edit',
+    'ats.project.delete',
+    'ats.news-post.create',
+    'ats.news-post.edit',
+    'ats.news-post.delete'
+)
 on conflict do nothing;
 
 
 INSERT INTO passport.role_scope (role_id, scope_id, created_at, updated_at)
 SELECT role.id, scope.id, NOW(), NOW()
 FROM passport.role, passport.scope
-WHERE role.name = 'manager' and scope.name in ('ats.project.create')
+WHERE role.name = 'manager' and scope.name in (
+    'ats.project.create',
+    'ats.news-post.create'
+)
 on conflict do nothing;
 
 

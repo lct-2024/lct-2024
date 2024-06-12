@@ -7,8 +7,9 @@
 (in-package #:common/chat)
 
 
-(defun create-new-chat (content-type content-id)
+(defun create-new-chat (content-type content-id &key title)
   (let ((client (chat/client:connect)))
     (chat-id (create-chat client
                           :content-type content-type
-                          :content-id content-id))))
+                          :content-id content-id
+                          :title title))))

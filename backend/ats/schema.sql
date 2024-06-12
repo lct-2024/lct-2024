@@ -181,6 +181,20 @@ values
 (3, 'Назначено второе собеседование'),
 (4, 'Отправлен оффер');
 
+
+
+CREATE TABLE ats.news_post (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    project_id BIGINT references ats.project on delete set null,
+    title TEXT NOT NULL default '',
+    text TEXT NOT NULL default '',
+    html TEXT NOT NULL default '',
+    chat_id TEXT,
+    created_at TIMESTAMPTZ default now(),
+    updated_at TIMESTAMPTZ default now()
+);
+
+
 ---------------
 -- Migrations:
 

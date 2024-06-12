@@ -22,7 +22,11 @@
   ((name :initarg :name
          :type string
          :col-type :text
-         :accessor scope-name))
+         :accessor scope-name)
+   (description :initarg :description
+                :type string
+                :col-type :text
+                :accessor scope-description))
   (:documentation "Обозначает некую бизнес-область, на которую могут быть права у пользователя. Например name может быть: blog.writer или admin, и тд.. Scopes привязаны к ролям, а роли - к пользователям.")
   (:table-name "passport.scope"))
 
