@@ -7,7 +7,7 @@
   (:import-from #:log4cl-extras/context
                 #:with-fields)
   (:export
-   #:require-role))
+   #:require-scope))
 (in-package #:common/auth)
 
 

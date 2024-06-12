@@ -56,11 +56,17 @@
                :type (or null speciality)
                :col-type (or :null speciality)
                :accessor job-speciality)
+   (open :initarg :open
+         :type boolean
+         :col-type :boolean
+         :initform nil
+         :documentation "Признак того, позиция открыта. Закрытые вакансии не будут отображаться в списке на сайте."
+         :accessor job-open)
    (active :initarg :active
            :type boolean
            :col-type :boolean
            :initform t
-           :documentation "Признак того, что идёт набор на эту вакансию."
+           :documentation "Признак того, что идёт набор на эту вакансию. Пока набор не закончится, рекрутёр не начнёт назначать собесы."
            :accessor job-active)
    (active-to :initarg :active-to
               :type (or null local-time:timestamp)

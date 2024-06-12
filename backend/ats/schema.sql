@@ -228,3 +228,6 @@ alter table ats.job add column required_experience TEXT;
 alter table ats.job_applicant add column application_step_id BIGINT references ats.application_step on delete set null;
 alter table ats.job_applicant add column status TEXT;
 
+
+alter table ats.job add column open boolean default false;
+update ats.job set open = true;

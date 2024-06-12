@@ -1,6 +1,8 @@
 (uiop:define-package #:ats/api/jobs
   (:use #:cl)
   (:import-from #:ats/models/job-applicant)
+  (:import-from #:ats/models/job
+                #:job-open)
   (:import-from #:openrpc-server
                 #:return-error
                 #:define-rpc-method)
@@ -27,6 +29,7 @@
                 #:get-job-programming-languages
                 #:bind-job-to-programming-languages)
   (:import-from #:mito
+                #:find-dao
                 #:select-dao
                 #:includes
                 #:deftable)
@@ -42,11 +45,23 @@
   (:import-from #:sxql
                 #:where)
   (:import-from #:common/auth
-                #:require-scope
-                #:require-role)
+                #:require-scope)
   (:import-from #:ats/models/applicant
-                #:applicant))
+                #:applicant)
+  (:import-from #:common/permissions
+                #:scope-for-editing
+                #:scope-for-deleting)
+  (:import-from #:common/rpc
+                #:define-delete-method
+                #:define-update-method))
 (in-package #:ats/api/jobs)
+
+
+(defmethod scope-for-editing ((obj job))
+  "ats.job.edit")
+
+(defmethod scope-for-deleting ((obj job))
+  "ats.job.delete")
 
 
 (deftable job (ats/models/job::job)
@@ -166,3 +181,63 @@
          (mito:object-id applicant)
          :type "self-applied")
         (values t)))))
+
+
+(define-rpc-method (ats-api open-position) (job-id)
+  (:summary "Открыть вакансию")
+  (:description "Сделать это может только залогиненый пользователь со scope ats.job.edit")
+  (:param job-id integer "ID вакансии")
+  (:result boolean)
+  
+  (with-connection ()
+    (with-session ((user-id scopes))
+      (require-scope user-id scopes "ats.job.edit" "open the position")
+      
+      (let* ((job (mito:find-dao 'job
+                                 :id job-id)))
+        (unless job
+          (openrpc-server:return-error "Job was not found."))
+
+        (setf (job-open job)
+              t)
+        (mito:save-dao job)
+        (values t)))))
+
+
+(define-rpc-method (ats-api close-position) (job-id)
+  (:summary "Закрыть вакансию")
+  (:description "Сделать это может только залогиненый пользователь со scope ats.job.edit")
+  (:param job-id integer "ID вакансии")
+  (:result boolean)
+  
+  (with-connection ()
+    (with-session ((user-id scopes))
+      (require-scope user-id scopes "ats.job.edit" "close the position")
+      
+      (let* ((job (mito:find-dao 'job
+                                 :id job-id)))
+        (unless job
+          (openrpc-server:return-error "Job was not found."))
+
+        ;; TODO: надо ещё и уведомления всем текущим кандидатам рассылать
+        (setf (job-open job)
+              nil)
+        (mito:save-dao job)
+        (values t)))))
+
+
+(define-update-method (ats-api update-job job)
+                      (id title category city description project-id speciality-id
+                          ;; TODO: Поменять skills или programming-languages так пока нельзя
+                          ;; потому что это many-to-many связь,
+                          ;; надо будет с этим что-то придумать.
+                          active active-to type-of-employment salary required-experience)
+  "Обновить вакансию."
+  (find-dao 'job
+            :id id))
+
+
+(define-delete-method (ats-api delete-job job)
+  ;; TODO: по идее, как и при закрытии позиции, тут надо уметь уведомлять кандидатов
+  ;; о том, что позиция закрылась.
+  "Удалить вакансию.")
