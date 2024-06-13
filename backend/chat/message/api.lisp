@@ -169,46 +169,46 @@
     (values message)))
 
 
-(define-rpc-method (chat-api create-fake-messages) (chat-id num-messages)
-  (:summary "Добавляет в чат NUM-MESSAGES сообщений от рандомных пользователей, помеченных как robot.")
-  (:param chat-id string)
-  (:param num-messages integer)
-  (:result (list-of message))
+;; (define-rpc-method (chat-api create-fake-messages) (chat-id num-messages)
+;;   (:summary "Добавляет в чат NUM-MESSAGES сообщений от рандомных пользователей, помеченных как robot.")
+;;   (:param chat-id string)
+;;   (:param num-messages integer)
+;;   (:result (list-of message))
 
-  (with-connection ()
-    (loop with user-ids = (get-random-user-ids num-messages)
-          with max-minutes = 15
-          for user-id in user-ids
-          for random-shift in (sort (loop repeat num-messages
-                                          collect (random (* max-minutes 60)))
-                                    #'>)
-          for text = (generate-random-message)
-          for message = (create-dao 'message
-                                    :chat-id chat-id
-                                    :user-id user-id
-                                    :message text)
-          collect (shift-creation-date message random-shift))))
+;;   (with-connection ()
+;;     (loop with user-ids = (get-random-user-ids num-messages)
+;;           with max-minutes = 15
+;;           for user-id in user-ids
+;;           for random-shift in (sort (loop repeat num-messages
+;;                                           collect (random (* max-minutes 60)))
+;;                                     #'>)
+;;           for text = (generate-random-message)
+;;           for message = (create-dao 'message
+;;                                     :chat-id chat-id
+;;                                     :user-id user-id
+;;                                     :message text)
+;;           collect (shift-creation-date message random-shift))))
 
 
-(define-rpc-method (chat-api create-fake-messages2) (chat-id messages)
-  (:summary "Добавляет в чат сообщения от рандомных пользователей, помеченных как robot.")
-  (:param chat-id string)
-  (:param messages (list-of string))
-  (:result (list-of message))
+;; (define-rpc-method (chat-api create-fake-messages2) (chat-id messages)
+;;   (:summary "Добавляет в чат сообщения от рандомных пользователей, помеченных как robot.")
+;;   (:param chat-id string)
+;;   (:param messages (list-of string))
+;;   (:result (list-of message))
 
-  (with-connection ()
-    (loop with user-ids = (get-random-user-ids (length messages))
-          with max-minutes = 15
-          for user-id in user-ids
-          for random-shift in (sort (loop repeat (length messages)
-                                          collect (random (* max-minutes 60)))
-                                    #'>)
-          for text in messages
-          for message = (create-dao 'message
-                                    :chat-id chat-id
-                                    :user-id user-id
-                                    :message text)
-          collect (shift-creation-date message random-shift))))
+;;   (with-connection ()
+;;     (loop with user-ids = (get-random-user-ids (length messages))
+;;           with max-minutes = 15
+;;           for user-id in user-ids
+;;           for random-shift in (sort (loop repeat (length messages)
+;;                                           collect (random (* max-minutes 60)))
+;;                                     #'>)
+;;           for text in messages
+;;           for message = (create-dao 'message
+;;                                     :chat-id chat-id
+;;                                     :user-id user-id
+;;                                     :message text)
+;;           collect (shift-creation-date message random-shift))))
 
 
 (define-rpc-method (chat-api get-messages) (chat-id &key (limit 100) page-key)
@@ -307,9 +307,9 @@ limit ?                   -- Fourth: limit again
                                  limit)))))
 
 
-(define-rpc-method (chat-api delete-latest-messages) (chat-id &key (limit 1))
-  (:summary "Удаляет N последних сообщений из указанного чата.")
-  (:description "Этот метод нужен для того, чтобы подчищать чаты Kinojaba по мере того, как мы автоматически добавляем новые сообщения.")
+(define-rpc-method (chat-api delete-oldest-messages) (chat-id &key (limit 1))
+  (:summary "Удаляет N самых старых сообщений из указанного чата.")
+  (:description "Этот метод нужен для того, чтобы подчищать cтарые сообщения из чатов по мере того, как добавляются новые сообщения.")
   (:param chat-id string)
   (:param limit integer)
   (:result t)

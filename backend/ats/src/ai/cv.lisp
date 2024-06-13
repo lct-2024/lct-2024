@@ -29,7 +29,9 @@
   (:import-from #:40ants-pg/connection
                 #:with-connection)
   (:import-from #:common/dates
-                #:parse-date))
+                #:parse-date)
+  (:import-from #:ats/models/applicant-skill
+                #:bind-applicant-to-skills))
 (in-package #:ats/ai/cv)
 
 
@@ -122,8 +124,8 @@
                                        :experience experience
                                        :about about
                                        :contacts contacts)))
-      (ats/models/applicant-skill::bind-applicant-to-skills applicant
-                                                            (get-skill-ids skills))
+      (bind-applicant-to-skills applicant
+                                (get-skill-ids skills))
       (bind-applicant-to-programming-languages applicant
                                                (get-programming-language-ids languages))
 
@@ -204,3 +206,20 @@
    (request-json-response
     "Выдели из этого специальность кандидата, которого ищут на работу. Представь результат в виде JSON документа, где есть ключ \"results\" и извлечённые данные в как строка. Сократи результат до 2-3 слов."
     text)))
+
+
+(defun score-applicant (job-description applicant-description &key (default-score 0))
+  ;;   (gethash
+  ;;    "score"
+  ;;    (request-json-response
+  ;;     (fmt "В запросе представлено резюме пользователя. Сравни его с этими требованиями и выдай оценку от 0 до 100, где 0 – кандидат полностью не соответствует требованиям, а 100 - кандидат полностью соответствует. Ответ должен быть в формате JSON: {\"score\": количественная оценка}
+
+  ;; Требования:
+
+  ;; ~A"
+  ;;          job-description)
+  ;;     applicant-description)
+  ;;    default-score)
+  ;; TODO: убрать после заполнения тестовых данных
+  (random 100)
+  )

@@ -17,22 +17,22 @@
 
 (task "build" ()
       (cl:loop for service in (cl:list "passport" "chat" "ats")
-            do (sh (fmt "qlot exec ros build ~A/roswell/~A.ros"
+            do (sh (fmt "OPENRPC_USE_CACHED_SPEC=1 qlot exec ros build ~A/roswell/~A.ros"
                         service
                         service))))
 
 (task "build-chat" ()
-      (sh (fmt "qlot exec ros build chat/roswell/chat.ros"
+      (sh (fmt "OPENRPC_USE_CACHED_SPEC=1 qlot exec ros build chat/roswell/chat.ros"
                service
                service)))
 
 (task "build-ats" ()
-      (sh (fmt "qlot exec ros build ats/roswell/ats.ros"
+      (sh (fmt "OPENRPC_USE_CACHED_SPEC=1 qlot exec ros build ats/roswell/ats.ros"
                service
                service)))
 
 (task "build-passport" ()
-      (sh (fmt "qlot exec ros build passport/roswell/passport.ros"
+      (sh (fmt "OPENRPC_USE_CACHED_SPEC=1 qlot exec ros build passport/roswell/passport.ros"
                service
                service)))
 

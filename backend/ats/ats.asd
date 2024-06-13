@@ -15,7 +15,9 @@
                "ats/api/specialities"
                "ats/api/programming-languages"
                "ats/api/news"
-               "ats/api/skills")
+               "ats/api/skills"
+               "ats/api/score"
+               "ats/algorithms/resume-score")
   :in-order-to ((test-op (test-op "ats-tests"))))
 
 

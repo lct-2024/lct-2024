@@ -195,6 +195,21 @@ CREATE TABLE ats.news_post (
 );
 
 
+CREATE TABLE ats.score (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    job_id BIGINT NOT NULL references ats.job on delete cascade,
+    applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
+    fio_filled INTEGER NOT NULL default 0,
+    email_filled INTEGER NOT NULL default 0,
+    phone_filled INTEGER NOT NULL default 0,
+    telegram_filled INTEGER NOT NULL default 0,
+    about_filled INTEGER NOT NULL default 0,
+    experience_filled INTEGER NOT NULL default 0,
+    experience_match INTEGER NOT NULL default 0,
+    created_at TIMESTAMPTZ default now(),
+    updated_at TIMESTAMPTZ default now()
+);
+
 ---------------
 -- Migrations:
 
