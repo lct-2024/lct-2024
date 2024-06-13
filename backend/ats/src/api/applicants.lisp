@@ -30,7 +30,9 @@
   (:import-from #:serapeum
                 #:soft-list-of)
   (:import-from #:common/dates
-                #:parse-date))
+                #:parse-date)
+  (:import-from #:ats/algorithms/resume-score
+                #:update-user-scores-in-thread))
 (in-package #:ats/api/applicants)
 
 
@@ -155,14 +157,14 @@ where ja.job_id = ?
         (when exists
           (openrpc-server:return-error "CV already exists."))
         
-        (values
-         (mito:create-dao 'applicant
-                          :user-id user-id
-                          :email passport-email
-                          :name passport-fio
-                          :experience experience
-                          :about about
-                          :contacts contacts))))))
+        (prog1 (mito:create-dao 'applicant
+                                :user-id user-id
+                                :email passport-email
+                                :name passport-fio
+                                :experience experience
+                                :about about
+                                :contacts contacts)
+          (update-user-scores-in-thread user-id))))))
 
 
 (define-rpc-method (ats-api update-cv) (&key experience about contacts)
@@ -193,6 +195,7 @@ where ja.job_id = ?
           (setf (ats/models/applicant::applicant-contacts applicant)
                 contacts))
         (mito:save-dao applicant)
+        (update-user-scores-in-thread user-id)
         (values applicant)))))
 
 
@@ -273,15 +276,16 @@ where ja.job_id = ?
         (unless applicant
           (openrpc-server:return-error "CV does not exists yet."))
         
-        (values
-         (mito:create-dao 'education
-                          :applicant applicant
-                          :title title
-                          :from (parse-date from)
-                          :to (when to
-                                (parse-date to))
-                          :type type
-                          :speciality-id speciality-id))))))
+        (prog1
+            (mito:create-dao 'education
+                             :applicant applicant
+                             :title title
+                             :from (parse-date from)
+                             :to (when to
+                                   (parse-date to))
+                             :type type
+                             :speciality-id speciality-id)
+          (update-user-scores-in-thread user-id))))))
 
 
 (define-rpc-method (ats-api delete-applicant-education) (education-id)
@@ -310,6 +314,7 @@ where ja.job_id = ?
         (mito:execute-sql "delete from ats.education where id = ? and applicant_id = ?"
                           (list education-id
                                 (mito:object-id applicant)))
+        (update-user-scores-in-thread user-id)
         (values nil)))))
 
 
@@ -391,14 +396,15 @@ where ja.job_id = ?
                                        :user-id user-id)))
         (unless applicant
           (openrpc-server:return-error "CV does not exists yet."))
-        (values
-         (mito:create-dao 'recommendation
-                          :applicant applicant
-                          :fio fio
-                          :position position
-                          :company company
-                          :email email
-                          :phone phone))))))
+        (prog1
+            (mito:create-dao 'recommendation
+                             :applicant applicant
+                             :fio fio
+                             :position position
+                             :company company
+                             :email email
+                             :phone phone)
+          (update-user-scores-in-thread user-id))))))
 
 
 (define-rpc-method (ats-api delete-applicant-recommendation) (recommendation-id)
@@ -426,6 +432,7 @@ where ja.job_id = ?
         (mito:execute-sql "delete from ats.recommendation where id = ? and applicant_id = ?"
                           (list recommendation-id
                                 (mito:object-id applicant)))
+        (update-user-scores-in-thread user-id)
         (values nil)))))
 
 
@@ -433,17 +440,17 @@ where ja.job_id = ?
 ;; Steps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-rpc-method (ats-api delete-cv-recommendation) (recommendation-id)
-  (:summary "Удаляет запись о рекомендации текущего пользователя")
-  (:param recommendation-id integer "ID рекомендации")
-  (:result null)
-  (with-connection ()
-    (with-session (user-id)
-      (let* ((applicant (mito:find-dao 'applicant
-                                       :user-id user-id)))
-        (unless applicant
-          (openrpc-server:return-error "CV does not exists yet."))
-        (mito:execute-sql "delete from ats.recommendation where id = ? and applicant_id = ?"
-                          (list recommendation-id
-                                (mito:object-id applicant)))
-        (values nil)))))
+;; (define-rpc-method (ats-api delete-cv-recommendation) (recommendation-id)
+;;   (:summary "Удаляет запись о рекомендации текущего пользователя")
+;;   (:param recommendation-id integer "ID рекомендации")
+;;   (:result null)
+;;   (with-connection ()
+;;     (with-session (user-id)
+;;       (let* ((applicant (mito:find-dao 'applicant
+;;                                        :user-id user-id)))
+;;         (unless applicant
+;;           (openrpc-server:return-error "CV does not exists yet."))
+;;         (mito:execute-sql "delete from ats.recommendation where id = ? and applicant_id = ?"
+;;                           (list recommendation-id
+;;                                 (mito:object-id applicant)))
+;;         (values nil)))))

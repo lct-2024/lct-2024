@@ -120,7 +120,7 @@ where s.job_id = ?
                                              "Опишите опыт работы."))))))
 
 
-(define-rpc-method (ats-api get-score) (&key job-id)
+(define-rpc-method (ats-api get-score) (job-id)
   (:summary "Отдаёт оценку соответствия кандидата вакансии и рекомендации, как её улучшить.")
   (:param job-id integer "ID вакансии")
   (:result score-and-recommendations)

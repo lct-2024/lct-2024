@@ -20,7 +20,9 @@
   (:import-from #:40ants-pg/transactions
                 #:with-transaction)
   (:import-from #:40ants-pg/query
-                #:select-one-column))
+                #:select-one-column)
+  (:import-from #:log4cl-extras/error
+                #:with-log-unhandled))
 (in-package #:ats/algorithms/resume-score)
 
 
@@ -90,18 +92,47 @@
                       (ats/models/score::score-experience-filled score))
               ;; TODO: тут надо что-то решить с лимитом запросов
               ;; но пока защитиммся тем, что не будем пересчитывать
-              ;; эту часть score, если она уже посчитана:
-              (when (zerop (ats/models/score::score-experience-match score))
-                (setf (ats/models/score::score-experience-match score)
-                      (score-applicant
-                       (ats/models/job::job-description job)
-                       (fmt "~A~3%~A"
-                            (or (ats/models/applicant::applicant-about applicant)
-                                "")
-                            (or (ats/models/applicant::applicant-experience applicant)
-                                ""))))))
+              ;; эту часть score, если она уже посчитана.
+              ;; И если случается ошибка, то просто залоггируем её,
+              ;; чтобы не блокировать обновление остальных score
+              (handler-case
+                  (with-log-unhandled ()
+                    (when (zerop (ats/models/score::score-experience-match score))
+                      (setf (ats/models/score::score-experience-match score)
+                            (score-applicant
+                             (ats/models/job::job-description job)
+                             (fmt "~A~3%~A"
+                                  (or (ats/models/applicant::applicant-about applicant)
+                                      "")
+                                  (or (ats/models/applicant::applicant-experience applicant)
+                                      ""))))))
+                (serious-condition ()
+                  nil)))
             (mito:save-dao score)
             (values)))))))
+
+
+(defun update-user-scores-in-thread (user-id)
+  (flet ((score-updater()
+           ;; Небольшая задержка, чтобы закрылась транзакция
+           ;; в которой создавался или обновлялся applicant.
+           (with-log-unhandled ()
+             (sleep 5)
+             (let ((job-ids
+                     (with-connection ()
+                       (select-one-column
+                        "
+select job_id as id
+from ats.score as s
+join ats.applicant as a on s.applicant_id = a.id
+where a.user_id = ?
+"
+                        :binds (list user-id)))))
+               (loop for job-id in job-ids
+                     do (update-score job-id user-id))))))
+    (bt2:make-thread #'score-updater
+                     :name (fmt "Score update for user-id ~A"
+                                user-id))))
 
 
 (defun score-all-users ()
