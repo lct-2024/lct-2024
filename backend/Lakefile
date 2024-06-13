@@ -21,5 +21,31 @@
                         service
                         service))))
 
+(task "build-chat" ()
+      (sh (fmt "qlot exec ros build chat/roswell/chat.ros"
+               service
+               service)))
+
+(task "build-ats" ()
+      (sh (fmt "qlot exec ros build ats/roswell/ats.ros"
+               service
+               service)))
+
+(task "build-passport" ()
+      (sh (fmt "qlot exec ros build passport/roswell/passport.ros"
+               service
+               service)))
+
+
+(task "restart-all" ()
+      (cl:loop for service in (cl:list "passport" "chat" "ats")
+            do (sh (fmt "systemctl --user restart lct-2024-~A"
+                        service))))
+
+(task "status" ()
+      (cl:loop for service in (cl:list "passport" "chat" "ats")
+            do (sh (fmt "systemctl --user status lct-2024-~A"
+                        service))))
+
 (task "default" ("build")
   (echo "This was default task."))

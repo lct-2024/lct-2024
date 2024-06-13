@@ -55,11 +55,32 @@
             (apply #'serapeum:fmt message arguments ))))
 
 
+(deftable user-profile (user)
+  ((roles :initarg :roles
+          :type (soft-list-of string)
+          :col-type :array
+          :reader user-roles)
+   (scopes :initarg :scopes
+          :type (soft-list-of string)
+          :col-type :array
+          :reader user-scopes))
+  (:table "passport.user"))
+
+
+(defclass user-and-token ()
+  ((user :initarg :user
+         :type user-profile
+         :reader user-profile)
+   (token :initarg :token
+          :type string
+          :reader user-token)))
+
+
 (define-rpc-method (passport-api login) (email password)
   (:summary "Позволяет залогиниться пользователю по email и паролю.")
   (:param email string)
   (:param password string)
-  (:result string)
+  (:result user-and-token)
   (with-connection ()
     (let* ((hash (get-password-hash password))
            (user (get-user-by email))
@@ -70,7 +91,14 @@
               (or *demo-mode*
                   (equal user-hash hash)))
          (auth-log "User logged in: ~A" email)
-         (issue-token-for user))
+         (let ((auth-token (issue-token-for user)))
+           (multiple-value-bind (roles scopes)
+               (get-user-roles-and-scopes user)
+             (make-instance 'user-and-token
+                            :user (change-class user 'user-profile
+                                                :roles roles
+                                                :scopes scopes)
+                            :token auth-token))))
         (t
          (auth-log "User entered wrong pass or missing in db: ~A" email)
          (openrpc-server:return-error "Неправильный email или пароль." :code 1))))))
@@ -107,18 +135,6 @@
        (return-error (format nil "Email ~A уже занят."
                              email)
                      :code 2)))))
-
-
-(deftable user-profile (user)
-  ((roles :initarg :roles
-          :type (soft-list-of string)
-          :col-type :array
-          :reader user-roles)
-   (scopes :initarg :scopes
-          :type (soft-list-of string)
-          :col-type :array
-          :reader user-scopes))
-  (:table "passport.user"))
 
 
 (defmethod openrpc-server:slots-to-exclude ((obj (eql (find-class 'user-profile))))

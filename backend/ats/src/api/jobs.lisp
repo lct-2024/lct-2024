@@ -57,13 +57,6 @@
 (in-package #:ats/api/jobs)
 
 
-(defmethod scope-for-editing ((obj job))
-  "ats.job.edit")
-
-(defmethod scope-for-deleting ((obj job))
-  "ats.job.delete")
-
-
 (deftable job (ats/models/job::job)
   ((skills :initarg :skills
            :reader job-skills
@@ -80,6 +73,13 @@
                           :documentation "На сколько процентов, резюме текущего пользователя соответствует этой вакансии (от 0 до 100)"
                           :reader resume-matching-score))
   (:table-name "ats.job"))
+
+
+(defmethod scope-for-editing ((obj job))
+  "ats.job.edit")
+
+(defmethod scope-for-deleting ((obj job))
+  "ats.job.delete")
 
 
 (define-rpc-method (ats-api create-job) (title description project-id category
@@ -226,18 +226,18 @@
         (values t)))))
 
 
-(define-update-method (ats-api update-job job)
-                      (id title category city description project-id speciality-id
-                          ;; TODO: Поменять skills или programming-languages так пока нельзя
-                          ;; потому что это many-to-many связь,
-                          ;; надо будет с этим что-то придумать.
-                          active active-to type-of-employment salary required-experience)
-  "Обновить вакансию."
-  (find-dao 'job
-            :id id))
+;; (define-update-method (ats-api update-job job)
+;;                       (id title category city description project-id speciality-id
+;;                           ;; TODO: Поменять skills или programming-languages так пока нельзя
+;;                           ;; потому что это many-to-many связь,
+;;                           ;; надо будет с этим что-то придумать.
+;;                           active active-to type-of-employment salary required-experience)
+;;   "Обновить вакансию."
+;;   (find-dao 'job
+;;             :id id))
 
 
-(define-delete-method (ats-api delete-job job)
-  ;; TODO: по идее, как и при закрытии позиции, тут надо уметь уведомлять кандидатов
-  ;; о том, что позиция закрылась.
-  "Удалить вакансию.")
+;; (define-delete-method (ats-api delete-job job)
+;;   ;; TODO: по идее, как и при закрытии позиции, тут надо уметь уведомлять кандидатов
+;;   ;; о том, что позиция закрылась.
+;;   "Удалить вакансию.")

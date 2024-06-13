@@ -10,7 +10,8 @@ exec ros -Q -- $0 "$@"
 (progn
   (ros:ensure-asdf)
   #+quicklisp
-  (ql:quickload (list "ats/main")
+  (ql:quickload (list "ats"
+                      "ats/main")
                 :silent t))
 
 (in-package #:cl-user)
