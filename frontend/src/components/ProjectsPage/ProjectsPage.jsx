@@ -4,9 +4,14 @@ import Navigation from '../Navigation';
 import ProjectsList from './ProjectsList';
 import Footer from '../Footer';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { setProjects } from '../../store/projectsSlice';
+import Comments from '../Comments';
 
 const ProjectsPage = () => {
-    const [projects, setProjects] = useState([]);
+
+    const projects = useSelector(state => state.projects)
+    const dispatch = useDispatch()
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('Все');
@@ -23,7 +28,7 @@ const ProjectsPage = () => {
                 if (response.data.error) {
                     console.error('Error fetching data:', response.data.error.message);
                 } else {
-                    setProjects(response.data.result);
+                    dispatch(setProjects(response.data.result));
                     setFilteredProjects(response.data.result);
                 }
             } catch (error) {
@@ -134,34 +139,7 @@ const ProjectsPage = () => {
                     ) : (
                         <ProjectsList projects={filteredProjects} />
                     )}
-                    <div>
-                        <h2>Интересно узнать больше о проектах?</h2>
-                        <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
-                        <div className={style.comments}>
-                            {comments.map((comment, i) => (
-                                <div className={style.comment} key={i}>
-                                    <div>
-                                        <h4>{comment.name}</h4>
-                                        <p>21.01.24 21.00</p>
-                                    </div>
-                                    <p>{comment.text}</p>
-                                </div>
-                            ))}
-                            {showInput && (
-                                <>
-                                    <textarea
-                                        onChange={(e) => setNewCommentText(e.target.value)}
-                                        value={newCommentText}
-                                        placeholder='Комментарий...'
-                                    />
-                                    <button className={style.btn} onClick={handleCommentSubmit}>
-                                        Отправить комментарий
-                                    </button>
-                                </>
-                            )}
-                            {!showInput && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
-                        </div>
-                    </div>
+                    <Comments text="проектах" />
                 </div>
             </div>
             <Footer />

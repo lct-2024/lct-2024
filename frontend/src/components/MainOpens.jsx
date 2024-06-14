@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import style from './MainOpens.module.css'
+import VacansyList from './VacansyPage/VacansyList';
+import { useSelector } from 'react-redux';
+import Comments from './Comments';
 
 const MainOpens = () => {
-
-    const [comments, setComments] = useState([
-        { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
-        { name: "Егоров Александр Петрович", text: "Здравствуйте! Можно ли совмещать работу с учебой?" }
-    ])
-    const [newCommentText, setNewCommentText] = useState('');
+    const vacansies = useSelector(state => state.vacansies)
     const [selectedFilter, setSelectedFilter] = useState("Как устроиться на работу в Reksoft?");
-    const [showInput, setShowInput] = useState(false)
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
@@ -34,18 +31,6 @@ const MainOpens = () => {
         }
     };
 
-    const handleShowInput = () => {
-        setShowInput(true);
-    };
-
-    const handleCommentSubmit = () => {
-        setComments([
-            ...comments,
-            { name: "Николай Семенович", text: newCommentText }
-        ]);
-        setNewCommentText('');
-        setShowInput(false);
-    };
 
     return (
         <div className='container'>
@@ -74,32 +59,9 @@ const MainOpens = () => {
                         <p>{getFilterText()}</p>
                     </div>
                 </div>
-                <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, чтобы получить ответ:</h2>
-                <div className={style.comments}>
-                    {comments.map((comment, i) => {
-                        return <div className={style.comment} key={i}>
-                            <div>
-                                <h4>{comment.name}</h4>
-                                <p>21.01.24  21.00</p>
-                            </div>
-                            <p>{comment.text}</p>
-                        </div>
-                    })}
-                    {showInput && (<>
-                        <textarea onChange={(e) => setNewCommentText(e.target.value)} value={newCommentText} placeholder='Комментарий...' />
-                        <button className={style.btn} onClick={handleCommentSubmit}>
-                            Отправить комментарий
-                        </button>
-                    </>)}
-                    {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
-                </div>
                 <h2>ОТКРЫТЫЕ ВАКАНСИИ</h2>
-                <div className={style.vacansies}>
-                    <p>здесь будут карточки вакансий, которые еще не готовы</p>
-                    <button className={style.btn}>Смотреть все вакансии  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5.00195 12H19.002M19.002 12L12.002 5M19.002 12L12.002 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg></button>
-                </div>
+                {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Загрузка...</h1> : <VacansyList hideBody={false} btnShow="false" />}
+                <Comments text="нас" />
             </div>
         </div >
     )

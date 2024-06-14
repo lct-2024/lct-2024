@@ -3,41 +3,26 @@ import style from "./VacansyPage.module.css";
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 import VacansyList from './VacansyList';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchVacansies, setVacansies } from '../../store/vacansiesSlise';
 import axios from 'axios';
+import Comments from '../Comments';
 
-const VacansyPage = ({ vacansies, setVacansies }) => {
-    const [originalVacansies, setOriginalVacansies] = useState([]); // Исходный список вакансий
-    const [searchTerm, setSearchTerm] = useState('');
-    const [comments, setComments] = useState([
-        { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
-        { name: "Егоров Александр Петрович", text: "Здравствуйте! Можно ли совмещать работу с учебой?" }
-    ]);
-    const [newCommentText, setNewCommentText] = useState('');
-    const [showInput, setShowInput] = useState(false);
+const VacansyPage = () => {
+    const API_BASE_URL = 'https://chat.lct24.dev.40ants.com/api'
+    const vacansies = useSelector(state => state.vacansies.data)
+    const dispatch = useDispatch()
+    const authToken = useSelector(state => state.auth.token);
+    const [originalVacansies, setOriginalVacansies] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.post('https://ats.lct24.dev.40ants.com/api/get_jobs', {
-                    jsonrpc: '2.0',
-                    method: 'get_jobs',
-                    params: [],
-                    id: 1
-                });
-                if (response.data.error) {
-                    console.error('Error fetching data:', response.data.error.message);
-                } else {
-                    console.log(response.data.result);
-                    setOriginalVacansies(response.data.result);
-                    setVacansies(response.data.result);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+        dispatch(fetchVacansies());
+    }, [dispatch]);
 
-        fetchData();
-    }, [setVacansies]);
+    useEffect(() => {
+        setOriginalVacansies(vacansies);
+    }, [vacansies]);
 
     const handleSearchChange = (e) => {
         const searchTerm = e.target.value;
@@ -47,32 +32,18 @@ const VacansyPage = ({ vacansies, setVacansies }) => {
 
     const handleSearchSubmit = (searchTerm) => {
         if (searchTerm.trim() === '') {
-            setVacansies(originalVacansies); // Возвращаем полный список, если поисковый запрос пуст
+            dispatch(setVacansies(originalVacansies));
         } else {
             const filteredVacancies = originalVacansies.filter(vacansy =>
                 vacansy.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
-            setVacansies(filteredVacancies);
+            dispatch(setVacansies(filteredVacancies));
         }
     };
-
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSearchSubmit(searchTerm);
         }
-    };
-
-    const handleShowInput = () => {
-        setShowInput(true);
-    };
-
-    const handleCommentSubmit = () => {
-        setComments([
-            ...comments,
-            { name: "Николай Семенович", text: newCommentText }
-        ]);
-        setNewCommentText('');
-        setShowInput(false);
     };
 
     return (
@@ -122,38 +93,8 @@ const VacansyPage = ({ vacansies, setVacansies }) => {
                         </button>
                     </div>
                 </div>
-                {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Загрузка...</h1> : <VacansyList vacansies={vacansies} />}
-
-                <div className='container'>
-                    <div>
-                        <h2>Интересно узнать больше о вакансиях?</h2>
-                        <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
-                        <div className={style.comments}>
-                            {comments.map((comment, i) => (
-                                <div className={style.comment} key={i}>
-                                    <div>
-                                        <h4>{comment.name}</h4>
-                                        <p>21.01.24 21.00</p>
-                                    </div>
-                                    <p>{comment.text}</p>
-                                </div>
-                            ))}
-                            {showInput && (
-                                <>
-                                    <textarea
-                                        onChange={(e) => setNewCommentText(e.target.value)}
-                                        value={newCommentText}
-                                        placeholder='Комментарий...'
-                                    />
-                                    <button className={style.btn} onClick={handleCommentSubmit}>
-                                        Отправить комментарий
-                                    </button>
-                                </>
-                            )}
-                            {!showInput && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
-                        </div>
-                    </div>
-                </div>
+                {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Загрузка...</h1> : <VacansyList hideBody='false' vacansies={vacansies} />}
+                <Comments text="вакансиях" />
                 <Footer />
             </div>
         </section>

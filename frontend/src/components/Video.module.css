@@ -1,7 +1,13 @@
 .main {
     width: 100%;
-    background-color: #D9D9D9;
+    background: url(../../public/video_back.png);
 }
+
+.main2 {
+    width: 100%;
+    background: url(../../public/video2.png);
+}
+
 
 .sect {
     display: flex;
@@ -10,16 +16,18 @@
     align-items: center;
 }
 
-.sect video {
-    width: 500px;
-    height: 500px;
+.sect .video {
+    width: 400px;
+    height: 400px;
+    margin-right: 50px;
 }
 
 .sect div {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 400px;
+    justify-content: space-around;
+    height: 480px;
+    margin: 0 0 0 20px;
 }
 
 .sect h2 {

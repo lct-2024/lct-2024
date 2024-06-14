@@ -1,23 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import style from './VacansyInfo.module.css'
-import Footer from '../Footer'
-import Navigation from '../Navigation'
-import { useParams } from 'react-router-dom'
-import ApplyForm from './ApplyForm'
+import React, { useEffect, useState } from 'react';
+import style from './VacansyInfo.module.css';
+import Footer from '../Footer';
+import Navigation from '../Navigation';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import ApplyForm from './ApplyForm';
+import Comments from '../Comments';
 
-const VacansyInfo = ({ vacansies }) => {
+const VacansyInfo = () => {
     const { id } = useParams();
+    const vacansies = useSelector(state => state.vacansies.data);
     const vacansy = vacansies.find((v) => v.id.toString() === id);
     const [comments, setComments] = useState([
         { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
         { name: "Егоров Александр Петрович", text: "Здравствуйте! Можно ли совмещать работу с учебой?" }
-    ])
+    ]);
     const [newCommentText, setNewCommentText] = useState('');
-    const [showInput, setShowInput] = useState(false)
+    const [showInput, setShowInput] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState("О проекте");
-    const [btnText, setBtnText] = useState("Откликнуться")
-    const [btnClicked, setBtnClicked] = useState(false)
+    const [btnText, setBtnText] = useState("Откликнуться");
+    const [btnClicked, setBtnClicked] = useState(false);
     const [showAlarm, setShowAlarm] = useState(false);
+    const [itsHr, setItsHr] = useState(false)
+
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
     };
@@ -36,39 +41,44 @@ const VacansyInfo = ({ vacansies }) => {
     };
 
     const handleButtonClicked = () => {
-        setBtnClicked(true)
-        setBtnText("Вы откликнулись")
-    }
+        setBtnClicked(true);
+        setBtnText("Вы откликнулись");
+    };
 
     const getFilterText = () => {
         switch (selectedFilter) {
             case 'О проекте':
-                return <div className={style.desc}>
-                    <h3>{vacansy.project.title}</h3>
-                    <p>{vacansy.project.description}</p>
-                </div>;
+                return (
+                    <div className={style.desc}>
+                        <h3>{vacansy.project.title}</h3>
+                        <p>{vacansy.project.description}</p>
+                    </div>
+                );
             case 'Критерии':
-                return <div className={style.desc}>
-                    <p> Языки: {vacansy.programming_languages.map((item) => item.title).join(', ')}</p>
-                    <p> Опыт работы: { }</p>
-                    <p> Навыки: {vacansy.skills.map((item) => item.title).join(', ')}</p>
-                </div>;
+                return (
+                    <div className={style.desc}>
+                        <p> Языки: {vacansy.programming_languages.map((item) => item.title).join(', ')}</p>
+                        <p> Направление вакансии: {vacansy.category}</p>
+                        <p> Навыки: {vacansy.skills.map((item) => item.title).join(', ')}</p>
+                    </div>
+                );
             case 'Обязанности':
-                return <div className={style.desc}>
-                    <p>{vacansy.description}</p>
-                </div>;
+                return (
+                    <div className={style.desc}>
+                        <p>{vacansy.description}</p>
+                    </div>
+                );
             case 'Условия':
-                return <div className={style.desc}>
-                    <p>Город: {vacansy.city}</p>
-                    <p>Тип занятости: {vacansy.type_of_employment}</p>
-                </div>;
+                return (
+                    <div className={style.desc}>
+                        <p>Город: {vacansy.city}</p>
+                        <p>Тип занятости: {vacansy.type_of_employment}</p>
+                    </div>
+                );
             default:
-                return <div className={style.desc}>
-
-                </div>;
+                return <div className={style.desc}></div>;
         }
     };
-
 
     useEffect(() => {
         if (btnClicked) {
@@ -78,6 +88,10 @@ const VacansyInfo = ({ vacansies }) => {
             }, 2000);
         }
     }, [btnClicked]);
+
+    if (!vacansy) {
+        return <div>Вакансия не найдена</div>;
+    }
 
     return (
         <div className={style.main}>
@@ -100,7 +114,7 @@ const VacansyInfo = ({ vacansies }) => {
                         <div className={style.body2}>
                             {vacansy.resume_matching_score > 40 ? <p>Ваше резюме подходит под описание вакансии</p> : <p>Ваше резюме не подходит под описание вакансии</p>}
                             <p>Требуемые навыки: 0/8</p>
-                            <p>Опыт работы Х</p>
+                            <p>Вакансия создана: {new Date(vacansy.created_at).toLocaleString()}</p>
                             <p className={style.light}>Подсветить недостающие пункты</p>
                         </div>
                     </div>
@@ -132,34 +146,15 @@ const VacansyInfo = ({ vacansies }) => {
                         </div>
                     </div>
                     <div className={style.lastSect}>
-                        <h2>Интересно узнать больше о вакансиях?</h2>
-                        <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
-                        <div className={style.comments}>
-                            {comments.map((comment, i) => {
-                                return <div className={style.comment} key={i}>
-                                    <div>
-                                        <h4>{comment.name}</h4>
-                                        <p>21.01.24  21.00</p>
-                                    </div>
-                                    <p>{comment.text}</p>
-                                </div>
-                            })}
-                            {showInput && (<>
-                                <textarea onChange={(e) => setNewCommentText(e.target.value)} value={newCommentText} placeholder='Комментарий...' />
-                                <button className={style.btn} onClick={handleCommentSubmit}>
-                                    Отправить комментарий
-                                </button>
-                            </>)}
-                            {showInput === false && <button className={style.btn} onClick={handleShowInput}>Написать комментарий</button>}
-                        </div>
+                        <Comments />
                     </div>
-                    <ApplyForm jobId={vacansy.id} />
+                    {itsHr && <ApplyForm jobId={vacansy.id} />}
                 </div>
                 {showAlarm && <p className={style.alarm}>Ваш отклик успешно отправлен! Уведомления об изменениях статуса отклика будут на вашей почте и на сайте</p>}
             </div>
             <Footer />
-        </div >
-    )
+        </div>
+    );
 }
 
-export default VacansyInfo
+export default VacansyInfo;

@@ -30,8 +30,8 @@ const Registration = () => {
                 params: {
                     email: formData.email,
                     password: formData.password,
+                    fio: formData.fio,
                     metadata: {
-                        full_name: formData.fio,
                         specialty: formData.specialty
                     },
                 },

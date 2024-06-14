@@ -4,14 +4,17 @@ import Footer from '../Footer';
 import Navigation from '../Navigation';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setAuthToken, setUser } from '../../store/authSlice';
 
-const Login = ({ setAuthToken, setUser }) => {
+const Login = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -32,15 +35,21 @@ const Login = ({ setAuthToken, setUser }) => {
                 id: 1
             });
 
+            console.log('Response:', response);
+
             if (response.data.error) {
                 setErrorMessage(response.data.error.message || 'Ошибка входа');
             } else {
-                const token = response.data.result;
+                const result = response.data.result;
+                const token = result.token;
+                const user = result.user;
+                console.log(user)
                 console.log('Успешный вход:', token);
-                setUser(response.data.user);
-                navigate('/profile');
-                setAuthToken(token);
+                dispatch(setUser(user));
+                dispatch(setAuthToken(token));
                 localStorage.setItem('authToken', token);
+                localStorage.setItem('user', JSON.stringify(user));
+                navigate('/profile');
             }
         } catch (error) {
             console.error('Ошибка при отправке данных:', error);
