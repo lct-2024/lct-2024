@@ -13,3 +13,11 @@
                           :content-type content-type
                           :content-id content-id
                           :title title))))
+
+
+(defun post-to-chat (chat-id message &key (token (uiop:getenv "NOTIFIER_TOKEN")))
+  (let ((client (chat/client:connect token)))
+    (chat/client:message-id
+     (chat/client:post client
+                       chat-id
+                       message))))

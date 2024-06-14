@@ -49,4 +49,6 @@ ALTER TABLE chat.chat ADD COLUMN content_type TEXT;
 
 ALTER TABLE chat.chat ADD COLUMN content_id TEXT;
 
-CREATE UNIQUE INDEX unique_content_type_and_id_idx ON chat.chat (content_type, content_id) WHERE content_type is not NULL and content_id is not NULL;
+CREATE UNIQUE INDEX unique_content_type_and_id_idx
+ON chat.chat (content_type, content_id)
+WHERE (content_type is not NULL and content_id is not NULL);

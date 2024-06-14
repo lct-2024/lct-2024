@@ -29,6 +29,7 @@
   (:import-from #:passport/client
                 #:my-profile)
   (:import-from #:serapeum
+                #:fmt
                 #:soft-list-of)
   (:import-from #:common/dates
                 #:parse-date)
@@ -38,10 +39,15 @@
                 #:job-applicant-application-step
                 #:job-applicant)
   (:import-from #:ats/models/application-step
+                #:application-step-title
                 #:application-step-num
                 #:application-step)
   (:import-from #:common/auth
-                #:require-scope))
+                #:require-scope)
+  (:import-from #:log4cl-extras/error
+                #:with-log-unhandled)
+  (:import-from #:common/chat
+                #:post-to-chat))
 (in-package #:ats/api/applicants)
 
 
@@ -487,7 +493,22 @@ where ja.id = ?
          ;; а там уже либо отказывать, либо делать оффер
          (when next-step
            (setf (job-applicant-application-step application)
-                 next-step))))
+                 next-step)
+           
+           (ignore-errors
+            (with-log-unhandled ()
+              (let ((system-chat-id
+                      (getf (first
+                             (mito:retrieve-by-sql "
+select system_chat_id as id
+from ats.applicant
+where id = ?"
+                                                   :binds (list applicant-id)))
+                            :id)))
+                (when system-chat-id
+                  (post-to-chat system-chat-id
+                                (fmt "Новый этап: ~A"
+                                     (application-step-title next-step))))))))))
       (t
        (setf (job-applicant-application-step application)
              (mito:find-dao 'ats/models/application-step::application-step

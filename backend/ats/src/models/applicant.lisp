@@ -89,7 +89,13 @@
             :type (or null string)
             :col-type (or :null :text)
             :documentation "ID чата, привязанного к объекту."
-            :accessor applicant-chat-id))
+            :accessor applicant-chat-id)
+   (system-chat-id :initarg :system-chat-id
+                   :initform nil
+                   :type (or null string)
+                   :col-type (or :null :text)
+                   :documentation "ID чата, с системными сообщениями пользователя."
+                   :accessor applicant-system-chat-id))
   (:table-name "ats.applicant"))
 
 
@@ -110,8 +116,20 @@
              (mito:save-dao applicant))))
 
 
+(defun fill-system-chat-ids ()
+  (with-connection ()
+    (loop for applicant in (mito:select-dao 'applicant)
+          do (setf (applicant-system-chat-id applicant)
+                   (create-new-chat "user-notifications"
+                                    (princ-to-string (applicant-user-id applicant))))
+             (mito:save-dao applicant))))
+
+
 (defmethod mito:insert-dao :after ((obj applicant))
   (setf (applicant-chat-id obj)
         (create-new-chat "applicant"
                          (princ-to-string (mito:object-id obj))))
+  (setf (applicant-system-chat-id obj)
+        (create-new-chat "user-notifications"
+                         (princ-to-string (applicant-user-id obj))))
   (mito:save-dao obj))
