@@ -1,41 +1,39 @@
 # client_max_body_size 20M;
 
 server {
-    if ($host = lct24.dev.40ants.com) {
+    if ($host = hrzero.ru) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
     listen 80 ;
     listen [::]:80 ;
-    server_name lct24.dev.40ants.com;
+    server_name hrzero.ru;
     return 301 https://$host$request_uri;
 }
 
 server {
-    if ($host = passport.lct24.dev.40ants.com) {
+    if ($host = passport.hrzero.ru) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
     listen 80 ;
     listen [::]:80 ;
-    server_name passport.lct24.dev.40ants.com;
+    server_name passport.hrzero.ru;
     return 301 https://$host$request_uri;
-
-
 }
 
 
 server {
-    if ($host = chat.lct24.dev.40ants.com) {
+    if ($host = chat.hrzero.ru) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
     listen 80 ;
     listen [::]:80 ;
-    server_name chat.lct24.dev.40ants.com;
+    server_name chat.hrzero.ru;
     return 301 https://$host$request_uri;
 
 
@@ -44,7 +42,7 @@ server {
 
 server {
     root /var/www/html/lct24;
-    server_name lct24.dev.40ants.com; # managed by Certbot
+    server_name hrzero.ru; # managed by Certbot
 
     location /favicon.ico {
       root /var/www/html/lct24;
@@ -113,16 +111,15 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/lct24.dev.40ants.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/lct24.dev.40ants.com/privkey.pem; # managed by Certbot
 
-
+    ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
 }
 
 
 server {
     root /var/www/html/lct24;
-    server_name passport.lct24.dev.40ants.com; # managed by Certbot
+    server_name passport.hrzero.ru; # managed by Certbot
 
     location / {
       limit_req zone=mylimit burst=10;
@@ -147,16 +144,15 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/lct24.dev.40ants.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/lct24.dev.40ants.com/privkey.pem; # managed by Certbot
 
-
+    ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
 }
 
 
 server {
     root /var/www/html/lct24;
-    server_name chat.lct24.dev.40ants.com; # managed by Certbot
+    server_name chat.hrzero.ru; # managed by Certbot
 
     location / {
       limit_req zone=mylimit burst=10;
@@ -181,28 +177,27 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/lct24.dev.40ants.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/lct24.dev.40ants.com/privkey.pem; # managed by Certbot
 
-
+    ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
 }
 
 
 server {
-    if ($host = ats.lct24.dev.40ants.com) {
+    if ($host = ats.hrzero.ru) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
     listen 80 ;
     listen [::]:80 ;
-    server_name ats.lct24.dev.40ants.com;
+    server_name ats.hrzero.ru;
     return 301 https://$host$request_uri;
 }
 
 server {
     root /var/www/html/lct24;
-    server_name ats.lct24.dev.40ants.com; # managed by Certbot
+    server_name ats.hrzero.ru; # managed by Certbot
 
     location / {
       limit_req zone=mylimit burst=10;
@@ -227,8 +222,7 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/lct24.dev.40ants.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/lct24.dev.40ants.com/privkey.pem; # managed by Certbot
 
-
+    ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
 }
