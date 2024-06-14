@@ -57,6 +57,16 @@
          (where (:= :project-id project-id)))))))
 
 
+(defun %create-news-post (title text 
+                          &key
+                          project-id)
+  (with-connection ()
+    (mito:create-dao 'news-post
+                     :title title
+                     :text text
+                     :project-id project-id)))
+
+
 (define-rpc-method (ats-api create-news-post) (title text 
                                                      &key
                                                      project-id)
@@ -69,11 +79,8 @@
   (with-connection ()
     (with-session ((user-id scopes))
       (require-scope user-id scopes "ats.news-post.create" "create a news-post")
-      
-      (mito:create-dao 'news-post
-                       :title title
-                       :text text
-                       :project-id project-id))))
+
+      (%create-news-post title text :project-id project-id))))
 
 
 (define-update-method (ats-api update-news-post news-post)
