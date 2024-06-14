@@ -15,6 +15,7 @@
   (:import-from #:ats/models/education
                 #:education)
   (:import-from #:mito
+                #:includes
                 #:object-id
                 #:select-by-sql
                 #:deftable
@@ -32,7 +33,15 @@
   (:import-from #:common/dates
                 #:parse-date)
   (:import-from #:ats/algorithms/resume-score
-                #:update-user-scores-in-thread))
+                #:update-user-scores-in-thread)
+  (:import-from #:ats/models/job-applicant
+                #:job-applicant-application-step
+                #:job-applicant)
+  (:import-from #:ats/models/application-step
+                #:application-step-num
+                #:application-step)
+  (:import-from #:common/auth
+                #:require-scope))
 (in-package #:ats/api/applicants)
 
 
@@ -70,6 +79,20 @@ select ja.id
 join ats.job_applicant as ja on a.id = ja.applicant_id
 left join ats.application_step as ast on ja.application_step_id = ast.id
 where ja.job_id = ?
+")
+
+(defparameter *retrieve-single-applicant-query*
+  "
+select ja.id
+     , a.name as fio
+     , ja.updated_at::date::text as date
+     , ast.title as step
+     , (100 * random())::integer as score
+     , ja.type as application_type
+  from ats.applicant as a
+join ats.job_applicant as ja on a.id = ja.applicant_id
+left join ats.application_step as ast on ja.application_step_id = ast.id
+where ja.id = ?
 ")
 
 (define-rpc-method (ats-api get-applicants) (job-id)
@@ -440,17 +463,50 @@ where ja.job_id = ?
 ;; Steps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (define-rpc-method (ats-api delete-cv-recommendation) (recommendation-id)
-;;   (:summary "Удаляет запись о рекомендации текущего пользователя")
-;;   (:param recommendation-id integer "ID рекомендации")
-;;   (:result null)
-;;   (with-connection ()
-;;     (with-session (user-id)
-;;       (let* ((applicant (mito:find-dao 'applicant
-;;                                        :user-id user-id)))
-;;         (unless applicant
-;;           (openrpc-server:return-error "CV does not exists yet."))
-;;         (mito:execute-sql "delete from ats.recommendation where id = ? and applicant_id = ?"
-;;                           (list recommendation-id
-;;                                 (mito:object-id applicant)))
-;;         (values nil)))))
+(defun %move-to-the-next-step (job-id applicant-id)
+  (let* ((application
+           (first
+            (mito:select-dao 'job-applicant
+              (includes 'application-step)
+              (where (:and
+                      (:=
+                       :job-id job-id)
+                      (:=
+                       :applicant-id applicant-id)))))))
+    (unless application
+      (openrpc-server:return-error "Person has no application to the job."))
+
+    (cond
+      ((job-applicant-application-step application)
+       (let ((next-step
+               (mito:find-dao 'ats/models/application-step::application-step
+                              :num (1+
+                                    (application-step-num
+                                     (job-applicant-application-step application))))))
+         ;; Продвигать можно лишь до последнего шага,
+         ;; а там уже либо отказывать, либо делать оффер
+         (when next-step
+           (setf (job-applicant-application-step application)
+                 next-step))))
+      (t
+       (setf (job-applicant-application-step application)
+             (mito:find-dao 'ats/models/application-step::application-step
+                            :num 1))))
+    (mito:save-dao application)
+
+    (first
+     (select-by-sql 'applicant-with-status
+                    *retrieve-single-applicant-query*
+                    :binds (list (mito:object-id application))))))
+
+
+(define-rpc-method (ats-api move-to-the-next-step) (job-id applicant-id)
+  (:summary "Переводит Соискателя на следующий этап в воронке собеседований для указанной вакансии.")
+  (:param job-id integer "ID вакансии")
+  (:param applicant-id integer "ID резюме соискателя")
+  (:result applicant-with-status)
+  (with-connection ()
+    (with-session ((user-id scopes))
+      (require-scope user-id scopes "ats.job.edit" "push applicant forward")
+      
+      (%move-to-the-next-step job-id applicant-id))))
