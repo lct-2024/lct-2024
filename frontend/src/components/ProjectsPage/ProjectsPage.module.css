@@ -18,12 +18,17 @@
     margin: 0 auto;
 }
 
-.body {
+.body,
+.body2 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 1700px;
+    height: 1600px;
     padding: 100px 0;
+}
+
+.body2 {
+    height: 800px;
 }
 
 .body h2 {

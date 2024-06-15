@@ -1,0 +1,197 @@
+.mainBlock {
+    height: 1300px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 80px 0;
+}
+
+.blocks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.body,
+.body2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 300px;
+    padding: 30px 0;
+}
+
+.body2 {
+    height: 120px;
+}
+
+
+.body2 {
+    font-size: 20px;
+    padding: 30px;
+    background-color: #E9ECF1;
+    transition: 0.2s;
+}
+
+.body2:hover {
+    background-color: #33599A;
+}
+
+.body2:hover p {
+    color: white;
+}
+
+.body h2 {
+    font-size: 40px;
+    font-weight: 400;
+}
+
+.light {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.text {
+    font-size: 20px;
+}
+
+.filter {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 500px;
+}
+
+.filter p {
+    padding: 10px;
+    background-color: #33599A;
+    color: white;
+    margin: 10px 10px 0 0;
+    min-width: 100px;
+    text-align: center;
+}
+
+.otklik {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-size: 24px;
+    background-color: #E9ECF1;
+    border: none;
+    width: 280px;
+    color: #25252E;
+}
+
+.otklik:hover {
+    background-color: #33599A;
+    color: white;
+}
+
+.smallBlock {
+    display: flex;
+}
+
+.smallBlock div {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 60px;
+    width: 200px;
+    padding: 5px;
+    background-color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.smallBlock div:hover {
+    background-color: #33599A;
+}
+
+.smallBlock div:hover p {
+    color: white;
+}
+
+.smallBlock p {
+    transition: 0.2s;
+    width: 350px;
+    font-size: 24px;
+}
+
+.activeFilter {
+    background-color: rgb(0, 0, 0) !important;
+}
+
+.activeFilter p {
+    color: white;
+}
+
+.block {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.desc {
+    min-height: 150px;
+    padding: 20px 10px;
+    background-color: #E9ECF1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.desc2 {
+    display: flex;
+    justify-content: space-around;
+}
+
+.desc p,
+.desc h3 {
+    margin: 12px 5px;
+    font-size: 22px;
+}
+
+.dwnld {
+    background-color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    width: 220px;
+    height: 50px;
+    margin: 10px auto;
+}
+
+.lastSect h2 {
+    margin: 10px 0;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #D9D9D9;
+    border: none;
+    padding: 20px;
+    width: 280px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.alarm {
+    position: absolute;
+    padding: 20px;
+    max-width: 500px;
+    color: black;
+    width: 400px;
+    background-color: white;
+    right: 30px;
+    top: 20px;
+    font-size: 20px;
+    border: 1px solid black;
+}

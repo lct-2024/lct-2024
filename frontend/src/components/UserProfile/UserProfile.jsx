@@ -40,7 +40,7 @@ const UserProfile = () => {
                 <div className={style.settings}>
                     <div className={style.setTitle}>
                         <h2>Настройки уведомлений</h2>
-                        <div className={style.checkboxWrapper}><input className={classes} id="cb1-6" type="checkbox" />
+                        <div className={style.checkboxWrapper}><input className={classes} id="cb1-6" type="checkbox" checked="true" />
                             <label className={style.tglBtn} for="cb1-6" />
                             <p>Получать уведомления на почту</p>
                         </div>
@@ -48,15 +48,15 @@ const UserProfile = () => {
                     <div className={style.setBody}>
                         <h2>Виды уведомлений приходящих на почту</h2>
                         <div>
-                            <input type="checkbox" />
+                            <input type="checkbox" checked="true" />
                             <p>Новые комментарии в обсуждениях, где вы участвуете</p>
                         </div>
                         <div>
-                            <input type="checkbox" />
+                            <input type="checkbox" checked="true" />
                             <p>Новые вакансии избранных проектов</p>
                         </div>
                         <div>
-                            <input type="checkbox" />
+                            <input type="checkbox" checked="true" />
                             <p>Изменение статуса откликов</p>
                         </div>
                     </div>

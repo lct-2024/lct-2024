@@ -11,12 +11,6 @@ const VacansyInfo = () => {
     const { id } = useParams();
     const vacansies = useSelector(state => state.vacansies.data);
     const vacansy = vacansies.find((v) => v.id.toString() === id);
-    const [comments, setComments] = useState([
-        { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
-        { name: "Егоров Александр Петрович", text: "Здравствуйте! Можно ли совмещать работу с учебой?" }
-    ]);
-    const [newCommentText, setNewCommentText] = useState('');
-    const [showInput, setShowInput] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState("О проекте");
     const [btnText, setBtnText] = useState("Откликнуться");
     const [btnClicked, setBtnClicked] = useState(false);
@@ -25,19 +19,6 @@ const VacansyInfo = () => {
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
-    };
-
-    const handleShowInput = () => {
-        setShowInput(true);
-    };
-
-    const handleCommentSubmit = () => {
-        setComments([
-            ...comments,
-            { name: "Николай Семенович", text: newCommentText }
-        ]);
-        setNewCommentText('');
-        setShowInput(false);
     };
 
     const handleButtonClicked = () => {

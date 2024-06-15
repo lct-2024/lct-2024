@@ -55,3 +55,66 @@ html {
     width: 720px;
   }
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 850px;
+  min-height: 700px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content button {
+  background: #E9ECF1;
+  border-radius: 10px;
+  width: 175px;
+  height: 40px;
+  border: none;
+  font-weight: 700;
+  transition: 0.3s;
+  font-family: "Century Gothic";
+  line-height: 17px;
+}
+
+.modal-content button:hover {
+  background: #33599A;
+  color: white;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.modal-header svg {
+  cursor: pointer;
+}
+
+.modal-header svg:hover path {
+  transition: 0.2s;
+}
+
+.modal-header svg:hover path {
+  fill: #d82f48;
+}

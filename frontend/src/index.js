@@ -10,6 +10,7 @@ import vacansiesReducer from "./store/vacansiesSlise"
 import authReducer from './store/authSlice'
 import newsReducer from './store/newsSlice'
 import commentsReducer from './store/commentsSlice';
+import resumeReducer from './store/resumeSlice';
 import { BrowserRouter } from 'react-router-dom';
 
 const store = configureStore({
@@ -19,6 +20,7 @@ const store = configureStore({
     auth: authReducer,
     news: newsReducer,
     comments: commentsReducer,
+    resume: resumeReducer,
   },
 });
 

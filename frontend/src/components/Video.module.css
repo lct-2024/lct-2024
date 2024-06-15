@@ -8,7 +8,6 @@
     background: url(../../public/video2.png);
 }
 
-
 .sect {
     display: flex;
     justify-content: space-between;
@@ -25,15 +24,15 @@
 .sect div {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    height: 480px;
+    justify-content: space-evenly;
+    height: 380px;
     margin: 0 0 0 20px;
 }
 
 .sect h2 {
     font-size: 36px;
     font-weight: 400;
-    width: 800px;
+    width: 700px;
 }
 
 .sect p {

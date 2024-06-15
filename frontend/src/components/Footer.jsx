@@ -9,8 +9,8 @@ const Footer = ({ showText }) => {
         <div className={style.main2}>
             <div className="container">
                 <div className={style.footer}>
-                    {showText && <h4>Познакомься с командой напрямую</h4>}
-                    {showText && <p>В VC, Habr, VK и Telegram мы делимся мероприятиями, внутренней жизнью и опытом Рексофт</p>}
+                    {showText && <h4 >Познакомься с командой напрямую</h4>}
+                    {showText && <p style={{ color: "white" }}>В VC, Habr, VK и Telegram мы делимся мероприятиями, внутренней жизнью и опытом Рексофт</p>}
                     <div className={style.main}>
                         <Link to="/">
                             <img src="../black_logo.png" alt="лого" />

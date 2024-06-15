@@ -62,6 +62,29 @@
     font-weight: 500;
 }
 
+
+.all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #25252E;
+    color: white;
+    padding: 10px;
+    height: 60px;
+    width: 260px;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin: -220px auto 0 auto;
+}
+
+.all svg {
+    margin-left: 5px;
+}
+
+.all:hover {
+    background-color: #33599A;
+}
+
 .mainText {
     display: flex;
 }

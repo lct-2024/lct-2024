@@ -3,6 +3,7 @@ import style from './MainOpens.module.css'
 import VacansyList from './VacansyPage/VacansyList';
 import { useSelector } from 'react-redux';
 import Comments from './Comments';
+import { Link } from 'react-router-dom';
 
 const MainOpens = () => {
     const vacansies = useSelector(state => state.vacansies)
@@ -61,6 +62,10 @@ const MainOpens = () => {
                 </div>
                 <h2>ОТКРЫТЫЕ ВАКАНСИИ</h2>
                 {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Загрузка...</h1> : <VacansyList hideBody={false} btnShow="false" />}
+                <Link to="/vacansy-page" className={style.all}>Все вакансии<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.00195 12H19.002M19.002 12L12.002 5M19.002 12L12.002 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                </Link>
                 <Comments text="нас" />
             </div>
         </div >

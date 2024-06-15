@@ -27,7 +27,7 @@ const NewsPage = () => {
     }
 
     return (
-        <section>
+        <section className={style.sec}>
             <div className={style.main}>
                 <div className='container'>
                     <div className={style.head}>
@@ -44,16 +44,16 @@ const NewsPage = () => {
                             <div className={style.newsBlock} key={i}>
                                 <img src="bl2.png" alt="фото новости" />
                                 <div className={style.about}>
-                                    <h4>{item.title}</h4>
+                                    <h4>{item.short_title}</h4>
                                     <p>{item.text}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
-                <Comments contentId="newsId" contentType="news" />
-                <Footer />
             </div>
+            <Comments contentId='newsId' contentType='news' />
+            <Footer />
         </section>
     );
 };

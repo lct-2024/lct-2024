@@ -75,26 +75,6 @@ const ProjectsPage = () => {
         }
     };
 
-    const [comments, setComments] = useState([
-        { name: "Иванов Иван Иванович", text: "Здравствуйте! Я не понимаю есть ли в офисе кошки, не нашел в описании компании." },
-        { name: "Егоров Александр Петрович", text: "Здравствуйте! Можно ли совмещать работу с учебой?" }
-    ]);
-    const [newCommentText, setNewCommentText] = useState('');
-    const [showInput, setShowInput] = useState(false);
-
-    const handleShowInput = () => {
-        setShowInput(true);
-    };
-
-    const handleCommentSubmit = () => {
-        setComments([
-            ...comments,
-            { name: "Николай Семенович", text: newCommentText }
-        ]);
-        setNewCommentText('');
-        setShowInput(false);
-    };
-
     return (
         <>
             <div className={style.main}>
@@ -106,7 +86,7 @@ const ProjectsPage = () => {
                 </div>
             </div>
             <div className='container'>
-                <div className={style.body}>
+                <div className={filteredProjects.length === 0 ? style.body2 : style.body}>
                     <div>
                         <div className={style.search}>
                             <input
@@ -116,11 +96,6 @@ const ProjectsPage = () => {
                                 onChange={handleSearchChange}
                                 onKeyPress={handleKeyPress}
                             />
-                            <button>
-                                <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M21.5 21.5L17.2 17.2M19.5 11.5C19.5 15.9183 15.9183 19.5 11.5 19.5C7.08172 19.5 3.5 15.9183 3.5 11.5C3.5 7.08172 7.08172 3.5 11.5 3.5C15.9183 3.5 19.5 7.08172 19.5 11.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </button>
                         </div>
                         <div className={style.filter}>
                             {['Все', 'Финтех', 'Госсектор', 'IT', 'Медиа', 'Нефть и газ', 'Ретейл', 'Коммуникации', 'Транспорт', 'Другое'].map((filter) => (
@@ -135,7 +110,7 @@ const ProjectsPage = () => {
                         </div>
                     </div>
                     {filteredProjects.length === 0 ? (
-                        <h1 style={{ margin: '0 auto' }}>Проектов нет</h1>
+                        <h1 style={{ margin: '0px auto' }}>Проектов нет</h1>
                     ) : (
                         <ProjectsList projects={filteredProjects} />
                     )}

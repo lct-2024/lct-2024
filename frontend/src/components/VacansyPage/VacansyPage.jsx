@@ -21,8 +21,10 @@ const VacansyPage = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        setOriginalVacansies(vacansies);
-    }, [vacansies]);
+        if (vacansies.length > 0) {
+            setOriginalVacansies(vacansies);
+        }
+    }, []);
 
     const handleSearchChange = (e) => {
         const searchTerm = e.target.value;
@@ -32,6 +34,7 @@ const VacansyPage = () => {
 
     const handleSearchSubmit = (searchTerm) => {
         if (searchTerm.trim() === '') {
+            console.log(originalVacansies)
             dispatch(setVacansies(originalVacansies));
         } else {
             const filteredVacancies = originalVacansies.filter(vacansy =>
@@ -86,11 +89,6 @@ const VacansyPage = () => {
                                 <path d="M6 7L12 13L18 7" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </div>
-                        <button onClick={() => handleSearchSubmit(searchTerm)}>
-                            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21.5 21.5L17.2 17.2M19.5 11.5C19.5 15.9183 15.9183 19.5 11.5 19.5C7.08172 19.5 3.5 15.9183 3.5 11.5C3.5 7.08172 7.08172 3.5 11.5 3.5C15.9183 3.5 19.5 7.08172 19.5 11.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </button>
                     </div>
                 </div>
                 {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Загрузка...</h1> : <VacansyList hideBody='false' vacansies={vacansies} />}

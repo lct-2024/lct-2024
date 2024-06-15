@@ -16,8 +16,9 @@ export const fetchOrCreateChat = createAsyncThunk(
                 params: { id: chat_id },
                 id: 1,
             }, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
+                headers: { 'Authorization': `${authToken}` }
             });
+            console.log(response.data)
             return response.data.result;
         };
 
@@ -28,8 +29,9 @@ export const fetchOrCreateChat = createAsyncThunk(
                 params: { content_id, content_type, title, private: isPrivate },
                 id: 1,
             }, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
+                headers: { 'Authorization': `${authToken}` }
             });
+            console.log(response.data)
             return response.data.result;
         };
 
@@ -39,6 +41,7 @@ export const fetchOrCreateChat = createAsyncThunk(
                 return { chatId: chat.id, messages: chat.messages };
             } else {
                 const newChat = await createChat(contentId, contentType, 'Chat Title', false);
+                console.log(newChat)
                 return { chatId: newChat.id, messages: [] };
             }
         } catch (error) {
@@ -65,8 +68,9 @@ export const postMessage = createAsyncThunk(
                 params: { chat_id: chatId, message },
                 id: 1,
             }, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
+                headers: { 'Authorization': `${authToken}` }
             });
+            console.log(response.data)
             return response.data.result;
         } catch (error) {
             return rejectWithValue(error.message);

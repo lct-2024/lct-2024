@@ -46,8 +46,8 @@ const Comments = ({ text, contentId, contentType }) => {
 
     return (
         <div className='container'>
-            <h2>Интересно узнать больше о {text}?</h2>
-            <h2>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
+            <h2 className={style.title}>Интересно узнать больше о {text}?</h2>
+            <h2 className={style.title}>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
             <div className={style.comments}>
                 {comments && comments.length > 0 ? (
                     comments.map((comment, i) => (
@@ -56,7 +56,7 @@ const Comments = ({ text, contentId, contentType }) => {
                                 <h4>{comment.name}</h4>
                                 <p>{new Date(comment.created_at).toLocaleString()}</p>
                             </div>
-                            <p>{comment.text}</p>
+                            <p>{comment.messae}</p>
                         </div>
                     ))
                 ) : (

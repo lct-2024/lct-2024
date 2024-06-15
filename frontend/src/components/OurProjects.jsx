@@ -1,5 +1,6 @@
 import React from 'react'
 import style from "./OurProjects.module.css"
+import { Link } from 'react-router-dom'
 
 const OurProjects = () => {
     return (
@@ -9,7 +10,7 @@ const OurProjects = () => {
                 <div>
                     <div className={style.block}>
                         <div>
-                            <h3>Система обработки багажа для аэропорта Домоедово</h3>
+                            <h3>Система обработки багажа для аэропорта Домодедово</h3>
                             <h4>Автоматизированная система обработки багажа для аэропорта Домодедово</h4>
                             <p>Открытых вакансий: 1</p>
                             <button>Другое</button>
@@ -36,10 +37,10 @@ const OurProjects = () => {
                         </div>
                     </div>
                 </div>
-                <button className={style.btn}>все проекты <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <Link to="/projects-page" className={style.btn}>все проекты <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5.00195 12H19.002M19.002 12L12.002 5M19.002 12L12.002 19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                </button>
+                </Link>
                 <h2>занимаемся цифровой трансформацией предприятий   в области промышленной автоматизации уже 30+ лет</h2>
                 <div>
                     <div className={style.smallBlock}>

@@ -10,6 +10,7 @@ import Registration from "./components/AuthPage/Registration";
 import VacansyInfo from "./components/VacansyPage/VacansyInfo";
 import UserProfile from "./components/UserProfile/UserProfile";
 import NewsPage from "./components/NewsPage/NewsPage";
+import ResumePage from "./components/ResumePage/ResumePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ function App() {
         <Route path="/registration" element={<Registration />} />
         {user && <Route path="/profile" element={<UserProfile />} />}
         <Route path="/news" element={<NewsPage />} />
+        <Route path="/resume" element={<ResumePage />} />
         <Route path="*" element={<h1 style={{ margin: "auto" }}>Вернитесь на <Link to="/">главную страницу</Link></h1>} />
       </Routes>
     </div>
