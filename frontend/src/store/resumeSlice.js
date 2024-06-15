@@ -28,7 +28,25 @@ export const fetchCVData = createAsyncThunk(
                 throw new Error(data.error.message || 'Failed to fetch CV');
             }
 
-            return data.result; // Assuming data.result is an object containing CV details
+            if (!data.result) {
+                const initialCVData = {
+                    about: '',
+                    chat_id: '',
+                    contacts: null,
+                    created_at: '',
+                    email: '',
+                    experience: '',
+                    id: null,
+                    name: '',
+                    system_chat_id: '',
+                    updated_at: '',
+                    user_id: null,
+                    skills: [],
+                    education: [],
+                };
+                return thunkAPI.dispatch(createCVData({ token, cvData: initialCVData }));
+            }
+            return data.result;
         } catch (error) {
             throw new Error(error.response?.data?.error?.message || 'Failed to fetch CV');
         }
@@ -82,7 +100,6 @@ export const getCVEducation = createAsyncThunk(
                 }
             );
 
-            console.log(response.data)
             const data = response.data;
 
             if (data.error) {
@@ -118,7 +135,6 @@ export const addCVEducation = createAsyncThunk(
                 }
             );
 
-            console.log(response.data)
             const data = response.data;
 
             if (data.error) {
@@ -153,7 +169,7 @@ export const deleteCVEducation = createAsyncThunk(
                     },
                 }
             );
-            console.log(response.data)
+
             const data = response.data;
 
             if (data.error) {
@@ -189,7 +205,6 @@ export const updateCVData = createAsyncThunk(
                 }
             );
 
-            console.log(response.data.result)
             return response.data.result;
         } catch (error) {
             throw new Error(error.response?.data?.error?.message || 'Failed to update CV');
@@ -243,7 +258,6 @@ const resumeSlice = createSlice({
             .addCase(getCVEducation.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.cvData.education = action.payload; // Check action.payload here
-                console.log(action.payload); // Debugging output
             })
             .addCase(getCVEducation.rejected, (state, action) => {
                 state.status = 'failed';
