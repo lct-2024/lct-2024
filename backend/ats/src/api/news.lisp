@@ -40,21 +40,58 @@
                 #:define-update-method)
   (:import-from #:common/permissions
                 #:scope-for-deleting
-                #:scope-for-editing))
+                #:scope-for-editing)
+  (:import-from #:str
+                #:shorten)
+  (:import-from #:common/utils
+                #:first-paragraphs)
+  (:import-from #:common/markup
+                #:markdown->html)
+  (:import-from #:alexandria
+                #:curry))
 (in-package #:ats/api/news)
 
 
-(define-rpc-method (ats-api get-news) (&key project-id)
+(deftable extended-news-post (news-post)
+  ((short-title :initarg :short-title
+                :col-type :text
+                :type string)
+   (short-html :initarg :short-html
+               :col-type :text
+               :type string)))
+
+
+(defun extend-news-post (max-title-length num-paragraphs-in-preview post)
+  (change-class
+   post 'extended-news-post
+   :short-title
+   (shorten max-title-length
+            (ats/models/news-post::news-post-title post))
+   :short-html
+   (or
+    (ignore-errors
+     (markdown->html
+      (first-paragraphs num-paragraphs-in-preview
+                        (ats/models/news-post::news-post-text post))))
+    (ats/models/news-post::news-post-html post))))
+
+
+(define-rpc-method (ats-api get-news) (&key project-id (max-title-length 30) (num-paragraphs-in-preview 2))
   (:summary "Отдаёт все новостные посты, или посты привязанные к проекту с указанным ID.")
   (:param project-id integer "ID проекта новости которого надо отдать.")
-  (:result (serapeum:soft-list-of news-post))
+  (:param max-title-length integer "Ограничение на длинну заголовка в поле short_title.")
+  (:param num-paragraphs-in-preview integer "Количество абзацев в preview в поле short_html.")
+  (:result (serapeum:soft-list-of extended-news-post))
   (with-connection ()
     (values
-     (select-dao 'news-post
-       (includes 'project)
-       (order-by :title)
-       (when project-id
-         (where (:= :project-id project-id)))))))
+     (mapcar (curry #'extend-news-post
+                    max-title-length
+                    num-paragraphs-in-preview)
+             (select-dao 'news-post
+               (includes 'project)
+               (order-by :title)
+               (when project-id
+                 (where (:= :project-id project-id))))))))
 
 
 (defun %create-news-post (title text 

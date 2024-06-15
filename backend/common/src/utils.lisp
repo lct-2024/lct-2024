@@ -5,6 +5,7 @@
   (:import-from #:serapeum
                 #:dict)
   (:import-from #:uuid)
+  (:import-from #:str)
   (:import-from #:yason
                 #:with-output-to-string*)
   (:import-from #:mito
@@ -47,7 +48,8 @@
            #:limit
            #:make-uuid
            #:format-datetime
-           #:format-datetime-msk))
+           #:format-datetime-msk
+           #:first-paragraphs))
 (in-package #:common/utils)
 
 
@@ -91,3 +93,20 @@
                                #\Space
                                (:hour 2) #\: (:min 2) #\: (:sec 2))
                      :timezone (msk-timezone)))
+
+
+(defun first-paragraphs (n text)
+  (with-output-to-string (s)
+    (loop with num-paragraphs = 0
+          with prev-empty = nil
+          for line in (str:lines (str:trim text))
+          for trimmed = (str:trim line)
+          for empty = (str:emptyp trimmed)
+          while (< num-paragraphs n)
+          do (cond                      ;
+               ((and (null prev-empty)
+                     empty)
+                (incf num-paragraphs)))
+             (write-line line s)
+             (setf prev-empty
+                   empty))))
