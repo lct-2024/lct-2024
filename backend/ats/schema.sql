@@ -247,3 +247,6 @@ alter table ats.job_applicant add column status TEXT;
 
 alter table ats.job add column open boolean default false;
 update ats.job set open = true;
+
+alter table ats.applicant add column salary TEXT not null default '';
+alter table ats.applicant add column portfolio TEXT not null default '';

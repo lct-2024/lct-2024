@@ -76,6 +76,18 @@
           :initform ""
           :documentation "Общее описание кандидата, его увелечения, свойства характера и прочее."
           :accessor applicant-about)
+   (portfolio :initarg :portfolio
+          :type string
+          :col-type :text
+          :initform ""
+          :documentation "Ссылка на портфолио."
+          :accessor applicant-portfolio)
+   (salary :initarg :salary
+          :type string
+          :col-type :text
+          :initform ""
+          :documentation "Желаемая зарплата"
+          :accessor applicant-salary)
    (contacts :initarg :contacts
              :type (soft-list-of contact)
              :col-type :jsonb

@@ -13,6 +13,8 @@
   (:import-from #:ats/api
                 #:ats-api)
   (:import-from #:ats/models/education
+                #:get-education-simple
+                #:update-education-simple
                 #:education)
   (:import-from #:mito
                 #:includes
@@ -47,7 +49,10 @@
   (:import-from #:log4cl-extras/error
                 #:with-log-unhandled)
   (:import-from #:common/chat
-                #:post-to-chat))
+                #:post-to-chat)
+  (:import-from #:ats/models/applicant-skill
+                #:get-skills-simple
+                #:update-skills-simple))
 (in-package #:ats/api/applicants)
 
 
@@ -151,24 +156,56 @@ where ja.id = ?
                  :id applicant-id)))))
 
 
+(deftable extended-applicant (applicant)
+  ((skills :initarg :skills
+           :type (soft-list-of string)
+           :col-type :array
+           :documentation "Навыки кандидата.")
+   (education :initarg :education
+              :type (soft-list-of string)
+              :col-type :array
+              :documentation "Образование кандидата в упрощённом виде - только названия учебных заведений.")))
+
+
+(defun extend-applicant (applicant)
+  (change-class applicant 'extended-applicant
+                :skills (get-skills-simple applicant)
+                :education (get-education-simple applicant)))
+
+
 (define-rpc-method (ats-api my-cv) ()
   (:summary "Отдаёт данные резюме текущего пользователя.")
   (:description "Этот метод вернёт none, если данные ещё не добавлены. Добавить их можно методом create-cv.
 
 Метод требует аутентификации через заголовок Authorization.")
-  (:result (or null applicant))
+  (:result extended-applicant)
   (with-connection ()
     (with-session (user-id)
-      (values
-       (find-dao 'applicant
-                 :user-id user-id)))))
+      (let* ((passport-client (passport/client:connect (current-jwt-token)))
+             (profile (my-profile passport-client))
+             (passport-fio (passport/client:user-fio profile))
+             (passport-email (passport/client:user-email profile)))
+        (extend-applicant
+         (or (find-dao 'applicant
+                       :user-id user-id)
+             ;; Если нет CV то создадим
+             (prog1 (mito:create-dao 'applicant
+                                     :user-id user-id
+                                     :email passport-email
+                                     :name passport-fio
+                                     :experience ""
+                                     :about ""
+                                     :contacts nil)
+               (update-user-scores-in-thread user-id))))))))
 
 
-(define-rpc-method (ats-api create-cv) (&key experience about contacts)
+(define-rpc-method (ats-api create-cv) (&key name email (experience "") (about "") contacts)
   (:summary "Добавляет данные резюме текущего пользователя.")
   (:description "Метод требует аутентификации через заголовок Authorization.
 
 Если данные уже есть в базе, то будет возвращена ошибка - для их редактирования надо использовать метод edit-cv.")
+  (:param name string "ФИО кандидата")
+  (:param email string "Email для связи")
   (:param experience string "Описание опыта работы кандидата.")
   (:param about string "Общее описание кандидата, его увелечения, свойства характера и прочее.")
   (:param contacts (soft-list-of hash-table)
@@ -188,24 +225,30 @@ where ja.id = ?
         
         (prog1 (mito:create-dao 'applicant
                                 :user-id user-id
-                                :email passport-email
-                                :name passport-fio
+                                :email (or email passport-email)
+                                :name (or name passport-fio)
                                 :experience experience
                                 :about about
                                 :contacts contacts)
           (update-user-scores-in-thread user-id))))))
 
 
-(define-rpc-method (ats-api update-cv) (&key experience about contacts)
+(define-rpc-method (ats-api update-cv) (&key name email experience about contacts education skills salary portfolio)
   (:summary "Обновляет данные резюме текущего пользователя.")
   (:description "Метод требует аутентификации через заголовок Authorization.
 
                  Если данных ещё нет в базе, то будет возвращена ошибка - для их добавления надо использовать метод create-cv.")
+  (:param name string "ФИО кандидата")
+  (:param email string "Email для связи")
   (:param experience string "Описание опыта работы кандидата.")
   (:param about string "Общее описание кандидата, его увелечения, свойства характера и прочее.")
+  (:param portfolio string "Ссылка на portfolio")
+  (:param salary string "Желаемая зарплата")
+  (:param skills (soft-list-of string) "Список навыков")
+  (:param education (soft-list-of string) "Список образовательных учреждений")
   (:param contacts (soft-list-of hash-table)
           "Список контактов в виде словарей с ключами \"type\" и \"value\", где значениями являются строки. Например: [{\"telegram\": \"telegram-nick\"}].")
-  (:result applicant)
+  (:result extended-applicant)
   
   (with-connection ()
     (with-session (user-id)
@@ -214,6 +257,22 @@ where ja.id = ?
         (unless applicant
           (openrpc-server:return-error "CV does not exists yet."))
 
+
+        (update-skills-simple applicant skills)
+        (update-education-simple applicant education)
+        
+        (when salary
+          (setf (ats/models/applicant::applicant-salary applicant)
+                salary))
+        (when portfolio
+          (setf (ats/models/applicant::applicant-portfolio applicant)
+                portfolio))
+        (when name
+          (setf (ats/models/applicant::applicant-name applicant)
+                name))
+        (when email
+          (setf (ats/models/applicant::applicant-email applicant)
+                email))
         (when experience
           (setf (ats/models/applicant::applicant-experience applicant)
                 experience))
@@ -225,7 +284,7 @@ where ja.id = ?
                 contacts))
         (mito:save-dao applicant)
         (update-user-scores-in-thread user-id)
-        (values applicant)))))
+        (extend-applicant applicant)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -463,6 +522,70 @@ where ja.id = ?
                                 (mito:object-id applicant)))
         (update-user-scores-in-thread user-id)
         (values nil)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Skills
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (define-rpc-method (ats-api get-cv-recommendations) ()
+;;   (:summary "Отдаёт записи об рекоммендациях текущего пользователя")
+;;   (:result (serapeum:soft-list-of recommendation))
+;;   (with-connection ()
+;;     (with-session (user-id)
+;;       (let* ((applicant (mito:find-dao 'applicant
+;;                                        :user-id user-id)))
+;;         (unless applicant
+;;           (openrpc-server:return-error "CV does not exists yet."))
+       
+;;         (let ((results (select-dao 'recommendation
+;;                          (where (:= :applicant-id (mito:object-id applicant)))
+;;                          (order-by :fio))))
+;;           (values results))))))
+
+
+;; (define-rpc-method (ats-api add-cv-recommendation) (fio &key
+;;                                                         (position "")
+;;                                                         (company "")
+;;                                                         (email "")
+;;                                                         (phone ""))
+;;   (:summary "Добавляет новую запись о рекомендации кандидата")
+;;   (:param fio string "ФИО")
+;;   (:param position string "Должность")
+;;   (:param company string "Компания")
+;;   (:param email string "Email")
+;;   (:param phone string "Телефон")
+;;   (:result recommendation)
+;;   (with-connection ()
+;;     (with-session (user-id)
+;;       (let* ((applicant (mito:find-dao 'applicant
+;;                                        :user-id user-id)))
+;;         (unless applicant
+;;           (openrpc-server:return-error "CV does not exists yet."))
+;;         (prog1
+;;             (mito:create-dao 'recommendation
+;;                              :applicant applicant
+;;                              :fio fio
+;;                              :position position
+;;                              :company company
+;;                              :email email
+;;                              :phone phone)
+;;           (update-user-scores-in-thread user-id))))))
+
+;; (define-rpc-method (ats-api delete-cv-recommendation) (recommendation-id)
+;;   (:summary "Удаляет запись о рекомендации текущего пользователя")
+;;   (:param recommendation-id integer "ID рекомендации")
+;;   (:result null)
+;;   (with-connection ()
+;;     (with-session (user-id)
+;;       (let* ((applicant (mito:find-dao 'applicant
+;;                                        :user-id user-id)))
+;;         (unless applicant
+;;           (openrpc-server:return-error "CV does not exists yet."))
+;;         (mito:execute-sql "delete from ats.recommendation where id = ? and applicant_id = ?"
+;;                           (list recommendation-id
+;;                                 (mito:object-id applicant)))
+;;         (update-user-scores-in-thread user-id)
+;;         (values nil)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

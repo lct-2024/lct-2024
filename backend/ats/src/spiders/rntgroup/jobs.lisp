@@ -3,6 +3,7 @@
   (:import-from #:scrapycl
                 #:spider
                 #:request)
+  (:import-from #:html2text)
   (:import-from #:lquery
                 #:$1
                 #:$)
@@ -161,7 +162,7 @@
                        (values))))))))
 
 
-(defvar *items-to-skip* (- 21 5))
+(defvar *items-to-skip* 0)
 
 (defmethod scrapycl:process ((spider rntgroup-jobs) (request job-page-request))
   ;; Иногда в урлах могут быть назаэнкоженные руские символы:
@@ -182,3 +183,8 @@
            (values))))
     (scrapycl:fetch-error ()
       (values))))
+
+
+(defun start-scraper ()
+  (scrapycl:start (make-instance 'rntgroup-jobs)
+                  :wait t))

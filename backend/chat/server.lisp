@@ -6,6 +6,8 @@
   (:import-from #:chat/chat-member/api)
   (:import-from #:chat/message/api)
   (:import-from #:40ants-openrpc/server)
+  (:import-from #:openrpc-server
+                #:debug-on)
   (:export
    #:start-me
    #:stop-me))
@@ -16,6 +18,7 @@
 
 
 (defun start-me ()
+  (debug-on)
   (40ants-openrpc/server:start :api chat-api
                                :port *port*))
 

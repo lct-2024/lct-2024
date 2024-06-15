@@ -5,6 +5,8 @@
   (:import-from #:40ants-openrpc/server)
   (:import-from #:ats/api
                 #:ats-api)
+  (:import-from #:openrpc-server
+                #:debug-on)
   (:export #:start
            #:stop
            #:start-in-production))
@@ -15,6 +17,7 @@
 
 
 (defun start ()
+  (debug-on)
   (40ants-openrpc/server:start :api ats-api
                                :port *port*))
 

@@ -1,6 +1,7 @@
 (uiop:define-package #:ats/models/education
   (:use #:cl)
   (:import-from #:serapeum
+                #:->
                 #:fmt
                 #:soft-list-of
                 #:dict)
@@ -9,13 +10,16 @@
                 #:object-id
                 #:dao-table-class)
   (:import-from #:40ants-pg/query
+                #:select-one-column
                 #:sql-fetch-all)
   (:import-from #:yason
                 #:with-output-to-string*)
   (:import-from #:ats/models/applicant
                 #:applicant)
   (:import-from #:ats/models/speciality
-                #:speciality))
+                #:speciality)
+  (:import-from #:40ants-pg/transactions
+                #:with-transaction))
 (in-package #:ats/models/education)
 
 
@@ -63,3 +67,31 @@
             (object-id education)
             (education-title education))))
 
+
+
+(-> update-education-simple (applicant (soft-list-of string))
+    (values applicant &optional))
+
+(defun update-education-simple (applicant education)
+  (with-transaction 
+    (mito:execute-sql "delete from ats.education where applicant_id = ?"
+                      (list (object-id applicant)))
+
+    (loop for item in education
+          do (mito:create-dao 'education
+                              :applicant applicant
+                              :title item
+                              :from "2024-01-01"))
+    (values applicant)))
+
+
+(-> get-education-simple (applicant)
+    (values (soft-list-of string) &optional))
+
+(defun get-education-simple (applicant)
+  (select-one-column "
+select title
+from ats.education
+where applicant_id = ? "
+                     :binds (list (object-id applicant))
+                     :column :title))

@@ -15,6 +15,7 @@
 
 
 (defun start ()
+  (openrpc-server:debug-on)
   (40ants-openrpc/server:start :api passport-api
                                :port *port*))
 
