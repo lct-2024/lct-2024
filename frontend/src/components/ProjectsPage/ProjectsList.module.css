@@ -1,0 +1,91 @@
+.project {
+    padding: 20px;
+    background: #E9ECF1;
+    height: fit-content;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 5px 0;
+    transition: 0.2s;
+}
+
+.project:hover {
+    color: white;
+    background: #33599A;
+}
+
+.project:hover p {
+    color: white;
+}
+
+.project:hover path {
+    stroke: white;
+}
+
+.project div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project svg {
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.project h2 {
+    font-size: 32px;
+}
+
+.project p {
+    transition: 0.2s;
+    margin: 5px 0;
+}
+
+
+
+.project button {
+    border: none;
+    width: 80px;
+    height: 30px;
+}
+
+.btn {
+    border: none;
+    width: 240px;
+    height: 63px;
+    font-size: 20px;
+    margin: 20px 40%;
+    background: #E9ECF1;
+}
+
+.btn:hover {
+    color: white;
+    background-color: #33599A;
+}
+
+.list {
+    min-height: 820px;
+}
+
+.theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background-color: #33599A;
+    color: white;
+    margin: 0 15px 0 0 !important;
+    transition: 0.2s;
+}
+
+.project:hover .theme {
+    color: black;
+    background-color: #E9ECF1;
+}
+
+.themesContainer {
+    justify-content: flex-start !important;
+    width: 500px;
+}

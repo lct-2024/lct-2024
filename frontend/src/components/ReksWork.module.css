@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: space-around;
     height: 2100px;
-    padding: 100px 0;
+    padding: 90px 0;
 }
 
 .block {
@@ -44,14 +44,14 @@
 }
 
 .block div {
-    border: 1px solid black;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     padding: 20px;
     height: 300px;
     width: 540px;
-    background-color: #D9D9D9;
+    background-color: #E9ECF1;
+    margin: 5px;
 }
 
 .btn {
@@ -71,13 +71,15 @@
 }
 
 .smallBlock div {
-    border: 1px solid black;
+    font-weight: 500;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 120px;
     width: 380px;
-    background-color: #D9D9D9;
+    color: #33599A;
+    background-color: #E9ECF1;
+    cursor: pointer;
 }
 
 .smallBlock p {
@@ -92,7 +94,18 @@
 .text {
     display: flex;
     align-items: center;
-    padding: 100px;
-    background-color: #D9D9D9;
+    padding: 60px;
+    background-color: #E9ECF1;
     font-size: 30px;
+    justify-content: center;
+    color: #25252E;
+}
+
+.activeFilter {
+    background-color: white !important;
+}
+
+.block h3 {
+    color: #33599A;
+    font-weight: 500;
 }

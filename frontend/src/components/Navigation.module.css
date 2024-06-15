@@ -19,9 +19,47 @@
 .items a {
     text-decoration: none;
     font-size: 20px;
-    color: black
+    color: black;
+    transition: 0.2s
+}
+
+.items a:hover {
+    color: #33599A;
 }
 
 .items svg {
     cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: 20px;
+}
+
+.dropdownContent {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: white;
+    z-index: 1;
+    top: 100%;
+}
+
+.dropdownContent a {
+    color: black;
+    padding: 12px 30px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdownContent a:hover {
+    background-color: #ddd;
 }

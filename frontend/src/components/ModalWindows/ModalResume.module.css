@@ -1,0 +1,44 @@
+.body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 630px;
+}
+
+.body input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid black;
+}
+
+.body textarea {
+    border: 1px solid black;
+    width: 100%;
+    height: 50px;
+    max-height: 100px;
+    padding: 10px;
+    resize: vertical;
+}
+
+.skill {
+    margin-left: 18%;
+}
+
+.body div {
+    display: flex;
+    align-items: center;
+}
+
+.body label {
+    display: inline-block;
+    font-size: 20px;
+    width: 190px;
+}
+
+.body div {
+    width: 800px;
+}
+
+.save {
+    margin: 0 auto !important;
+}

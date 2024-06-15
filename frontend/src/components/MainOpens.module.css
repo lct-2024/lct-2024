@@ -22,6 +22,13 @@
     margin: 20px 0 -200px 0;
 }
 
+.main textarea {
+    resize: none;
+    padding: 10px 0 10px 5px;
+    width: 100%;
+    height: 50px;
+}
+
 .btn {
     display: flex;
     align-items: center;
@@ -39,18 +46,43 @@
 }
 
 .smallBlock div {
-    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 120px;
     width: 380px;
-    background-color: #D9D9D9;
+    background-color: #E9ECF1;
+    cursor: pointer;
 }
 
 .smallBlock p {
     width: 350px;
     font-size: 24px;
+    color: #33599A;
+    font-weight: 500;
+}
+
+
+.all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #25252E;
+    color: white;
+    padding: 10px;
+    height: 60px;
+    width: 260px;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin: -220px auto 0 auto;
+}
+
+.all svg {
+    margin-left: 5px;
+}
+
+.all:hover {
+    background-color: #33599A;
 }
 
 .mainText {
@@ -61,13 +93,15 @@
     display: flex;
     align-items: center;
     padding: 50px;
-    background-color: #D9D9D9;
+    background-color: #E9ECF1;
     font-size: 30px;
 }
 
 .comments {
     border: 1px solid black;
     padding: 20px;
+    overflow: auto;
+    max-height: 330px;
 }
 
 .comment {
@@ -100,4 +134,12 @@
 .vacansies button {
     background-color: black;
     color: white;
+}
+
+.activeFilter {
+    background-color: white !important;
+}
+
+.main h2 {
+    margin: 20px 0;
 }

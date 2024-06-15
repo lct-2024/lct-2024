@@ -1,6 +1,11 @@
 .main {
     width: 100%;
-    background-color: #D9D9D9;
+    background: url(../../public/video_back.png);
+}
+
+.main2 {
+    width: 100%;
+    background: url(../../public/video2.png);
 }
 
 .sect {
@@ -10,22 +15,24 @@
     align-items: center;
 }
 
-.sect video {
-    width: 500px;
-    height: 500px;
+.sect .video {
+    width: 400px;
+    height: 400px;
+    margin-right: 50px;
 }
 
 .sect div {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 400px;
+    justify-content: space-evenly;
+    height: 380px;
+    margin: 0 0 0 20px;
 }
 
 .sect h2 {
     font-size: 36px;
     font-weight: 400;
-    width: 800px;
+    width: 700px;
 }
 
 .sect p {
