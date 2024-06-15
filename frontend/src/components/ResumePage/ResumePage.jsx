@@ -92,7 +92,7 @@ const ResumePage = () => {
                         </div>
                         <div className={style.body2}>
                             <p>Ваше резюме заполнено</p>
-                            <p>на {cvData ? Math.round((Object.keys(cvData).length / 11) * 100) : 0}%</p>
+                            <p>на {cvData ? Math.round((Object.keys(cvData).length / 15) * 100) : 0}%</p>
                             <p className={style.light}>Подсветить недостающие пункты</p>
                         </div>
                     </div>
