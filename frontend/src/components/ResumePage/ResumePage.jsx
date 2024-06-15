@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import style from './ResumePage.module.css'
+import React, { useEffect, useState } from 'react';
+import style from './ResumePage.module.css';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 import Comments from '../Comments';
 import ModalResume from '../ModalWindows/ModalResume';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCVData, setShowModal } from '../../store/resumeSlice';
+import { fetchCVData, setShowModal, updateCVData } from '../../store/resumeSlice';
 
 const ResumePage = () => {
-
     const [selectedFilter, setSelectedFilter] = useState("О себе");
     const [btnClicked, setBtnClicked] = useState(false);
     const [showAlarm, setShowAlarm] = useState(false);
@@ -16,8 +15,26 @@ const ResumePage = () => {
     const { cvData, showModal } = useSelector((state) => state.resume);
     const token = localStorage.getItem('authToken');
 
+    // Fetch CV data on component mount or when token changes
+    useEffect(() => {
+        if (token) {
+            dispatch(fetchCVData(token));
+        }
+    }, [dispatch, token]);
+
+    // Update local component state when cvData changes
+    useEffect(() => {
+        if (cvData) {
+            setSelectedFilter("О себе"); // Reset selected filter
+        }
+    }, [cvData]);
+
     const handleButtonClicked = () => {
         dispatch(setShowModal(true));
+    };
+
+    const handleUpdateCV = (updatedCV) => {
+        dispatch(updateCVData({ token, cvData: updatedCV }));
     };
 
     const getFilterText = () => {
@@ -49,25 +66,13 @@ const ResumePage = () => {
             case 'Образование':
                 return (
                     <div className={style.desc}>
-                        {cvData?.education && cvData.education.map((item, index) => (
-                            <p key={index}>{item}</p>
-                        ))}
+                        {cvData?.education && cvData.education}
                     </div>
                 );
             default:
                 return <div className={style.desc}></div>;
         }
     };
-
-    const handleFilterClick = (filter) => {
-        setSelectedFilter(filter === selectedFilter ? null : filter);
-    };
-
-    useEffect(() => {
-        if (token) {
-            dispatch(fetchCVData(token));
-        }
-    }, [dispatch, token]);
 
     return (
         <div className={style.main}>
@@ -79,7 +84,7 @@ const ResumePage = () => {
                             <p>Резюме</p>
                             <h2>{cvData?.name || 'Название не указано'}</h2>
                             <p>Желаемая зарплата: {cvData?.salary || 'не указана'}</p>
-                            <p>Ссылка на портфолио: {cvData?.portfolioLink || 'не указана'}</p>
+                            <p>Ссылка на портфолио: {cvData?.portfolio || 'не указана'}</p>
                             <div className={style.filter}>
                                 <p>Разработка</p>
                             </div>
@@ -94,19 +99,19 @@ const ResumePage = () => {
                     <div className={style.block}>
                         <div className={style.smallBlock}>
                             <div className={selectedFilter === 'О себе' ? style.activeFilter : ''}
-                                onClick={() => handleFilterClick('О себе')}>
+                                onClick={() => setSelectedFilter('О себе')}>
                                 <p>О себе</p>
                             </div>
                             <div className={selectedFilter === 'Навыки' ? style.activeFilter : ''}
-                                onClick={() => handleFilterClick('Навыки')}>
+                                onClick={() => setSelectedFilter('Навыки')}>
                                 <p>Навыки</p>
                             </div>
                             <div className={selectedFilter === 'Опыт работы' ? style.activeFilter : ''}
-                                onClick={() => handleFilterClick('Опыт работы')}>
+                                onClick={() => setSelectedFilter('Опыт работы')}>
                                 <p>Опыт работы</p>
                             </div>
                             <div className={selectedFilter === 'Образование' ? style.activeFilter : ''}
-                                onClick={() => handleFilterClick('Образование')}>
+                                onClick={() => setSelectedFilter('Образование')}>
                                 <p>Образование</p>
                             </div>
                         </div>
@@ -121,9 +126,9 @@ const ResumePage = () => {
                 {showAlarm && <p className={style.alarm}>Ваша вакансия успешно изменена!</p>}
             </div>
             <Footer />
-            {showModal && <ModalResume />}
-        </div >
+            {showModal && <ModalResume onSave={handleUpdateCV} />}
+        </div>
     );
 }
 
-export default ResumePage
+export default ResumePage;

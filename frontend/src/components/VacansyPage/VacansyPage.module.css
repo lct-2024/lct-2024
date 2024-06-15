@@ -60,25 +60,43 @@
     border: 1px solid black;
 }
 
-.search div {
+.dropbtn {
+    padding: 16px;
+    font-size: 16px;
+    background-color: white !important;
+    border: none;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
+}
+
+.dropdown {
+    display: inline;
+    position: relative;
+}
+
+.dropContent {
+    display: none;
+    position: absolute;
     background-color: white;
-    height: 42px;
-    min-width: 166px;
+    min-width: 190px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropContent p {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+
+.dropContent p:hover {
     cursor: pointer;
+    background-color: #ddd;
 }
 
-.search button {
-    background-color: black;
-    padding: 15.5px;
-}
-
-.search button:hover {
-    border: 2px solid #FF474D;
-    background-color: #FF474D;
+.dropdown:hover .dropContent {
+    display: block;
 }
 
 .btns {

@@ -28,54 +28,51 @@ export const fetchCVData = createAsyncThunk(
                 throw new Error(data.error.message || 'Failed to fetch CV');
             }
 
+            // If CV doesn't exist, create a new one
             if (!data.result) {
-                const initialCVData = {
-                    about: '',
-                    chat_id: '',
-                    contacts: null,
-                    created_at: '',
-                    email: '',
-                    experience: '',
-                    id: null,
-                    name: '',
-                    system_chat_id: '',
-                    updated_at: '',
-                    user_id: null,
-                    skills: [],
-                    education: [],
-                };
-                return thunkAPI.dispatch(createCVData({ token, cvData: initialCVData }));
+                // Create new CV here (assuming initial CV data)
+                const createResponse = await axios.post(
+                    'https://ats.lct24.dev.40ants.com/api/update_cv',
+                    {
+                        jsonrpc: '2.0',
+                        method: 'update_cv',
+                        params: {
+                            about: '',
+                            chat_id: '',
+                            contacts: null,
+                            created_at: '',
+                            email: '',
+                            experience: '',
+                            id: null,
+                            name: '',
+                            system_chat_id: '',
+                            updated_at: '',
+                            user_id: null,
+                            skills: [],
+                            education: [],
+                        },
+                        id: 1,
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `${token}`,
+                        },
+                    }
+                );
+
+                const createData = createResponse.data;
+
+                if (createData.error) {
+                    throw new Error(createData.error.message || 'Failed to create CV');
+                }
+
+                return createData.result;
             }
-            return data.result;
+
+            return data.result; // Return existing CV details
         } catch (error) {
             throw new Error(error.response?.data?.error?.message || 'Failed to fetch CV');
-        }
-    }
-);
-
-export const createCVData = createAsyncThunk(
-    'resume/createCVData',
-    async ({ token, cvData }, thunkAPI) => {
-        try {
-            const response = await axios.post(
-                'https://ats.lct24.dev.40ants.com/api/create_cv',
-                {
-                    jsonrpc: '2.0',
-                    method: 'create_cv',
-                    params: cvData,
-                    id: 1,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `${token}`,
-                    },
-                }
-            );
-
-            return response.data.result;
-        } catch (error) {
-            throw new Error(error.response?.data?.error?.message || 'Failed to create CV');
         }
     }
 );
@@ -258,6 +255,7 @@ const resumeSlice = createSlice({
             .addCase(getCVEducation.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.cvData.education = action.payload; // Check action.payload here
+                console.log(action.payload); // Debugging output
             })
             .addCase(getCVEducation.rejected, (state, action) => {
                 state.status = 'failed';
@@ -287,18 +285,6 @@ const resumeSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
-            .addCase(createCVData.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(createCVData.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.cvData = action.payload;
-                state.showModal = false;
-            })
-            .addCase(createCVData.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message;
-            })
             .addCase(updateCVData.pending, (state) => {
                 state.status = 'loading';
             })
@@ -306,10 +292,12 @@ const resumeSlice = createSlice({
                 state.status = 'succeeded';
                 state.cvData = action.payload;
                 state.showModal = false;
+                console.log('CV Data updated successfully:', action.payload);
             })
             .addCase(updateCVData.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = action.error.message || 'Failed to update CV';
+                console.error('Update CV failed:', action.error);
             });
     },
 });
