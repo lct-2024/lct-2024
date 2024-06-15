@@ -60,25 +60,8 @@ API документировано в формате OpenRPC (аналог OpenA
 
 ### Вот так выглядит архитектура сервиса
 
-```mermaid
-graph TD;
-   subgraph backend[back + front]
-   Application
-   end
-   
-   subgraph cloud
-   DB[(Postgres)]
-   S3[[S3]]
-   end
 
-   subgraph external-services
-   Resend
-   end
-
-   Application --> DB
-   Application --> Resend
-   Application --> S3
-```
+![](images/lct24-arch.png)
 
 
 ### Директории
@@ -145,10 +128,3 @@ pandoc README.md \
 
 ## Несколько скринов с демо интерфейса (TODO: обновить)
 
-### Дашборд HR сотрудника
-
-![](https://storage.yandexcloud.net/hrzero-files/lct-hr-dashboard.gif)
-
-### Игра помогающая лучше узнать коллег
-
-![](https://storage.yandexcloud.net/hrzero-files/lct-hr-game.gif)
