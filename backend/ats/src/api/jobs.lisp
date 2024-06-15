@@ -43,6 +43,7 @@
   (:import-from #:local-time-duration
                 #:duration)
   (:import-from #:sxql
+                #:join
                 #:where)
   (:import-from #:common/auth
                 #:require-scope)
@@ -181,6 +182,33 @@
          (mito:object-id applicant)
          :type "self-applied")
         (values t)))))
+
+
+(define-rpc-method (ats-api get-my-jobs) ()
+  (:summary "Отдаёт вакансии на которые откликнулся текущий кандидат")
+  (:result (serapeum:soft-list-of job))
+  
+  (with-connection ()
+    (with-session ((user-id))
+      (let* ((applicant (mito:find-dao 'applicant
+                                       :user-id user-id)))
+        (when applicant
+          (loop for job in (select-dao 'ats/models/job::job
+                             (includes 'project)
+                             (includes 'speciality)
+                             (join :ats.job_applicant
+                                 :on (:=
+                                      :job.id
+                                      :job_applicant.job_id))
+                             (where (:= :job_applicant.applicant_id
+                                        (mito:object-id applicant))))
+                collect
+                   (change-class job 'job
+                                 :skills (get-job-skills job)
+                                 :programming-languages (get-job-programming-languages job)
+                                 :resume-matching-score (if user-id
+                                                            (calculate-resume-score job user-id)
+                                                            0))))))))
 
 
 (define-rpc-method (ats-api open-position) (job-id)
