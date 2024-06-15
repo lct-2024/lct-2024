@@ -75,9 +75,9 @@ const ResumePage = () => {
                     <div className={style.blocks}>
                         <div className={style.body}>
                             <p>Резюме</p>
-                            <h2>{cvData.name}</h2>
-                            <p>Желаемая зарплата: не указана</p>
-                            <p>Ссылка на портфолио: не указана</p>
+                            <h2>{cvData?.name || 'Название не указано'}</h2>
+                            <p>Желаемая зарплата: {cvData?.salary || 'не указана'}</p>
+                            <p>Ссылка на портфолио: {cvData?.portfolioLink || 'не указана'}</p>
                             <div className={style.filter}>
                                 <p>Разработка</p>
                             </div>
