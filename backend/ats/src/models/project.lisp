@@ -10,6 +10,8 @@
                 #:dao-table-class)
   (:import-from #:40ants-pg/query
                 #:sql-fetch-all)
+  (:import-from #:alexandria
+                #:random-elt)
   (:export
    #:get-project-by-id))
 (in-package #:ats/models/project)
@@ -38,3 +40,10 @@
 (defun get-project-by-id (id)
   (mito:find-dao 'project
                  :id id))
+
+
+(defun get-random-project-id ()
+  (getf (random-elt (mito:retrieve-by-sql "select id from ats.project"))
+        :id))
+
+

@@ -47,61 +47,85 @@ order by title COLLATE \"ru_RU\""
                         :binds (list (fmt "%~A%" query)))))
 
 
+(defparameter *known-langs*
+  (list "Python"
+        "Golang"
+        "Java"
+        "JavaScript"
+        "C#"
+        "C++"
+        "Ruby"
+        "PHP"
+        "Swift"
+        "Kotlin"
+        "TypeScript"
+        "Go"
+        "R"
+        "Scala"
+        "Rust"
+        "Perl"
+        "Haskell"
+        "Objective-C"
+        "Lua"
+        "Shell Script"
+        "SQL"
+        "Matlab"
+        "Assembly"
+        "Groovy"
+        "Clojure"
+        "Visual Basic"
+        "Dart"
+        "F#"
+        "COBOL"
+        "Lisp"
+        "Prolog"
+        "Fortran"
+        "Ada"
+        "Julia"
+        "Scheme"
+        "TCL"
+        "Erlang"
+        "Powershell"
+        "Apex"
+        "Delphi"
+        "Elixir"
+        "ActionScript"
+        "ABAP"
+        "Smalltalk"
+        "VHDL"
+        "ColdFusion"
+        "AWK"
+        "COOL"
+        "Dart"
+        "OCaml"
+        "Scratch"))
+
+
 (defun load-some-programming-languages ()
   (with-connection ()
-    (loop with data = (list "Python"
-                            "Java"
-                            "JavaScript"
-                            "C#"
-                            "C++"
-                            "Ruby"
-                            "PHP"
-                            "Swift"
-                            "Kotlin"
-                            "TypeScript"
-                            "Go"
-                            "R"
-                            "Scala"
-                            "Rust"
-                            "Perl"
-                            "Haskell"
-                            "Objective-C"
-                            "Lua"
-                            "Shell Script"
-                            "SQL"
-                            "Matlab"
-                            "Assembly"
-                            "Groovy"
-                            "Clojure"
-                            "Visual Basic"
-                            "Dart"
-                            "F#"
-                            "COBOL"
-                            "Lisp"
-                            "Prolog"
-                            "Fortran"
-                            "Ada"
-                            "Julia"
-                            "Scheme"
-                            "TCL"
-                            "Erlang"
-                            "Powershell"
-                            "Apex"
-                            "Delphi"
-                            "Elixir"
-                            "ActionScript"
-                            "ABAP"
-                            "Smalltalk"
-                            "VHDL"
-                            "ColdFusion"
-                            "AWK"
-                            "COOL"
-                            "Dart"
-                            "OCaml"
-                            "Scratch")
+    (loop with data = *known-langs*
           for title in (remove-duplicates
                         (sort data
                               #'string<)
                         :test #'string-equal)
           do (create-dao 'programming-language
                          :title (trim title)))))
+
+
+(defun get-programming-language-ids (languages)
+  (loop for name in languages
+        for lang = (or (first
+                        (mito:select-by-sql 'programming-language
+                                            "select * from ats.programming_language where title collate \"ru_RU\" ilike ?"
+                                            :binds (list (trim name))))
+                       (mito:create-dao 'programming-language
+                                        :title (trim name)))
+        collect (mito:object-id lang)))
+
+
+(defun separate-skills-from-languages (values)
+  (loop for item in values
+        if (member item *known-langs* :test #'string-equal)
+        collect item into langs
+        else collect item into skills
+        finally (return (values skills langs))))

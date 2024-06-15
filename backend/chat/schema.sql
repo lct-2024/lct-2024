@@ -8,7 +8,7 @@ CREATE TABLE chat.chat (
 );
 
 CREATE TABLE chat.chat_team (
-    chat_id UUID NOT NULL,
+    chat_id UUID NOT NULL references chat.chat on delete cascade,
     team_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ,
@@ -16,7 +16,7 @@ CREATE TABLE chat.chat_team (
 );
 
 CREATE TABLE chat.chat_member (
-    chat_id UUID NOT NULL,
+    chat_id UUID NOT NULL references chat.chat on delete cascade,
     user_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ,
@@ -25,7 +25,7 @@ CREATE TABLE chat.chat_member (
 
 CREATE TABLE chat.message (
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    chat_id UUID NOT NULL,
+    chat_id UUID NOT NULL references chat.chat on delete cascade,
     user_id BIGINT NOT NULL,
     message TEXT NOT NULL,
     created_at TIMESTAMPTZ,
@@ -49,4 +49,6 @@ ALTER TABLE chat.chat ADD COLUMN content_type TEXT;
 
 ALTER TABLE chat.chat ADD COLUMN content_id TEXT;
 
-CREATE UNIQUE INDEX unique_content_type_and_id_idx ON chat.chat (content_type, content_id) WHERE content_type is not NULL and content_id is not NULL;
+CREATE UNIQUE INDEX unique_content_type_and_id_idx
+ON chat.chat (content_type, content_id)
+WHERE (content_type is not NULL and content_id is not NULL);

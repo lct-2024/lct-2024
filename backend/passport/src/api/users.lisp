@@ -3,6 +3,7 @@
   (:import-from #:sha1
                 #:sha1-hex)
   (:import-from #:openrpc-server
+                #:type-to-schema
                 #:return-error
                 #:define-rpc-method)
   (:import-from #:40ants-pg/connection
@@ -10,9 +11,11 @@
   (:import-from #:40ants-openrpc/jwt
                 #:with-session)
   (:import-from #:mito
+                #:deftable
                 #:save-dao
                 #:find-dao)
   (:import-from #:passport/models/user
+                #:get-user-roles-and-scopes
                 #:user-password-hash
                 #:get-user-by
                 #:issue-token-for
@@ -29,11 +32,18 @@
                 #:with-output-to-file
                 #:make-keyword)
   (:import-from #:serapeum
+                #:soft-list-of
+                #:dict
                 #:fmt)
   (:import-from #:local-time
                 #:now
                 #:format-rfc3339-timestring))
 (in-package #:passport/api/users)
+
+
+(defvar *demo-mode*
+  (uiop:getenv "DEMO_MODE")
+  "Если установлен демо-режим, то можно войти в любую учётку с любым паролем.")
 
 
 (defun auth-log (message &rest arguments)
@@ -45,33 +55,64 @@
             (apply #'serapeum:fmt message arguments ))))
 
 
+(deftable user-profile (user)
+  ((roles :initarg :roles
+          :type (soft-list-of string)
+          :col-type :array
+          :reader user-roles)
+   (scopes :initarg :scopes
+          :type (soft-list-of string)
+          :col-type :array
+          :reader user-scopes))
+  (:table "passport.user"))
+
+
+(defclass user-and-token ()
+  ((user :initarg :user
+         :type user-profile
+         :reader user-profile)
+   (token :initarg :token
+          :type string
+          :reader user-token)))
+
+
 (define-rpc-method (passport-api login) (email password)
   (:summary "Позволяет залогиниться пользователю по email и паролю.")
   (:param email string)
   (:param password string)
-  (:result string)
+  (:result user-and-token)
   (with-connection ()
     (let* ((hash (get-password-hash password))
            (user (get-user-by email))
            (user-hash (when user
                         (user-password-hash user))))
       (cond
-        ((equal user-hash hash)
+        ((and user
+              (or *demo-mode*
+                  (equal user-hash hash)))
          (auth-log "User logged in: ~A" email)
-         (issue-token-for user))
+         (let ((auth-token (issue-token-for user)))
+           (multiple-value-bind (roles scopes)
+               (get-user-roles-and-scopes user)
+             (make-instance 'user-and-token
+                            :user (change-class user 'user-profile
+                                                :roles roles
+                                                :scopes scopes)
+                            :token auth-token))))
         (t
          (auth-log "User entered wrong pass or missing in db: ~A" email)
          (openrpc-server:return-error "Неправильный email или пароль." :code 1))))))
 
 
-(define-rpc-method (passport-api signup) (email password fio
+(define-rpc-method (passport-api signup) (email password
                                                 &key
-                                                my-role)
+                                                fio ;; Это надо бы совсем выпилить
+                                                metadata)
   (:summary "Регистрирует новую учётку с указанным email и паролем.")
-  (:param email string)
-  (:param password string)
-  (:param fio string)
-  (:param my-role string "Должность текущего пользователя в компании.")
+  (:param email string "Email пользователя.")
+  (:param password string "Пароль.")
+  (:param fio string "Deprecated. Класть ФИО надо в metadata, как отдельные поля.")
+  (:param metadata hash-table "Словарь с дополнительной информацией о пользователе, нужной остальным сервисам сайта.")
   
   (:result string)
   (log:info "Signup with" email)
@@ -84,8 +125,9 @@
                                      :fio fio
                                      :email email
                                      :avatar-url (get-avatar-url-for email)
-                                     :position my-role
-                                     :password-hash (get-password-hash password))))
+                                     :password-hash (get-password-hash password)
+                                     :metadata (or metadata
+                                                   (dict)))))
          (auth-log "User signed up: ~A" email)
          (issue-token-for user)))
       (t
@@ -95,14 +137,44 @@
                      :code 2)))))
 
 
+(defmethod openrpc-server:slots-to-exclude ((obj (eql (find-class 'user-profile))))
+  (list* "password-hash"
+         (call-next-method)))
+
+
 (define-rpc-method (passport-api my-profile) ()
   (:summary "Отдаёт профиль текущего залогиненого пользователя.")
   (:result user)
   (with-connection ()
     (with-session (user-id)
-      (first
-       (mito:select-dao 'user
-                        (sxql:where (:= :id user-id)))))))
+      (let ((user (mito:find-dao 'user
+                                 :id user-id)))
+        (multiple-value-bind (roles scopes)
+            (get-user-roles-and-scopes user)
+          (change-class user 'user-profile
+                        :roles roles
+                        :scopes scopes)
+          (values user))))))
+
+
+(define-rpc-method (passport-api get-user-profiles) (user-ids)
+  (:summary "Отдаёт профили пользователей по их id.")
+  (:param user-ids (soft-list-of integer) "Список id пользователей.")
+  (:result (soft-list-of user))
+  (let ((unique-user-ids  (remove-duplicates user-ids)))
+    (when unique-user-ids
+          (with-connection ()
+      
+            (loop for user in (40ants-pg/utils:select-dao-by-ids 'user user-ids)
+                  ;; TODO: так для каждого пользователя получать роли не оптимально,
+                  ;; но на этапе MVP нам это не важно. Сами роли нам нужны
+                  ;; для того, чтобы можно было в чатах подсветить сотрудников компании
+                  collect (multiple-value-bind (roles scopes)
+                              (get-user-roles-and-scopes user)
+                            (change-class user 'user-profile
+                                          :roles roles
+                                          :scopes scopes)
+                            (values user)))))))
 
 
 (defun get-password-hash (password)

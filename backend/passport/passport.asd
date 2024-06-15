@@ -8,6 +8,7 @@
   :pathname "src"
   :depends-on ("passport/core"
                "passport/api/users"
+               "passport/api/scopes"
                "passport/api/deploy")
   :in-order-to ((test-op (test-op "passport-tests"))))
 

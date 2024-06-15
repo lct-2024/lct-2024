@@ -7,8 +7,18 @@ WORK_DIR=${1:-~/projects/lct-2024-latest/frontend/}
 
 cd ${WORK_DIR}
 
-git pull
+LOG_FILE=/tmp/lct24-frontend-build.log
 
-docker build . -t lct24-frontend > /tmp/lct24-frontend-build.log 2>&1
+echo "Pulling: $(date)" >> $LOG_FILE
 
-systemctl --user restart lct-2024
+git pull >> $LOG_FILE 2>&1
+
+echo "Building" >> $LOG_FILE
+
+docker build . -t lct24-frontend >> $LOG_FILE 2>&1
+
+echo "Pulling" >> $LOG_FILE
+
+systemctl --user restart lct-2024 >> $LOG_FILE 2>&1
+
+echo "Done: $(date)" >> $LOG_FILE

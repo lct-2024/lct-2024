@@ -79,3 +79,12 @@ order by title COLLATE \"ru_RU\""
 (defun get-speciality-by-id (id)
   (mito:find-dao 'speciality
                  :id id))
+
+
+(defun get-speciality-id (title)
+  (mito:object-id
+   (or (first (mito:select-by-sql 'speciality
+                                  "select * from ats.speciality where title collate \"ru_RU\" ilike ?"
+                                  :binds (list title)))
+       (mito:create-dao 'speciality
+                        :title title))))

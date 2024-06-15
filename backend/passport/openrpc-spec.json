@@ -1,16 +1,6 @@
 {
   "methods": [
     {
-      "name": "rpc.discover",
-      "params": [],
-      "result": {
-        "name": "OpenRPC Schema",
-        "schema": {
-          "$ref": "https://raw.githubusercontent.com/open-rpc/meta-schema/master/schema.json"
-        }
-      }
-    },
-    {
       "name": "login",
       "params": [
         {
@@ -60,6 +50,13 @@
             "type": "string"
           },
           "required": true
+        },
+        {
+          "name": "metadata",
+          "schema": {
+            "type": "object"
+          },
+          "summary": "Словарь с дополнительной информацией о пользователе, нужной остальным сервисам сайта."
         }
       ],
       "result": {
@@ -93,9 +90,6 @@
               "x-cl-class": "T",
               "x-cl-package": "COMMON-LISP"
             },
-            "synced": {
-              "type": "boolean"
-            },
             "id": {
               "type": "integer"
             },
@@ -111,9 +105,13 @@
             "avatar_url": {
               "type": "string"
             },
-            "admin": {
+            "banned": {
               "type": "boolean",
-              "description": "Если этот признак True, то пользователь считается админом и может позволить себе больше, чем простые смертные."
+              "description": "Если True, то пользователь забанен и не может логиниться."
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Словарь с дополнительной информацией о пользователе."
             }
           },
           "required": [
@@ -130,6 +128,26 @@
         }
       },
       "summary": "Отдаёт профиль текущего залогиненого пользователя.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "deploy",
+      "params": [
+        {
+          "name": "token",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "result": {
+        "name": "deploy_result",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "summary": "Запускает деплой фронтенда.",
       "paramStructure": "by-name"
     }
   ],

@@ -11,7 +11,11 @@
   (:import-from #:40ants-pg/query
                 #:sql-fetch-all)
   (:import-from #:yason
-                #:with-output-to-string*))
+                #:with-output-to-string*)
+  (:import-from #:common/chat
+                #:create-new-chat)
+  (:import-from #:40ants-pg/connection
+                #:with-connection))
 (in-package #:ats/models/applicant)
 
 
@@ -64,19 +68,46 @@
                :type string
                :col-type :text
                :initform ""
+               :documentation "Описание опыта работы кандидата."
                :accessor applicant-experience)
    (about :initarg :about
           :type string
           :col-type :text
           :initform ""
+          :documentation "Общее описание кандидата, его увелечения, свойства характера и прочее."
           :accessor applicant-about)
+   (portfolio :initarg :portfolio
+          :type string
+          :col-type :text
+          :initform ""
+          :documentation "Ссылка на портфолио."
+          :accessor applicant-portfolio)
+   (salary :initarg :salary
+          :type string
+          :col-type :text
+          :initform ""
+          :documentation "Желаемая зарплата"
+          :accessor applicant-salary)
    (contacts :initarg :contacts
              :type (soft-list-of contact)
              :col-type :jsonb
              :initform nil
              :inflate #'contacts-from-json
              :deflate #'contacts-to-json
-             :accessor applicant-contacts))
+             :documentation "Список контактов в виде словарей с ключами \"type\" и \"value\", где значениями являются строки. Например: [{\"telegram\": \"telegram-nick\"}]."
+             :accessor applicant-contacts)
+   (chat-id :initarg :chat-id
+            :initform nil
+            :type (or null string)
+            :col-type (or :null :text)
+            :documentation "ID чата, привязанного к объекту."
+            :accessor applicant-chat-id)
+   (system-chat-id :initarg :system-chat-id
+                   :initform nil
+                   :type (or null string)
+                   :col-type (or :null :text)
+                   :documentation "ID чата, с системными сообщениями пользователя."
+                   :accessor applicant-system-chat-id))
   (:table-name "ats.applicant"))
 
 
@@ -86,3 +117,31 @@
             (object-id applicant)
             (applicant-name applicant))))
 
+
+
+(defun fill-chat-ids ()
+  (with-connection ()
+    (loop for applicant in (mito:select-dao 'applicant)
+          do (setf (applicant-chat-id applicant)
+                   (create-new-chat "applicant"
+                                    (princ-to-string (mito:object-id applicant))))
+             (mito:save-dao applicant))))
+
+
+(defun fill-system-chat-ids ()
+  (with-connection ()
+    (loop for applicant in (mito:select-dao 'applicant)
+          do (setf (applicant-system-chat-id applicant)
+                   (create-new-chat "user-notifications"
+                                    (princ-to-string (applicant-user-id applicant))))
+             (mito:save-dao applicant))))
+
+
+(defmethod mito:insert-dao :after ((obj applicant))
+  (setf (applicant-chat-id obj)
+        (create-new-chat "applicant"
+                         (princ-to-string (mito:object-id obj))))
+  (setf (applicant-system-chat-id obj)
+        (create-new-chat "user-notifications"
+                         (princ-to-string (applicant-user-id obj))))
+  (mito:save-dao obj))

@@ -17,7 +17,8 @@
   (:import-from #:40ants-pg/transactions
                 #:with-transaction)
   (:export
-   #:bind-job-to-skills))
+   #:bind-job-to-skills
+   #:get-job-skills))
 (in-package #:ats/models/job-skill)
 
 
@@ -35,7 +36,7 @@
 
 (defmethod print-object ((obj job-skill) stream)
   (print-unreadable-object (obj stream :type t)
-    (format stream "ID=~A JOB=~A LANG=~A"
+    (format stream "ID=~A JOB=~A SKILL=~A"
             (object-id obj)
             (job obj)
             (skill obj))))
@@ -49,3 +50,13 @@
                                         :job job
                                         :skill-id skill-id)
             collect (skill link))))
+
+
+(defun get-job-skills (job)
+  (mito:select-by-sql 'skill
+                      "
+select skill.*
+from ats.skill
+join ats.job_skill on skill.id = job_skill.skill_id
+where job_skill.job_id = ?"
+                      :binds (list (mito:object-id job))))

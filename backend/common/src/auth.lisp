@@ -7,18 +7,18 @@
   (:import-from #:log4cl-extras/context
                 #:with-fields)
   (:export
-   #:require-role))
+   #:require-scope))
 (in-package #:common/auth)
 
 
-(defun require-role (user-id roles required-role action-name)
-  (unless (member required-role roles)
+(defun require-scope (user-id scopes required-scope action-name)
+  (unless (member required-scope scopes :test #'string-equal)
     (with-fields (:user-id user-id
-                  :roles roles
-                  :required-role required-role
+                  :scopes scopes
+                  :required-scope required-scope
                   :action-name action-name)
       (log:error "AUTH: Unauthorized access")
-      (return-error (fmt "Role ~A is required to ~A."
-                         required-role
+      (return-error (fmt "Scope ~A is required to ~A."
+                         required-scope
                          action-name)
                     :code 3))))

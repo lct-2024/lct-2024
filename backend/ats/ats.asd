@@ -14,8 +14,12 @@
                "ats/api/cities"
                "ats/api/specialities"
                "ats/api/programming-languages"
-               "ats/api/skills")
+               "ats/api/news"
+               "ats/api/skills"
+               "ats/api/score"
+               "ats/algorithms/resume-score")
   :in-order-to ((test-op (test-op "ats-tests"))))
 
 
 (asdf:register-system-packages "dexador" '("DEX"))
+(asdf:register-system-packages "log4cl" '(#:log))

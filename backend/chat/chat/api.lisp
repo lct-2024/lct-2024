@@ -75,6 +75,32 @@
            (openrpc-server:return-error (fmt "Чат с id ~S не найден." id)
                                         :code 1003)))))))
 
+
+(define-rpc-method (chat-api get-chat-bound-to-content) (content-type content-id)
+  (:summary "Запрашивает данные о чате, привязанном к конкретной сущности.")
+  (:description "Если чат не найден, то возвращает ошибку.")
+  (:param content-type string)
+  (:param content-id string)
+  (:result chat)
+
+  (handler-bind
+      ((error (lambda (err)
+                (unless (typep err 'jsonrpc:jsonrpc-error)
+                  (openrpc-server:return-error (fmt "Ошибка: ~S" err)
+                                               :code 1000)))))
+    (with-connection ()
+      (let ((chat (find-dao 'chat
+                            :content-type content-type
+                            :content-id content-id)))
+        (cond
+          (chat chat)
+          (t
+           (openrpc-server:return-error (fmt "Chat for content-type ~A and content-id ~S was not found."
+                                             content-type
+                                             content-id)
+                                        :code 1003)))))))
+
+
 (define-rpc-method (chat-api archive-chat) (id)
   (:summary "Архивирует чат.")
   (:description "Если чат не найден, то возвращает ошибку.")
@@ -110,3 +136,17 @@
 
   (with-connection ()
     (mito:retrieve-dao 'chat :content-type content-type)))
+
+
+(define-rpc-method (chat-api get-content-types) ()
+  (:summary "Отдаёт список content-type, в существующих чатах")
+  (:description "Просто вспомогательный метод, чтобы перед использованием get-all-chats можно было посмотреть на типы чатов.")
+  (:result (list-of string))
+
+  (with-connection ()
+    (loop for row in (mito:retrieve-by-sql "
+select distinct(content_type) as content_type
+  from chat.chat
+ where content_type is not null
+")
+          collect (getf row :content-type ))))
