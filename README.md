@@ -113,6 +113,8 @@ API документировано в формате OpenRPC (аналог OpenA
 
 ![](images/matrix.png)
 
+[Ссылка на Excel документ](https://docs.google.com/spreadsheets/d/1xUVcL1cUuk8DvOQjpiERGPLdxric5y3epYXcq5PUuJM/edit?gid=1519841586#gid=1519841586) в Google Docs.
+
 
 ## Как собрать PDF с документацией
 
