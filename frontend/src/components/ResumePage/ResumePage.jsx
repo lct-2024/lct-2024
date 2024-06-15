@@ -21,11 +21,13 @@ const ResumePage = () => {
     };
 
     const getFilterText = () => {
+        if (!cvData) {
+            return <p>Резюме еще не создано</p>;
+        }
         switch (selectedFilter) {
             case 'О себе':
                 return (
                     <div className={style.desc}>
-                        {console.log(cvData)}
                         <h3>{cvData.name || 'Название не указано'}</h3>
                         <p>{cvData.about || 'Описание не указано'}</p>
                     </div>
