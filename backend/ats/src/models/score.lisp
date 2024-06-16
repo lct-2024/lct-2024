@@ -74,7 +74,13 @@
                      :col-type :integer
                      :initform 0
                      :documentation "Experience заполнено"
-                     :accessor score-experience-match))
+                     :accessor score-experience-match)
+   (total :initarg :total
+          :experience-match integer
+          :col-type :integer
+          :initform 0
+          :documentation "Общая оценка по которой можно отсортировать наиболее подходящие вакансии."
+          :accessor score-total))
   (:documentation "Хранит метрики соответствия кандидата вакансии.")
   (:table-name "ats.score"))
 

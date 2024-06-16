@@ -21,7 +21,7 @@
 
 (deftable recommendation ()
   ((applicant :initarg :applicant
-              :documentation "Пользователь, к которому привязана запись об образовании."
+              :documentation "Пользователь, к которому привязана рекомендация."
               :type applicant
               :col-type applicant
               :reader recommendation-applicant)

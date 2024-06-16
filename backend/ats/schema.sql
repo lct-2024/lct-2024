@@ -250,3 +250,5 @@ update ats.job set open = true;
 
 alter table ats.applicant add column salary TEXT not null default '';
 alter table ats.applicant add column portfolio TEXT not null default '';
+
+alter table ats.score add column total INTEGER not null default 0;

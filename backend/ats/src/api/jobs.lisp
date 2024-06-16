@@ -29,6 +29,7 @@
                 #:get-job-programming-languages
                 #:bind-job-to-programming-languages)
   (:import-from #:mito
+                #:object-id
                 #:find-dao
                 #:select-dao
                 #:includes
@@ -43,6 +44,8 @@
   (:import-from #:local-time-duration
                 #:duration)
   (:import-from #:sxql
+                #:order-by
+                #:left-join
                 #:join
                 #:where)
   (:import-from #:common/auth
@@ -142,19 +145,34 @@
   (:result (serapeum:soft-list-of job))
   (with-connection ()
     (with-session ((user-id) :require nil)
-      (values
-       (loop for job in (select-dao 'ats/models/job::job
-                          (includes 'project)
-                          (includes 'speciality)
-                          (unless show-all
-                            (where (:= :active 1))))
-             collect
-                (change-class job 'job
-                              :skills (get-job-skills job)
-                              :programming-languages (get-job-programming-languages job)
-                              :resume-matching-score (if user-id
-                                                         (calculate-resume-score job user-id)
-                                                         0)))))))
+      (let ((applicant (when user-id
+                         (mito:find-dao 'applicant
+                                        :user-id user-id))))
+        (values
+         (loop for job in (select-dao 'ats/models/job::job
+                            (includes 'project)
+                            (includes 'speciality)
+                            (when applicant
+                              (left-join :ats.score
+                                         :on (:= :job.id
+                                              :score.job_id)))
+                            (unless show-all
+                              (cond
+                                (applicant
+                                 (where (:and (:= :active 1)
+                                              (:= :score.applicant_id
+                                                  (object-id applicant)))))
+                                (t (where (:and (:= :active 1))))))
+                            (when applicant
+                              (order-by (:desc :score.total))))
+               collect
+                  (change-class job 'job
+                                :skills (get-job-skills job)
+                                :programming-languages (get-job-programming-languages job)
+                                :resume-matching-score (if applicant
+                                                           (calculate-resume-score job
+                                                                                   applicant)
+                                                           0))))))))
 
 
 (define-rpc-method (ats-api apply-to-the-job) (job-id)
@@ -207,7 +225,7 @@
                                  :skills (get-job-skills job)
                                  :programming-languages (get-job-programming-languages job)
                                  :resume-matching-score (if user-id
-                                                            (calculate-resume-score job user-id)
+                                                            (calculate-resume-score job applicant)
                                                             0))))))))
 
 

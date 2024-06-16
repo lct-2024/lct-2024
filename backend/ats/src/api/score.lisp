@@ -32,7 +32,8 @@
   (:import-from #:common/auth
                 #:require-scope
                 #:require-role)
-  (:import-from #:ats/models/score))
+  (:import-from #:ats/models/score
+                #:score-total))
 (in-package #:ats/api/score)
 
 
@@ -73,26 +74,7 @@ where s.job_id = ?
                   (update-score job-id user-id)))))
     (cond
       (score
-       (let ((total (min (+ (* (ats/models/score::score-fio-filled score)
-                               5)
-                            (* (ats/models/score::score-email-filled score)
-                               5)
-                            (* (ats/models/score::score-phone-filled score)
-                               5)
-                            (* (ats/models/score::score-telegram-filled score)
-                               5)
-                            (* (ats/models/score::score-about-filled score)
-                               5)
-                            (* (ats/models/score::score-experience-filled score)
-                               5)
-                            ;; Предыдущие пункты в сумме могут дать 30%,
-                            ;; а experience-match может быть от 0 до 100,
-                            ;; так что его надо сжать до диапазона 0 - 60
-                            (coerce (ceiling (* 0.6 (ats/models/score::score-experience-match score)))
-                                    'integer))
-                         ;; На всякий случай ограничим сверху, чтобы не было нелепых выходов за более 100%
-                         100))
-             (recommendations
+       (let ((recommendations
                (remove-if #'null
                           (list (when (zerop (ats/models/score::score-fio-filled score))
                                   "Укажите в резюме имя.")
@@ -110,7 +92,7 @@ where s.job_id = ?
                                 (when (< 50 (ats/models/score::score-experience-match score))
                                   "Поступите в академию Reksoft, чтобы получить знания для соответствия вакансии.")))))
          (make-instance 'score-and-recommendations
-                        :score total
+                        :score (score-total score)
                         :recommendations recommendations)))
       ;; Score не может быть посчитан, потому что у пользователя пока нет резюме.
       (t
