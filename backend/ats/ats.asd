@@ -19,7 +19,8 @@
                "ats/api/score"
                "ats/api/analytics"
                "ats/api/subscriptions"
-               "ats/algorithms/resume-score")
+               "ats/algorithms/resume-score"
+               "ats/algorithms/new-job-processing")
   :in-order-to ((test-op (test-op "ats-tests"))))
 
 

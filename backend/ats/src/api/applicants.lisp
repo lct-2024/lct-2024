@@ -52,7 +52,9 @@
                 #:post-to-chat)
   (:import-from #:ats/models/applicant-skill
                 #:get-skills-simple
-                #:update-skills-simple))
+                #:update-skills-simple)
+  (:export
+   #:notify-applicant))
 (in-package #:ats/api/applicants)
 
 
@@ -592,6 +594,24 @@ where ja.id = ?
 ;; Steps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun notify-applicant (applicant message)
+  (ignore-errors
+   (with-log-unhandled ()
+     (let ((system-chat-id
+             (getf (first
+                    (mito:retrieve-by-sql "
+select system_chat_id as id
+from ats.applicant
+where id = ?"
+                                          :binds (list (etypecase applicant
+                                                         (applicant (object-id applicant))
+                                                         (integer applicant)))))
+                   :id)))
+       (when system-chat-id
+         (post-to-chat system-chat-id
+                       message))))))
+
+
 (defun %move-to-the-next-step (job-id applicant-id)
   (let* ((application
            (first
@@ -617,21 +637,10 @@ where ja.id = ?
          (when next-step
            (setf (job-applicant-application-step application)
                  next-step)
-           
-           (ignore-errors
-            (with-log-unhandled ()
-              (let ((system-chat-id
-                      (getf (first
-                             (mito:retrieve-by-sql "
-select system_chat_id as id
-from ats.applicant
-where id = ?"
-                                                   :binds (list applicant-id)))
-                            :id)))
-                (when system-chat-id
-                  (post-to-chat system-chat-id
-                                (fmt "Новый этап: ~A"
-                                     (application-step-title next-step))))))))))
+
+           (notify-applicant applicant-id
+                             (fmt "Новый этап: ~A"
+                                  (application-step-title next-step))))))
       (t
        (setf (job-applicant-application-step application)
              (mito:find-dao 'ats/models/application-step::application-step

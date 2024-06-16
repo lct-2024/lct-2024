@@ -22,7 +22,9 @@
   (:import-from #:40ants-pg/connection
                 #:with-connection)
   (:import-from #:common/chat
-                #:create-new-chat))
+                #:create-new-chat)
+  (:export
+   #:*new-job-hooks*))
 (in-package #:ats/models/job)
 
 
@@ -119,8 +121,17 @@
              (mito:save-dao job))))
 
 
-(defmethod mito:insert-dao :after ((obj job))
-  (setf (job-chat-id obj)
+(defmethod create-chat-for-job (job)
+  (setf (job-chat-id job)
         (create-new-chat "job"
-                         (princ-to-string (mito:object-id obj))))
+                         (princ-to-string (mito:object-id job)))))
+
+
+(defvar *new-job-hooks* '(create-chat-for-job))
+
+
+(defmethod mito:insert-dao :after ((obj job))
+  (loop for func in *new-job-hooks*
+        do (funcall func obj))
+
   (mito:save-dao obj))
