@@ -9,19 +9,6 @@ export const fetchOrCreateChat = createAsyncThunk(
         const authToken = getState().auth.token;
         const chatId = getState().comments.chatId;
 
-        const getChat = async (chat_id) => {
-            const response = await axios.post(`${API_BASE_URL}/get_chat`, {
-                jsonrpc: '2.0',
-                method: 'get_chat',
-                params: { id: chat_id },
-                id: 1,
-            }, {
-                headers: { 'Authorization': `${authToken}` }
-            });
-            console.log(response.data)
-            return response.data.result;
-        };
-
         const createChat = async (content_id, content_type, title, isPrivate) => {
             const response = await axios.post(`${API_BASE_URL}/create_chat`, {
                 jsonrpc: '2.0',
@@ -32,18 +19,33 @@ export const fetchOrCreateChat = createAsyncThunk(
                 headers: { 'Authorization': `${authToken}` }
             });
             console.log(response.data)
+            console.log("чат успешно создан")
             return response.data.result;
         };
 
         try {
+            let result;
             if (chatId) {
-                const chat = await getChat(chatId);
-                return { chatId: chat.id, messages: chat.messages };
+                result = { chatId };
             } else {
                 const newChat = await createChat(contentId, contentType, 'Chat Title', false);
                 console.log(newChat)
-                return { chatId: newChat.id, messages: [] };
+                result = { chatId: newChat.id };
             }
+
+            // Получаем сообщения чата с использованием chatId
+            const messagesResponse = await axios.post(`${API_BASE_URL}/get_messages`, {
+                jsonrpc: '2.0',
+                method: 'get_messages',
+                params: { chat_id: result.chatId, page_key: 0, limit: 10 }, // Пример параметров пагинации
+                id: 1,
+            }, {
+                headers: { 'Authorization': `${authToken}` }
+            });
+
+            result.messages = messagesResponse.data.result.items; // Записываем полученные сообщения
+
+            return result;
         } catch (error) {
             if (error.response && error.response.data.error) {
                 const newChat = await createChat(contentId, contentType, 'Chat Title', false);
@@ -59,7 +61,7 @@ export const postMessage = createAsyncThunk(
     'comments/postMessage',
     async ({ message }, { getState, rejectWithValue }) => {
         const authToken = getState().auth.token;
-        const chatId = getState().comments.chatId;
+        const chatId = getState().comments.chatId; // Используем chatId из состояния
 
         try {
             const response = await axios.post(`${API_BASE_URL}/post`, {
@@ -71,12 +73,14 @@ export const postMessage = createAsyncThunk(
                 headers: { 'Authorization': `${authToken}` }
             });
             console.log(response.data)
+            console.log("сообщения с чата получены" + response.data.result)
             return response.data.result;
         } catch (error) {
             return rejectWithValue(error.message);
         }
     }
 );
+
 const commentsSlice = createSlice({
     name: 'comments',
     initialState: {

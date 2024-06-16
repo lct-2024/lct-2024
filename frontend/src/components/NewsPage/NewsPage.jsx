@@ -10,6 +10,7 @@ const NewsPage = () => {
     const news = useSelector((state) => state.news.data);
     const status = useSelector((state) => state.news.status);
     const error = useSelector((state) => state.news.error);
+    const chatId = news ? news.chat_id : null;
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -42,17 +43,17 @@ const NewsPage = () => {
                     <div className={style.news}>
                         {news.map((item, i) => (
                             <div className={style.newsBlock} key={i}>
-                                <img src="bl2.png" alt="фото новости" />
+                                <img src={item.image} alt="фото новости" />
                                 <div className={style.about}>
                                     <h4>{item.short_title}</h4>
-                                    <p>{item.text}</p>
+                                    <p dangerouslySetInnerHTML={{ __html: item.short_html }}></p>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
-            <Comments contentId='newsId' contentType='news' />
+            <Comments contentId='newsId' text="новостях" chatId={chatId} contentType='news' />
             <Footer />
         </section>
     );

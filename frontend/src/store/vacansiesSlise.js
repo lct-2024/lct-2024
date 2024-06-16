@@ -3,15 +3,32 @@ import axios from 'axios';
 
 export const fetchVacansies = createAsyncThunk(
     'vacansies/fetchVacansies',
-    async () => {
-        const response = await axios.post('https://ats.lct24.dev.40ants.com/api/get_jobs', {
-            jsonrpc: '2.0',
-            method: 'get_jobs',
-            params: [],
-            id: 1
-        });
-        console.log(response.data)
-        return response.data.result;
+    async (_, thunkAPI) => {
+        const authToken = localStorage.getItem('authToken');
+        const config = {
+            headers: {}
+        };
+
+        if (authToken) {
+            config.headers['Authorization'] = authToken;
+        }
+
+        try {
+            const response = await axios.post(
+                'https://ats.lct24.dev.40ants.com/api/get_jobs',
+                {
+                    jsonrpc: '2.0',
+                    method: 'get_jobs',
+                    params: [],
+                    id: 1
+                },
+                config
+            );
+            console.log(response.data);
+            return response.data.result;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
     }
 );
 
@@ -38,7 +55,7 @@ const vacansiesSlice = createSlice({
             })
             .addCase(fetchVacansies.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = action.payload;
             });
     }
 });

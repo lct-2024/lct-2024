@@ -1,6 +1,7 @@
 .main {
     width: 100%;
-    background-color: #D9D9D9;
+    background: url(../../../public/nav_back.png);
+    background-position: right;
 }
 
 .head {

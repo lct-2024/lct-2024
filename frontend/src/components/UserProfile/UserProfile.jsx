@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import style from './UserProfile.module.css';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Footer from '../Footer';
 import Navigation from '../Navigation';
 import axios from 'axios';
 import ModalUser from '../ModalWindows/ModalUser';
+import { setUser } from '../../store/authSlice';
 
 const UserProfile = () => {
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
     const [alerts, setAlerts] = useState([]);
     const [appliedJobs, setAppliedJobs] = useState([]);
@@ -34,6 +36,19 @@ const UserProfile = () => {
         setShowCount(showCount + 5);
     };
 
+    const handleEditProfile = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+    const handleSaveProfile = (updatedUser) => {
+        dispatch(setUser(updatedUser));
+        handleCloseModal();
+    };
+
     if (!user) {
         return <div>Loading...</div>;
     }
@@ -53,7 +68,7 @@ const UserProfile = () => {
                             <h2>Почта: {user.email}</h2>
                             <h2>Номер телефона: {!user.phone ? "Вы не указали номер телефона" : user.phone}</h2>
                         </div>
-                        <button className={style.btn2}>Редактировать</button>
+                        <button className={style.btn2} onClick={handleEditProfile}>Редактировать</button>
                     </div>
                     <div className={style.settings}>
                         <div className={style.setTitle}>
@@ -82,17 +97,10 @@ const UserProfile = () => {
                     </div>
                     <div className={style.alerts}>
                         <p className={style.title}>Отклики</p>
-                        {alerts.slice(0, showCount).map((alert) => (
-                            <div key={alert.id} className={style.alert}>
-                                <p>{alert.type} {alert.vacansyName}</p>
-                                <p>Дедлайн сбора откликов "{alert.vacansyName}": {alert.deadline}</p>
-                                <button className={style.btn2}>Отозвать отклик</button>
-                            </div>
-                        ))}
                         {appliedJobs.length === 0 ? (
                             <p>Нет откликов на вакансии</p>
                         ) : (
-                            appliedJobs.map((job) => (
+                            appliedJobs.slice(0, showCount).map((job) => (
                                 <div key={job.id} className={style.alert}>
                                     <div>
                                         <p className={style.title2}>{job.title}</p>
@@ -114,7 +122,7 @@ const UserProfile = () => {
                 </div>
             </div>
             <Footer />
-            {showModal && <ModalUser />}
+            {showModal && <ModalUser user={user} onClose={handleCloseModal} onSave={handleSaveProfile} />}
         </>
     );
 };
