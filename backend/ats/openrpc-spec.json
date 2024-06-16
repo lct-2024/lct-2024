@@ -4850,6 +4850,66 @@
       },
       "summary": "Отдаёт вакансии на которые откликнулся текущий кандидат",
       "paramStructure": "by-name"
+    },
+    {
+      "name": "get_analytics",
+      "params": [],
+      "result": {
+        "name": "get_analytics_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "updated_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "id": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "num": {
+                "type": "integer",
+                "description": "Номер этапа"
+              },
+              "title": {
+                "type": "string",
+                "description": "Этап воронки найма"
+              },
+              "candidates_count": {
+                "type": "integer",
+                "description": "Этап воронки найма"
+              }
+            },
+            "required": [
+              "candidates_count",
+              "title",
+              "num",
+              "id",
+              "updated_at",
+              "created_at"
+            ],
+            "x-cl-class": "STEP",
+            "x-cl-package": "ATS/API/ANALYTICS"
+          }
+        }
+      },
+      "summary": "Статистику по количеству кандидатов на каждом из этапов воронки найма",
+      "paramStructure": "by-name"
     }
   ],
   "openrpc": "1.0.0",
