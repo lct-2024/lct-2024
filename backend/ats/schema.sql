@@ -155,7 +155,7 @@ CREATE TABLE ats.job_applicant (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     job_id BIGINT NOT NULL references ats.job on delete cascade,
     type TEXT NOT NULL,
-    applicant_id BIGINT NOT NULL references ats.job on delete cascade,
+    applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ
 );
@@ -210,6 +210,16 @@ CREATE TABLE ats.score (
     updated_at TIMESTAMPTZ default now()
 );
 
+
+CREATE TABLE ats.subscriptions (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
+    filters JSONB NOT NULL,
+    last_processed_job_id INTEGER NOT NULL default 0,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+);
+
 ---------------
 -- Migrations:
 
@@ -250,3 +260,7 @@ update ats.job set open = true;
 
 alter table ats.applicant add column salary TEXT not null default '';
 alter table ats.applicant add column portfolio TEXT not null default '';
+
+alter table ats.score add column total INTEGER not null default 0;
+
+alter table ats.news_post add column image text not null default '';

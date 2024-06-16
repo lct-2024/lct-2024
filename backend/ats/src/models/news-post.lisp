@@ -38,6 +38,10 @@
           :type string
           :col-type :text
           :accessor news-post-title)
+   (image :initarg :image
+          :type string
+          :col-type :text
+          :accessor news-post-image)
    (text :initarg :description
          :type string
          :col-type :text

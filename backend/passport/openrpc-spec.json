@@ -21,7 +21,84 @@
       "result": {
         "name": "login_result",
         "schema": {
-          "type": "string"
+          "type": "object",
+          "properties": {
+            "user": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "x-cl-class": "T",
+                  "x-cl-package": "COMMON-LISP"
+                },
+                "updated_at": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "x-cl-class": "T",
+                  "x-cl-package": "COMMON-LISP"
+                },
+                "synced": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "fio": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "avatar_url": {
+                  "type": "string"
+                },
+                "banned": {
+                  "type": "boolean",
+                  "description": "Если True, то пользователь забанен и не может логиниться."
+                },
+                "metadata": {
+                  "type": "object",
+                  "description": "Словарь с дополнительной информацией о пользователе."
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "scopes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "scopes",
+                "roles",
+                "avatar_url",
+                "email",
+                "fio",
+                "id",
+                "updated_at",
+                "created_at"
+              ],
+              "x-cl-class": "USER-PROFILE",
+              "x-cl-package": "PASSPORT/API/USERS"
+            },
+            "token": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token",
+            "user"
+          ],
+          "x-cl-class": "USER-AND-TOKEN",
+          "x-cl-package": "PASSPORT/API/USERS"
         }
       },
       "summary": "Позволяет залогиниться пользователю по email и паролю.",
@@ -35,21 +112,16 @@
           "schema": {
             "type": "string"
           },
-          "required": true
+          "required": true,
+          "summary": "Email пользователя."
         },
         {
           "name": "password",
           "schema": {
             "type": "string"
           },
-          "required": true
-        },
-        {
-          "name": "fio",
-          "schema": {
-            "type": "string"
-          },
-          "required": true
+          "required": true,
+          "summary": "Пароль."
         },
         {
           "name": "metadata",
@@ -57,6 +129,13 @@
             "type": "object"
           },
           "summary": "Словарь с дополнительной информацией о пользователе, нужной остальным сервисам сайта."
+        },
+        {
+          "name": "fio",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Deprecated. Класть ФИО надо в metadata, как отдельные поля."
         }
       ],
       "result": {
@@ -89,6 +168,9 @@
               "required": [],
               "x-cl-class": "T",
               "x-cl-package": "COMMON-LISP"
+            },
+            "synced": {
+              "type": "boolean"
             },
             "id": {
               "type": "integer"
@@ -131,6 +213,143 @@
       "paramStructure": "by-name"
     },
     {
+      "name": "get_user_profiles",
+      "params": [
+        {
+          "name": "user_ids",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "required": true,
+          "summary": "Список id пользователей."
+        }
+      ],
+      "result": {
+        "name": "get_user_profiles_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "updated_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "synced": {
+                "type": "boolean"
+              },
+              "id": {
+                "type": "integer"
+              },
+              "fio": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "password_hash": {
+                "type": "string"
+              },
+              "avatar_url": {
+                "type": "string"
+              },
+              "banned": {
+                "type": "boolean",
+                "description": "Если True, то пользователь забанен и не может логиниться."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "Словарь с дополнительной информацией о пользователе."
+              }
+            },
+            "required": [
+              "avatar_url",
+              "password_hash",
+              "email",
+              "fio",
+              "id",
+              "updated_at",
+              "created_at"
+            ],
+            "x-cl-class": "USER",
+            "x-cl-package": "PASSPORT/MODELS/USER"
+          }
+        }
+      },
+      "summary": "Отдаёт профили пользователей по их id.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "get_scopes",
+      "params": [],
+      "result": {
+        "name": "get_scopes_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "updated_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "synced": {
+                "type": "boolean"
+              },
+              "id": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "description",
+              "name",
+              "id",
+              "updated_at",
+              "created_at"
+            ],
+            "x-cl-class": "SCOPE",
+            "x-cl-package": "PASSPORT/MODELS/SCOPE",
+            "description": "Обозначает некую бизнес-область, на которую могут быть права у пользователя. Например name может быть: blog.writer или admin, и тд.. Scopes привязаны к ролям, а роли - к пользователям."
+          }
+        }
+      },
+      "summary": "Выдаёт известные в системе скоупы и их описания.",
+      "paramStructure": "by-name"
+    },
+    {
       "name": "deploy",
       "params": [
         {
@@ -148,6 +367,80 @@
         }
       },
       "summary": "Запускает деплой фронтенда.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "set_metadata",
+      "params": [
+        {
+          "name": "metadata",
+          "schema": {
+            "type": "object"
+          },
+          "required": true,
+          "summary": "Словарь с дополнительной информацией о пользователе, нужной остальным сервисам сайта."
+        }
+      ],
+      "result": {
+        "name": "set_metadata_result",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "created_at": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "x-cl-class": "T",
+              "x-cl-package": "COMMON-LISP"
+            },
+            "updated_at": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "x-cl-class": "T",
+              "x-cl-package": "COMMON-LISP"
+            },
+            "synced": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "fio": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "password_hash": {
+              "type": "string"
+            },
+            "avatar_url": {
+              "type": "string"
+            },
+            "banned": {
+              "type": "boolean",
+              "description": "Если True, то пользователь забанен и не может логиниться."
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Словарь с дополнительной информацией о пользователе."
+            }
+          },
+          "required": [
+            "avatar_url",
+            "password_hash",
+            "email",
+            "fio",
+            "id",
+            "updated_at",
+            "created_at"
+          ],
+          "x-cl-class": "USER",
+          "x-cl-package": "PASSPORT/MODELS/USER"
+        }
+      },
+      "summary": "Обновляет метаданные текущего пользователя",
       "paramStructure": "by-name"
     }
   ],

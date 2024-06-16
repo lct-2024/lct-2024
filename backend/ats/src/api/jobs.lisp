@@ -29,6 +29,7 @@
                 #:get-job-programming-languages
                 #:bind-job-to-programming-languages)
   (:import-from #:mito
+                #:object-id
                 #:find-dao
                 #:select-dao
                 #:includes
@@ -43,6 +44,8 @@
   (:import-from #:local-time-duration
                 #:duration)
   (:import-from #:sxql
+                #:order-by
+                #:left-join
                 #:join
                 #:where)
   (:import-from #:common/auth
@@ -54,7 +57,9 @@
                 #:scope-for-deleting)
   (:import-from #:common/rpc
                 #:define-delete-method
-                #:define-update-method))
+                #:define-update-method)
+  (:import-from #:40ants-pg/query
+                #:select-one-column))
 (in-package #:ats/api/jobs)
 
 
@@ -136,25 +141,132 @@
         (values job)))))
 
 
-(define-rpc-method (ats-api get-jobs) (&key show-all)
+(defun get-jobs-with-filter (&key city category applicant project speciality show-all)
+  (let* ((filters (remove-if #'null
+                             (list (unless show-all
+                                     '(:= :active 1))
+                                   (when city
+                                     `(:= :city ,city))
+                                   (when category
+                                     `(:= :category ,category))
+                                   (when applicant
+                                    `(:= :score.applicant_id
+                                         ,(object-id applicant)))
+                                   (when speciality
+                                    `(:= :speciality.title
+                                         ,speciality))
+                                   (when project
+                                    `(:= :project.title
+                                         ,project)))))
+         (filter-expression
+           `(:and (:= 1 1)
+                  ,@filters))
+         (join-score-if-needed
+           (when applicant
+             (left-join :ats.score
+                        :on (:= :job.id
+                             :score.job_id))))
+         (join-speciality-if-needed
+           (when speciality
+             (left-join :ats.speciality
+                        :on (:= :job.speciality_id
+                             :speciality.id))))
+         (join-project-if-needed
+           (when project
+             (left-join :ats.project
+                        :on (:= :job.project_id
+                             :project.id)))))
+    (mito:select-dao 'ats/models/job::job
+      (includes 'project)
+      (includes 'speciality)
+      join-score-if-needed
+      join-speciality-if-needed
+      join-project-if-needed
+      (where filter-expression)
+      (when applicant
+        (order-by (:desc :score.total))))))
+
+
+(define-rpc-method (ats-api get-jobs) (&key category city project speciality show-all)
   (:summary "Отдаёт все вакансии")
+  (:description "Если вакансии смотрит соискатель, то они сортируются начиная от наиболее подходищих под его резюме.")
+  (:param city string "Город. Список городов в которых есть вакансии можно получить из ats.get_job_cities.")
+  (:param category string "Категория к которой отностится вакансия. Получить список категорий можно через метод ats.get_job_categories.")
+  (:param speciality string "Специальность. Список получить из ats.get_job_specialities.")
+  (:param project string "Специальность. Список получить из ats.get_job_projects.")
   (:param show-all boolean "Показать все вакансии, даже те что уже закрыты.")
-  (:result (serapeum:soft-list-of job))
+  (:result (soft-list-of job))
+  
   (with-connection ()
     (with-session ((user-id) :require nil)
-      (values
-       (loop for job in (select-dao 'ats/models/job::job
-                          (includes 'project)
-                          (includes 'speciality)
-                          (unless show-all
-                            (where (:= :active 1))))
-             collect
-                (change-class job 'job
-                              :skills (get-job-skills job)
-                              :programming-languages (get-job-programming-languages job)
-                              :resume-matching-score (if user-id
-                                                         (calculate-resume-score job user-id)
-                                                         0)))))))
+      (let ((applicant (when user-id
+                         (mito:find-dao 'applicant
+                                        :user-id user-id))))
+        (values
+         (loop for job in (get-jobs-with-filter :city city
+                                                :category category
+                                                :show-all show-all
+                                                :project project
+                                                :speciality speciality
+                                                :applicant applicant)
+               collect
+                  (change-class job 'job
+                                :skills (get-job-skills job)
+                                :programming-languages (get-job-programming-languages job)
+                                :resume-matching-score (if applicant
+                                                           (calculate-resume-score job
+                                                                                   applicant)
+                                                           0))))))))
+
+
+(define-rpc-method (ats-api get-job-categories) ()
+  (:summary "Отдаёт список категорий к которым может относиться вакансия")
+  (:result (soft-list-of string))
+  (with-connection ()
+    (select-one-column "
+SELECT distinct(category) as name
+  from ats.job
+ where job.active
+order by 1"
+                       :column :name)))
+
+
+(define-rpc-method (ats-api get-job-cities) ()
+  (:summary "Отдаёт все города для которых открыты вакансии.")
+  (:result (soft-list-of string))
+  (with-connection ()
+    (select-one-column "
+SELECT distinct(city) as name
+  from ats.job
+ where job.active
+order by 1"
+                       :column :name)))
+
+
+(define-rpc-method (ats-api get-job-specialities) ()
+  (:summary "Отдаёт все специальности для которых открыты вакансии.")
+  (:result (soft-list-of string))
+  (with-connection ()
+    (select-one-column "
+SELECT distinct(s.title) as name
+  from ats.job as j
+join ats.speciality as s on j.speciality_id = s.id
+ where j.active
+order by 1"
+                       :column :name)))
+
+
+(define-rpc-method (ats-api get-job-projects) ()
+  (:summary "Отдаёт все проекты для которых открыты вакансии.")
+  (:result (soft-list-of string))
+  (with-connection ()
+    (select-one-column "
+SELECT distinct(s.title) as name
+  from ats.job as j
+join ats.project as s on j.project_id = s.id
+ where j.active
+order by 1"
+                       :column :name)))
 
 
 (define-rpc-method (ats-api apply-to-the-job) (job-id)
@@ -207,7 +319,7 @@
                                  :skills (get-job-skills job)
                                  :programming-languages (get-job-programming-languages job)
                                  :resume-matching-score (if user-id
-                                                            (calculate-resume-score job user-id)
+                                                            (calculate-resume-score job applicant)
                                                             0))))))))
 
 

@@ -12,6 +12,7 @@
   (:import-from #:ats/models/applicant
                 #:applicant)
   (:import-from #:ats/models/score
+                #:score-total
                 #:score)
   (:import-from #:40ants-pg/connection
                 #:with-connection)
@@ -22,20 +23,29 @@
   (:import-from #:40ants-pg/query
                 #:select-one-column)
   (:import-from #:log4cl-extras/error
-                #:with-log-unhandled))
+                #:with-log-unhandled)
+  (:import-from #:mito
+                #:object-id))
 (in-package #:ats/algorithms/resume-score)
 
 
 (defvar *scores* (dict))
 
-(defun calculate-resume-score (job user-id)
+(defun calculate-resume-score (job applicant)
   "TODO: тут надо сделать реальный алгоритм, а пока пусть так."
-  (let ((job-scores (ensure-gethash (mito:object-id job)
-                                   *scores*
-                                   (dict))))
-    (ensure-gethash user-id
-                    job-scores
-                    (random 101))))
+  (let ((real-score (mito:find-dao 'score
+                                   :job job
+                                   :applicant applicant)))
+    (cond
+      (real-score
+       (score-total real-score))
+      (t
+       (let ((job-scores (ensure-gethash (object-id job)
+                                         *scores*
+                                         (dict))))
+         (ensure-gethash (object-id applicant)
+                         job-scores
+                         (random 101)))))))
 
 
 
@@ -108,6 +118,27 @@
                                       ""))))))
                 (serious-condition ()
                   nil)))
+
+            (setf (score-total score)
+                  (min (+ (* (ats/models/score::score-fio-filled score)
+                             5)
+                          (* (ats/models/score::score-email-filled score)
+                             5)
+                          (* (ats/models/score::score-phone-filled score)
+                             5)
+                          (* (ats/models/score::score-telegram-filled score)
+                             5)
+                          (* (ats/models/score::score-about-filled score)
+                             5)
+                          (* (ats/models/score::score-experience-filled score)
+                             5)
+                          ;; Предыдущие пункты в сумме могут дать 30%,
+                          ;; а experience-match может быть от 0 до 100,
+                          ;; так что его надо сжать до диапазона 0 - 60
+                          (coerce (ceiling (* 0.6 (ats/models/score::score-experience-match score)))
+                                  'integer))
+                       ;; На всякий случай ограничим сверху, чтобы не было нелепых выходов за более 100%
+                       100))
             (mito:save-dao score)
             (values)))))))
 

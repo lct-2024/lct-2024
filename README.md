@@ -53,6 +53,26 @@ API документировано в формате OpenRPC (аналог OpenA
 - https://chat.hrzero.ru/
 - https://ats.hrzero.ru/
 
+Чтобы в Playground выполнять запросы от определённого пользователя, нужно в левой нижней части экрана задать авторизационный токен
+таким образом:
+
+```
+{
+    "headers": {
+        "Authorization": "..."
+    }
+}
+```
+
+Вот токены пользователей с разными ролями:
+
+- HR (hr@example.com): `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyLWlkIjoyNywiZmlvIjoi0JLQsNGB0LjQu9C40Lkg0J_Rg9C_0LrQuNC9Iiwicm9sZXMiOlsiaHIiXSwic2NvcGVzIjpbImF0cy5qb2IuY3JlYXRlIiwiYXRzLnByb2plY3QuY3JlYXRlIiwiYXRzLm5ld3MtcG9zdC5jcmVhdGUiLCJhdHMuam9iLmVkaXQiLCJhdHMucHJvamVjdC5lZGl0IiwiYXRzLm5ld3MtcG9zdC5lZGl0IiwiYXRzLmpvYi5kZWxldGUiLCJhdHMucHJvamVjdC5kZWxldGUiLCJhdHMubmV3cy1wb3N0LmRlbGV0ZSJdLCJpYXQiOjE3MTg1MzgyMDJ9._oKpWJ2M1n2ET_RO9fUoiA4Vpygvi12aw8nkiPUO1lA`
+- Нанимающий менеджер (manager@example.com): `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyLWlkIjoyOCwiZmlvIjoi0JjQstCw0L0g0KHQuNC00L7RgNC-0LIiLCJyb2xlcyI6WyJtYW5hZ2VyIl0sInNjb3BlcyI6WyJhdHMucHJvamVjdC5jcmVhdGUiLCJhdHMubmV3cy1wb3N0LmNyZWF0ZSJdLCJpYXQiOjE3MTg1MzgyNTJ9.W-c_q80NXYPwdqoNTiDzWoxFZErVaerFLcvD2fvjEE8`
+- Кандидат 1 (sasha@example.com): `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyLWlkIjozMSwiZmlvIjoi0JDQu9C10LrRgdCw0L3QtNGAINCS0LDRgdC40LvRjNC60L7QsiIsInJvbGVzIjpudWxsLCJzY29wZXMiOm51bGwsImlhdCI6MTcxODUzODI5Nn0.bLcvFznPM2Z-zt50NhsmVFW06ekDX47DGihAPBt7UMk`
+- Кандидат 2 (mary@example.com): `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyLWlkIjozMiwiZmlvIjoi0JzQsNGA0LjRjyDQkNCz0LDRhNC-0L3QvtCy0LAiLCJyb2xlcyI6bnVsbCwic2NvcGVzIjpudWxsLCJpYXQiOjE3MTg1MzgzMzB9.3qNCWvE_cYi3dWPeHFhhGFHahVF-gja-nU5bgrox2Go`
+
+Замените многоточие из примера на один из токенов.
+
 Документация по API автоматически собирается из docstring в коде и складывается в файлы
 `openrpc-spec.json` внутри папки каждого из микросервисов. Затем по этим файлам
 автоматически генерируется клиент для того, чтобы можно было удобно обращаться из одного
@@ -107,6 +127,26 @@ API документировано в формате OpenRPC (аналог OpenA
 
 Технически, чаты устроены так, что доступ к ним может быть ограничен для определённой группы сотрудников компании.
 
+## Принципы обработки вакансий
+
+### Парсинг вакансий из резюме
+
+Процесс обработки загруженных файлов очень простой:
+
+- загруженный файл преобразуется из формата Word или PDF в обычный текст с помощью программы pandoc
+- затем мы испольщуем специальный prompt к YandexGPT, чтобы по этому тексту сформировать JSON с полями в которые извлечены контактные данные, биография, навыки и данные об опыте и образовании соискателя.
+
+Промпт к нейросети можно посмотреть в файле `backend/ats/src/ai/prompts/cv.txt`
+
+### Подписка на новые вакансии
+
+Для подписки мы сохраняем в базе фильтр, заданный пользователем: категорию, город, специальность, проект.
+
+Далее, при появлении новой вакансии, проверяем, соответствует ли она каким-либо подпискам и оправляем соответствующим
+соискателям уведомления. Сейчас этот процесс запускается по событию прямо в backend микросервиса ats, но в будущем,
+если потребуется обрабатывать тысячи соискателей и сотни новых вакансий в день, стоит перевести систему на очередь
+с отдельными обработчиками.
+
 ## Матрица трассировки требований
 
 Для тестирования мы описали 10 сценариев и составили такую матрицу трассировки требований:
@@ -128,5 +168,4 @@ pandoc README.md \
        -o README.pdf
 ```
 
-## Несколько скринов с демо интерфейса (TODO: обновить)
 

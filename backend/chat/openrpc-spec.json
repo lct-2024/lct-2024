@@ -62,9 +62,6 @@
               "x-cl-class": "T",
               "x-cl-package": "COMMON-LISP"
             },
-            "synced": {
-              "type": "boolean"
-            },
             "id": {
               "type": "string"
             },
@@ -158,9 +155,6 @@
               "x-cl-class": "T",
               "x-cl-package": "COMMON-LISP"
             },
-            "synced": {
-              "type": "boolean"
-            },
             "id": {
               "type": "string"
             },
@@ -253,9 +247,6 @@
               "required": [],
               "x-cl-class": "T",
               "x-cl-package": "COMMON-LISP"
-            },
-            "synced": {
-              "type": "boolean"
             },
             "id": {
               "type": "string"
@@ -352,9 +343,6 @@
                 "x-cl-class": "T",
                 "x-cl-package": "COMMON-LISP"
               },
-              "synced": {
-                "type": "boolean"
-              },
               "id": {
                 "type": "string"
               },
@@ -420,6 +408,22 @@
       "paramStructure": "by-name"
     },
     {
+      "name": "get_content_types",
+      "params": [],
+      "result": {
+        "name": "get_content_types_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "summary": "Отдаёт список content-type, в существующих чатах",
+      "description": "Просто вспомогательный метод, чтобы перед использованием get-all-chats можно было посмотреть на типы чатов.",
+      "paramStructure": "by-name"
+    },
+    {
       "name": "get_members",
       "params": [
         {
@@ -448,9 +452,6 @@
               "required": [],
               "x-cl-class": "T",
               "x-cl-package": "COMMON-LISP"
-            },
-            "synced": {
-              "type": "boolean"
             },
             "chat_id": {
               "type": "string"
@@ -510,9 +511,6 @@
               "required": [],
               "x-cl-class": "T",
               "x-cl-package": "COMMON-LISP"
-            },
-            "synced": {
-              "type": "boolean"
             },
             "id": {
               "type": "integer"
@@ -583,9 +581,6 @@
                 "required": [],
                 "x-cl-class": "T",
                 "x-cl-package": "COMMON-LISP"
-              },
-              "synced": {
-                "type": "boolean"
               },
               "id": {
                 "type": "integer"
@@ -660,9 +655,6 @@
                 "required": [],
                 "x-cl-class": "T",
                 "x-cl-package": "COMMON-LISP"
-              },
-              "synced": {
-                "type": "boolean"
               },
               "id": {
                 "type": "integer"
@@ -742,9 +734,6 @@
                     "required": [],
                     "x-cl-class": "T",
                     "x-cl-package": "COMMON-LISP"
-                  },
-                  "synced": {
-                    "type": "boolean"
                   },
                   "id": {
                     "type": "integer"
@@ -865,9 +854,6 @@
                 "x-cl-class": "T",
                 "x-cl-package": "COMMON-LISP"
               },
-              "synced": {
-                "type": "boolean"
-              },
               "id": {
                 "type": "integer"
               },
@@ -974,9 +960,6 @@
                 "x-cl-class": "T",
                 "x-cl-package": "COMMON-LISP"
               },
-              "synced": {
-                "type": "boolean"
-              },
               "id": {
                 "type": "integer"
               },
@@ -1042,6 +1025,137 @@
       },
       "summary": "Удаляет N последних сообщений из указанного чата.",
       "description": "Этот метод нужен для того, чтобы подчищать чаты Kinojaba по мере того, как мы автоматически добавляем новые сообщения.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "delete_oldest_messages",
+      "params": [
+        {
+          "name": "chat_id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "name": "limit",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "result": {
+        "name": "delete_oldest_messages_result",
+        "schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "x-cl-class": "T",
+          "x-cl-package": "COMMON-LISP"
+        }
+      },
+      "summary": "Удаляет N самых старых сообщений из указанного чата.",
+      "description": "Этот метод нужен для того, чтобы подчищать cтарые сообщения из чатов по мере того, как добавляются новые сообщения.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "get_chat_bound_to_content",
+      "params": [
+        {
+          "name": "content_type",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "name": "content_id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "result": {
+        "name": "get_chat_bound_to_content_result",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "created_at": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "x-cl-class": "T",
+              "x-cl-package": "COMMON-LISP"
+            },
+            "updated_at": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "x-cl-class": "T",
+              "x-cl-package": "COMMON-LISP"
+            },
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "private": {
+              "type": "boolean",
+              "description": "Тип чата. Если private, то писать/читать его могут только члены команды."
+            },
+            "archived": {
+              "type": "boolean",
+              "description": "Признак, заархивирован ли чат."
+            },
+            "content_type": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "Тип контента, для которого создан чат, например \"blog-page\"."
+            },
+            "content_id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "ID контента, для которого создан чат, например URL страницы."
+            }
+          },
+          "required": [
+            "content_id",
+            "content_type",
+            "archived",
+            "private",
+            "title",
+            "id",
+            "updated_at",
+            "created_at"
+          ],
+          "x-cl-class": "CHAT",
+          "x-cl-package": "CHAT/CHAT/MODEL",
+          "description": "Информация о чате."
+        }
+      },
+      "summary": "Запрашивает данные о чате, привязанном к конкретной сущности.",
+      "description": "Если чат не найден, то возвращает ошибку.",
       "paramStructure": "by-name"
     }
   ],
