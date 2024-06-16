@@ -141,7 +141,7 @@
         (values job)))))
 
 
-(defun get-jobs-with-filter (&key city category applicant show-all)
+(defun get-jobs-with-filter (&key city category applicant project speciality show-all)
   (let* ((filters (remove-if #'null
                              (list (unless show-all
                                      '(:= :active 1))
@@ -151,29 +151,49 @@
                                      `(:= :category ,category))
                                    (when applicant
                                     `(:= :score.applicant_id
-                                         ,(object-id applicant))))))
+                                         ,(object-id applicant)))
+                                   (when speciality
+                                    `(:= :speciality.title
+                                         ,speciality))
+                                   (when project
+                                    `(:= :project.title
+                                         ,project)))))
          (filter-expression
            `(:and (:= 1 1)
                   ,@filters))
-         (join
-             (when applicant
-               (left-join :ats.score
-                          :on (:= :job.id
-                               :score.job_id)))))
+         (join-score-if-needed
+           (when applicant
+             (left-join :ats.score
+                        :on (:= :job.id
+                             :score.job_id))))
+         (join-speciality-if-needed
+           (when speciality
+             (left-join :ats.speciality
+                        :on (:= :job.speciality_id
+                             :speciality.id))))
+         (join-project-if-needed
+           (when project
+             (left-join :ats.project
+                        :on (:= :job.project_id
+                             :project.id)))))
     (mito:select-dao 'ats/models/job::job
       (includes 'project)
       (includes 'speciality)
-      join
+      join-score-if-needed
+      join-speciality-if-needed
+      join-project-if-needed
       (where filter-expression)
       (when applicant
         (order-by (:desc :score.total))))))
 
 
-(define-rpc-method (ats-api get-jobs) (&key category city show-all)
+(define-rpc-method (ats-api get-jobs) (&key category city project speciality show-all)
   (:summary "Отдаёт все вакансии")
   (:description "Если вакансии смотрит соискатель, то они сортируются начиная от наиболее подходищих под его резюме.")
   (:param city string "Город. Список городов в которых есть вакансии можно получить из ats.get_job_cities.")
   (:param category string "Категория к которой отностится вакансия. Получить список категорий можно через метод ats.get_job_categories.")
+  (:param speciality string "Специальность. Список получить из ats.get_job_specialities.")
+  (:param project string "Специальность. Список получить из ats.get_job_projects.")
   (:param show-all boolean "Показать все вакансии, даже те что уже закрыты.")
   (:result (soft-list-of job))
   
@@ -186,6 +206,8 @@
          (loop for job in (get-jobs-with-filter :city city
                                                 :category category
                                                 :show-all show-all
+                                                :project project
+                                                :speciality speciality
                                                 :applicant applicant)
                collect
                   (change-class job 'job
@@ -204,6 +226,7 @@
     (select-one-column "
 SELECT distinct(category) as name
   from ats.job
+ where job.active
 order by 1"
                        :column :name)))
 
@@ -215,6 +238,33 @@ order by 1"
     (select-one-column "
 SELECT distinct(city) as name
   from ats.job
+ where job.active
+order by 1"
+                       :column :name)))
+
+
+(define-rpc-method (ats-api get-job-specialities) ()
+  (:summary "Отдаёт все специальности для которых открыты вакансии.")
+  (:result (soft-list-of string))
+  (with-connection ()
+    (select-one-column "
+SELECT distinct(s.title) as name
+  from ats.job as j
+join ats.speciality as s on j.speciality_id = s.id
+ where j.active
+order by 1"
+                       :column :name)))
+
+
+(define-rpc-method (ats-api get-job-projects) ()
+  (:summary "Отдаёт все проекты для которых открыты вакансии.")
+  (:result (soft-list-of string))
+  (with-connection ()
+    (select-one-column "
+SELECT distinct(s.title) as name
+  from ats.job as j
+join ats.project as s on j.project_id = s.id
+ where j.active
 order by 1"
                        :column :name)))
 

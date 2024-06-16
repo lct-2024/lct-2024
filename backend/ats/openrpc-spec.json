@@ -394,6 +394,20 @@
           "summary": "Показать все вакансии, даже те что уже закрыты."
         },
         {
+          "name": "project",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Специальность. Список получить из ats.get_job_projects."
+        },
+        {
+          "name": "speciality",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Специальность. Список получить из ats.get_job_specialities."
+        },
+        {
           "name": "category",
           "schema": {
             "type": "string"
@@ -4954,6 +4968,36 @@
         }
       },
       "summary": "Отдаёт все города для которых открыты вакансии.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "get_job_specialities",
+      "params": [],
+      "result": {
+        "name": "get_job_specialities_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "summary": "Отдаёт все специальности для которых открыты вакансии.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "get_job_projects",
+      "params": [],
+      "result": {
+        "name": "get_job_projects_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "summary": "Отдаёт все проекты для которых открыты вакансии.",
       "paramStructure": "by-name"
     }
   ],
