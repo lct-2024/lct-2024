@@ -89,13 +89,13 @@ const OurProjects = () => {
                     </div>
                     <div className={style.smallBlock2}>
                         <div>
-                            <p>фото</p>
+                            <img src="bl3.png" alt="фото" />
                         </div>
                         <div>
                             <p>Каждый проект - вызов и желание создать нечто уникальное с полной самоотдачей</p>
                         </div>
                         <div>
-                            <img src="image_bl4.png" alt="фото" />
+                            <img src="bl4.png" alt="фото" />
                         </div>
                         <div>
                             <p>Для нас важны принципы внимания к каждому и слаженной командной работы. </p>

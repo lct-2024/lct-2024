@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthToken, setUser } from "./store/authSlice";
-import MainPage from "./components/Pages/MainPage";
+import MainPage from "./components/MainPage/MainPage";
 import VacancyPage from "./components/VacansyPage/VacansyPage";
 import ProjectsPage from "./components/ProjectsPage/ProjectsPage";
 import Login from "./components/AuthPage/Login";

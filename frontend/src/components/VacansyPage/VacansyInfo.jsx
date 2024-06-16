@@ -16,14 +16,42 @@ const VacansyInfo = () => {
     const [btnText, setBtnText] = useState("Откликнуться");
     const [btnClicked, setBtnClicked] = useState(false);
     const [showAlarm, setShowAlarm] = useState(false);
-    const [itsHr, setItsHr] = useState(false)
-    let token = localStorage.getItem('authToken') || null
+    const [itsHr, setItsHr] = useState(false);
+    const [appliedJobs, setAppliedJobs] = useState([]);
+    let token = localStorage.getItem('authToken') || null;
+
+    useEffect(() => {
+        // Fetch applied jobs to check if the user has already applied to this job
+        axios.post('https://ats.lct24.dev.40ants.com/api/get_my_jobs', {
+            jsonrpc: '2.0',
+            method: 'get_my_jobs',
+            params: {},
+            id: 1
+        },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `${token}`,
+                }
+            })
+            .then(response => {
+                setAppliedJobs(response.data.result);
+                const alreadyApplied = response.data.result.some(job => job.id.toString() === id);
+                if (alreadyApplied) {
+                    setBtnText("Вы уже откликнулись");
+                    setBtnClicked(true);
+                }
+            })
+            .catch(error => console.error('Error fetching applied jobs:', error));
+    }, [id, token]);
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
     };
 
     const handleButtonClicked = async () => {
+        if (btnClicked) return; // Do nothing if the button is already clicked
+
         setBtnClicked(true);
         setBtnText("Вы откликнулись");
 
@@ -55,7 +83,6 @@ const VacansyInfo = () => {
             console.error('Error:', error);
         }
     };
-
 
     const getFilterText = () => {
         switch (selectedFilter) {
@@ -105,8 +132,6 @@ const VacansyInfo = () => {
         return <div>Вакансия не найдена</div>;
     }
 
-
-
     return (
         <div className={style.main}>
             <div className='container'>
@@ -123,7 +148,14 @@ const VacansyInfo = () => {
                                 <p>{vacansy.city}</p>
                                 <p>{vacansy.category}</p>
                             </div>
-                            <button style={{ opacity: btnClicked ? "0.5" : "1" }} onClick={handleButtonClicked} className={style.otklik}>{btnText}</button>
+                            <button
+                                style={{ opacity: btnClicked ? "0.5" : "1" }}
+                                onClick={handleButtonClicked}
+                                className={style.otklik}
+                                disabled={btnClicked}
+                            >
+                                {btnText}
+                            </button>
                         </div>
                         <div className={style.body2}>
                             {vacansy.resume_matching_score > 40 ? <p>Ваше резюме подходит под описание вакансии</p> : <p>Ваше резюме не подходит под описание вакансии</p>}
@@ -160,7 +192,7 @@ const VacansyInfo = () => {
                         </div>
                     </div>
                     <div className={style.lastSect}>
-                        <Comments text="вакансии" />
+                        <Comments text="вакансии" chatId={vacansy.chat_id} />
                     </div>
                     {itsHr && <ApplyForm jobId={vacansy.id} />}
                 </div>

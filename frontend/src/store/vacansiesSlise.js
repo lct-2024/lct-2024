@@ -9,7 +9,7 @@ export const fetchVacansies = createAsyncThunk(
             method: 'get_jobs',
             params: [],
             id: 1
-        });
+        }, { headers: { 'Authorization': `${localStorage.getItem('authToken') || null}` } });
         console.log(response.data)
         return response.data.result;
     }
