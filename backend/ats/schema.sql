@@ -264,3 +264,5 @@ alter table ats.applicant add column portfolio TEXT not null default '';
 alter table ats.score add column total INTEGER not null default 0;
 
 alter table ats.news_post add column image text not null default '';
+
+alter table ats.job_applicant add column interview_date timestamptz;

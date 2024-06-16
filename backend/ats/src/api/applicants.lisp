@@ -38,6 +38,7 @@
   (:import-from #:ats/algorithms/resume-score
                 #:update-user-scores-in-thread)
   (:import-from #:ats/models/job-applicant
+                #:job-applicant-interview-date
                 #:job-applicant-application-step
                 #:job-applicant)
   (:import-from #:ats/models/application-step
@@ -637,6 +638,8 @@ where id = ?"
          (when next-step
            (setf (job-applicant-application-step application)
                  next-step)
+           (setf (job-applicant-interview-date application)
+                 nil)
 
            (notify-applicant applicant-id
                              (fmt "Новый этап: ~A"
@@ -663,3 +666,40 @@ where id = ?"
       (require-scope user-id scopes "ats.job.edit" "push applicant forward")
       
       (%move-to-the-next-step job-id applicant-id))))
+
+
+(define-rpc-method (ats-api set-interview-date) (job-id applicant-id interview-date)
+  (:summary "Сохраняет дату интервью")
+  (:param job-id integer "ID вакансии")
+  (:param applicant-id integer "ID резюме соискателя")
+  (:param interview-date string "Время начала собеседования в формате ISO 8601")
+  (:result t)
+  
+  (with-connection ()
+    (with-session ((user-id scopes))
+      (require-scope user-id scopes "ats.job.edit" "set interview date")
+      (mito:execute-sql "
+update ats.job_applicant
+   set interview_date = ?
+ where job_id = ?
+   and applicant_id = ?"
+                        (list interview-date job-id applicant-id))
+      (values t))))
+
+
+(define-rpc-method (ats-api cancel-interview) (job-id applicant-id)
+  (:summary "Отменяет интервью и сбрасывает дату интервью")
+  (:param job-id integer "ID вакансии")
+  (:param applicant-id integer "ID резюме соискателя")
+  (:result t)
+  
+  (with-connection ()
+    (with-session ((user-id scopes))
+      (require-scope user-id scopes "ats.job.edit" "set interview date")
+      (mito:execute-sql "
+update ats.job_applicant
+   set interview_date = NULL
+ where job_id = ?
+   and applicant_id = ?"
+                        (list job-id applicant-id))
+      (values t))))

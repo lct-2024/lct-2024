@@ -15,7 +15,9 @@
   (:import-from #:common/chat
                 #:create-new-chat)
   (:import-from #:40ants-pg/connection
-                #:with-connection))
+                #:with-connection)
+  (:import-from #:local-time
+                #:timestamp))
 (in-package #:ats/models/applicant)
 
 

@@ -24,6 +24,8 @@
                 #:with-connection)
   (:import-from #:alexandria
                 #:random-elt)
+  (:import-from #:local-time
+                #:timestamp)
   (:export
    #:bind-job-to-applicants
    #:get-job-applicants))
@@ -52,7 +54,13 @@
    (application-step :initarg :application-step
                      :type (or null application-step)
                      :col-type (or :null application-step)
-                     :accessor application-step))
+                     :accessor application-step)
+   (interview-date :initarg :interview-date
+                   :initform nil
+                   :type (or null timestamp)
+                   :col-type (or :null :timestamptz)
+                   :documentation "Согласованное время интервью."
+                   :accessor applicant-interview-date))
   (:table-name "ats.job_applicant"))
 
 

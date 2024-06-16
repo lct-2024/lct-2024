@@ -40,34 +40,41 @@
 
 (defvar *thread* nil)
 
+(defvar *deploying* nil)
+
 
 (defun deploy-new-version ()
-  (log:info "Deploying a new version of the frontend.")
+  (when *deploying*
+    (log:error "Already deploying")
+    (return-from deploy-new-version))
 
-  (setf (uiop:getenv "SSH_AUTH_SOCK")
-        "/home/art/.ssh_auth_sock")
+  (let ((*deploying* t))
+    (log:info "Deploying a new version of the frontend.")
+
+    (setf (uiop:getenv "SSH_AUTH_SOCK")
+          "/home/art/.ssh_auth_sock")
   
-  (unwind-protect
-       (loop repeat 10
-             do (handler-case
-                    (multiple-value-bind (output error-output status-code)
-                        (uiop:run-program  "~/projects/lct-2024/deploy/update-frontend.sh"
-                                           :output :string
-                                           :error-output :output
-                                           :ignore-error-status t)
-                      (declare (ignore error-output))
+    (unwind-protect
+         (loop repeat 10
+               do (handler-case
+                      (multiple-value-bind (output error-output status-code)
+                          (uiop:run-program  "~/projects/lct-2024/deploy/update-frontend.sh"
+                                             :output :string
+                                             :error-output :output
+                                             :ignore-error-status t)
+                        (declare (ignore error-output))
                       
-                      (unless (zerop status-code)
-                        (log:error "Unable to execute update-fronted.sh"
-                                   output)
-                        (error "Unable to execute update-fronted.sh~%Here is it's output:~2%~A~%"
-                               output))
+                        (unless (zerop status-code)
+                          (log:error "Unable to execute update-fronted.sh"
+                                     output)
+                          (error "Unable to execute update-fronted.sh~%Here is it's output:~2%~A~%"
+                                 output))
                       
-                      (return-from deploy-new-version))
-                  (error ()
-                    (log:error "Retrying call update-frontend.sh")
-                    (sleep 5))))
-    (setf *thread* nil)))
+                        (return-from deploy-new-version))
+                    (error ()
+                      (log:error "Retrying call update-frontend.sh")
+                      (sleep 5))))
+      (setf *thread* nil))))
 
 
 (defun deploy-in-thread ()
