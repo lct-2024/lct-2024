@@ -6,7 +6,7 @@ import style from './Comments.module.css';
 const Comments = ({ text, contentId, contentType }) => {
     const [newCommentText, setNewCommentText] = useState('');
     const [showInput, setShowInput] = useState(false);
-
+    const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const authToken = useSelector((state) => state.auth.token);
     const chatId = useSelector((state) => state.comments.chatId);
@@ -53,10 +53,10 @@ const Comments = ({ text, contentId, contentType }) => {
                     comments.map((comment, i) => (
                         <div className={style.comment} key={i}>
                             <div>
-                                <h4>{comment.name}</h4>
+                                <h4>{user.fio}</h4>
                                 <p>{new Date(comment.created_at).toLocaleString()}</p>
                             </div>
-                            <p>{comment.messae}</p>
+                            <p>{comment.message}</p>
                         </div>
                     ))
                 ) : (

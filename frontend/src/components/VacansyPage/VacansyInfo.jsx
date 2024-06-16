@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ApplyForm from './ApplyForm';
 import Comments from '../Comments';
+import axios from 'axios';
 
 const VacansyInfo = () => {
     const { id } = useParams();
@@ -16,15 +17,45 @@ const VacansyInfo = () => {
     const [btnClicked, setBtnClicked] = useState(false);
     const [showAlarm, setShowAlarm] = useState(false);
     const [itsHr, setItsHr] = useState(false)
+    let token = localStorage.getItem('authToken') || null
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
     };
 
-    const handleButtonClicked = () => {
+    const handleButtonClicked = async () => {
         setBtnClicked(true);
         setBtnText("Вы откликнулись");
+
+        try {
+            const response = await axios.post(
+                'https://ats.lct24.dev.40ants.com/api/apply_to_the_job',
+                {
+                    jsonrpc: '2.0',
+                    method: 'apply_to_the_job',
+                    params: {
+                        job_id: vacansy.id
+                    },
+                    id: 1
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `${token}`,
+                    },
+                }
+            );
+
+            if (response.data.result) {
+                console.log('Отклик успешно отправлен');
+            } else {
+                console.error('Ошибка при отправке отклика');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
+
 
     const getFilterText = () => {
         switch (selectedFilter) {
@@ -73,6 +104,8 @@ const VacansyInfo = () => {
     if (!vacansy) {
         return <div>Вакансия не найдена</div>;
     }
+
+
 
     return (
         <div className={style.main}>
@@ -127,7 +160,7 @@ const VacansyInfo = () => {
                         </div>
                     </div>
                     <div className={style.lastSect}>
-                        <Comments />
+                        <Comments text="вакансии" />
                     </div>
                     {itsHr && <ApplyForm jobId={vacansy.id} />}
                 </div>

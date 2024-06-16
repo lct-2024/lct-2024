@@ -5,14 +5,11 @@ import Footer from '../Footer';
 import VacansyList from './VacansyList';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchVacansies, setVacansies } from '../../store/vacansiesSlise';
-import axios from 'axios';
 import Comments from '../Comments';
 
 const VacansyPage = () => {
-    const API_BASE_URL = 'https://chat.lct24.dev.40ants.com/api'
     const vacansies = useSelector(state => state.vacansies.data)
     const dispatch = useDispatch()
-    const authToken = useSelector(state => state.auth.token);
     const [originalVacansies, setOriginalVacansies] = useState([]);
     const [searchTerm, setSearchTerm] = useState('')
 

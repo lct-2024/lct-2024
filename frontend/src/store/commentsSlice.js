@@ -81,7 +81,7 @@ const commentsSlice = createSlice({
     name: 'comments',
     initialState: {
         chatId: null,
-        comments: [], // Убедитесь, что значение по умолчанию - пустой массив
+        comments: [],
         status: 'idle',
         error: null,
     },
@@ -101,6 +101,9 @@ const commentsSlice = createSlice({
                 state.error = action.payload;
             })
             .addCase(postMessage.fulfilled, (state, action) => {
+                if (!Array.isArray(state.comments)) {
+                    state.comments = [];
+                }
                 state.comments.push(action.payload);
             })
             .addCase(postMessage.rejected, (state, action) => {
