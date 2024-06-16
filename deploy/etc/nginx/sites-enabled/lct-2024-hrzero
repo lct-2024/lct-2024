@@ -13,6 +13,29 @@ server {
 }
 
 server {
+    if ($host = www.hrzero.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80 ;
+    listen [::]:80 ;
+    server_name www.hrzero.ru;
+    return 301 https://hrzero.ru$request_uri;
+}
+
+server {
+    listen 443 ;
+    listen [::]:443 ;
+    server_name www.hrzero.ru;
+    # Средиректим на домен без www
+    return 301 https://hrzero.ru$request_uri;
+
+    ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
+}
+
+server {
     if ($host = passport.hrzero.ru) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
@@ -111,9 +134,9 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-
     ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
+
 }
 
 
@@ -144,9 +167,9 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-
     ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
+
 }
 
 
@@ -177,9 +200,9 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-
     ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
+
 }
 
 
@@ -222,7 +245,7 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-
     ssl_certificate /etc/letsencrypt/live/hrzero.ru/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/hrzero.ru/privkey.pem; # managed by Certbot
+
 }
