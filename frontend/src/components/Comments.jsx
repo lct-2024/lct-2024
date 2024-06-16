@@ -1,22 +1,24 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchChat, postMessage } from '../store/commentsSlice';
+import { fetchOrCreateChat, postMessage } from '../store/commentsSlice';
 import style from './Comments.module.css';
 
-const Comments = ({ text, chatId }) => {
+const Comments = ({ text, contentId, contentType }) => {
     const [newCommentText, setNewCommentText] = useState('');
     const [showInput, setShowInput] = useState(false);
     const user = useSelector((state) => state.auth.user || null);
     const dispatch = useDispatch();
+    const authToken = useSelector((state) => state.auth.token);
+    const chatId = useSelector((state) => state.comments.chatId);
     const comments = useSelector((state) => state.comments.comments);
     const status = useSelector((state) => state.comments.status);
     const error = useSelector((state) => state.comments.error);
 
     useEffect(() => {
-        if (chatId) {
-            dispatch(fetchChat({ chatId }));
+        if (authToken) {
+            dispatch(fetchOrCreateChat({ contentId, contentType }));
         }
-    }, [chatId, dispatch]);
+    }, [authToken, dispatch, contentId, contentType]);
 
     const handleShowInput = () => {
         setShowInput(true);
@@ -26,7 +28,7 @@ const Comments = ({ text, chatId }) => {
         if (newCommentText.trim() === '') return;
 
         try {
-            await dispatch(postMessage({ message: newCommentText })).unwrap();
+            dispatch(postMessage({ message: newCommentText }));
             setNewCommentText('');
             setShowInput(false);
         } catch (error) {
@@ -34,39 +36,32 @@ const Comments = ({ text, chatId }) => {
         }
     };
 
-    const renderComments = useMemo(() => {
-        if (comments && comments.length > 0) {
-            return comments.map((comment, i) => (
-                <div className={style.comment} key={i}>
-                    <div>
-                        <h4>{user ? (user.fio || "Вы не зарегистрированы") : "Вы не зарегистрированы"}</h4>
-                        <p>{new Date(comment.created_at).toLocaleString()}</p>
-                    </div>
-                    <p>{comment.message}</p>
-                </div>
-            ));
-        } else {
-            return <p>Нет комментариев</p>;
-        }
-    }, [comments, user.fio]);
+    if (status === 'loading') {
+        return <div>Loading...</div>;
+    }
 
-    const renderLoading = useMemo(() => {
-        if (status === 'loading') {
-            return <div>Loading...</div>;
-        }
-        if (status === 'failed') {
-            return <div>Error: {error}</div>;
-        }
-        return null;
-    }, [status, error]);
+    if (status === 'failed') {
+        return <div>Error: {error}</div>;
+    }
 
     return (
         <div className='container'>
             <h2 className={style.title}>Интересно узнать больше о {text}?</h2>
             <h2 className={style.title}>Не нашли ответ на свой вопрос? Напишите в комментарии, <br /> чтобы получить ответ:</h2>
             <div className={style.comments}>
-                {renderLoading}
-                {renderComments}
+                {comments && comments.length > 0 ? (
+                    comments.map((comment, i) => (
+                        <div className={style.comment} key={i}>
+                            <div>
+                                <h4>{user ? user.fio : 'Не зарегистрированный пользователь  '}</h4>
+                                <p>{new Date(comment.created_at).toLocaleString()}</p>
+                            </div>
+                            <p>{comment.message}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>Нет комментариев</p>
+                )}
                 {showInput && (
                     <>
                         <textarea

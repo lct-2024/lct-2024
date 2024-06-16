@@ -3,10 +3,11 @@ import axios from 'axios';
 
 const API_BASE_URL = 'https://chat.lct24.dev.40ants.com/api';
 
-export const fetchChat = createAsyncThunk(
-    'comments/fetchChat',
-    async ({ chatId }, { getState, rejectWithValue }) => {
+export const fetchOrCreateChat = createAsyncThunk(
+    'comments/fetchOrCreateChat',
+    async ({ contentId, contentType }, { getState, rejectWithValue }) => {
         const authToken = getState().auth.token;
+        const chatId = getState().comments.chatId;
 
         const getChat = async (chat_id) => {
             const response = await axios.post(`${API_BASE_URL}/get_chat`, {
@@ -17,27 +18,39 @@ export const fetchChat = createAsyncThunk(
             }, {
                 headers: { 'Authorization': `${authToken}` }
             });
+            console.log(response.data)
             return response.data.result;
         };
 
-        const getMessages = async (chat_id) => {
-            const response = await axios.post(`${API_BASE_URL}/get_messages`, {
+        const createChat = async (content_id, content_type, title, isPrivate) => {
+            const response = await axios.post(`${API_BASE_URL}/create_chat`, {
                 jsonrpc: '2.0',
-                method: 'get_messages',
-                params: { chat_id },
+                method: 'create_chat',
+                params: { content_id, content_type, title, private: isPrivate },
                 id: 1,
             }, {
                 headers: { 'Authorization': `${authToken}` }
             });
-            return response.data.result.messages;
+            console.log(response.data)
+            return response.data.result;
         };
 
         try {
-            const chat = await getChat(chatId);
-            const messages = await getMessages(chatId);
-            return { chatId: chat.id, messages };
+            if (chatId) {
+                const chat = await getChat(chatId);
+                return { chatId: chat.id, messages: chat.messages };
+            } else {
+                const newChat = await createChat(contentId, contentType, 'Chat Title', false);
+                console.log(newChat)
+                return { chatId: newChat.id, messages: [] };
+            }
         } catch (error) {
-            return rejectWithValue(error.message);
+            if (error.response && error.response.data.error) {
+                const newChat = await createChat(contentId, contentType, 'Chat Title', false);
+                return { chatId: newChat.id, messages: [] };
+            } else {
+                return rejectWithValue(error.message);
+            }
         }
     }
 );
@@ -57,13 +70,13 @@ export const postMessage = createAsyncThunk(
             }, {
                 headers: { 'Authorization': `${authToken}` }
             });
+            console.log(response.data)
             return response.data.result;
         } catch (error) {
             return rejectWithValue(error.message);
         }
     }
 );
-
 const commentsSlice = createSlice({
     name: 'comments',
     initialState: {
@@ -75,15 +88,15 @@ const commentsSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchChat.pending, (state) => {
+            .addCase(fetchOrCreateChat.pending, (state) => {
                 state.status = 'loading';
             })
-            .addCase(fetchChat.fulfilled, (state, action) => {
+            .addCase(fetchOrCreateChat.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.chatId = action.payload.chatId;
                 state.comments = action.payload.messages;
             })
-            .addCase(fetchChat.rejected, (state, action) => {
+            .addCase(fetchOrCreateChat.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
             })
