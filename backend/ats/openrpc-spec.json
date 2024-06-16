@@ -3999,6 +3999,9 @@
               "title": {
                 "type": "string"
               },
+              "image": {
+                "type": "string"
+              },
               "text": {
                 "type": "string",
                 "description": "Содержимое новости в Markdown формате."
@@ -4028,6 +4031,7 @@
             "required": [
               "short_html",
               "short_title",
+              "image",
               "title",
               "project_id",
               "project",
@@ -4155,6 +4159,9 @@
             "title": {
               "type": "string"
             },
+            "image": {
+              "type": "string"
+            },
             "text": {
               "type": "string",
               "description": "Содержимое новости в Markdown формате."
@@ -4176,6 +4183,7 @@
             }
           },
           "required": [
+            "image",
             "title",
             "project_id",
             "project",
@@ -4302,6 +4310,9 @@
             "title": {
               "type": "string"
             },
+            "image": {
+              "type": "string"
+            },
             "text": {
               "type": "string",
               "description": "Содержимое новости в Markdown формате."
@@ -4323,6 +4334,7 @@
             }
           },
           "required": [
+            "image",
             "title",
             "project_id",
             "project",
@@ -5363,6 +5375,201 @@
         }
       },
       "summary": "Добавляет подписку на новые вакансии.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "set_interview_date",
+      "params": [
+        {
+          "name": "job_id",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true,
+          "summary": "ID вакансии"
+        },
+        {
+          "name": "applicant_id",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true,
+          "summary": "ID резюме соискателя"
+        },
+        {
+          "name": "interview_date",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "summary": "Время начала собеседования в формате ISO 8601"
+        }
+      ],
+      "result": {
+        "name": "set_interview_date_result",
+        "schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "x-cl-class": "T",
+          "x-cl-package": "COMMON-LISP"
+        }
+      },
+      "summary": "Сохраняет дату интервью",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "cancel_interview",
+      "params": [
+        {
+          "name": "job_id",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true,
+          "summary": "ID вакансии"
+        },
+        {
+          "name": "applicant_id",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true,
+          "summary": "ID резюме соискателя"
+        }
+      ],
+      "result": {
+        "name": "cancel_interview_result",
+        "schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "x-cl-class": "T",
+          "x-cl-package": "COMMON-LISP"
+        }
+      },
+      "summary": "Отменяет интервью и сбрасывает дату интервью",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "my_interview",
+      "params": [],
+      "result": {
+        "name": "my_interview_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "updated_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "id": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "job_title": {
+                "type": "string",
+                "description": "Название вакансии"
+              },
+              "date": {
+                "type": "string",
+                "description": "Дата начала собеседования в формате ISO 8601"
+              },
+              "name": {
+                "type": "string",
+                "description": "Имя кандидата"
+              }
+            },
+            "required": [
+              "name",
+              "date",
+              "job_title",
+              "id",
+              "updated_at",
+              "created_at"
+            ],
+            "x-cl-class": "INTERVIEW-DETAILS",
+            "x-cl-package": "ATS/API/APPLICANTS"
+          }
+        }
+      },
+      "summary": "Отдаёт Соискателю список дат на которые запланированы собеседования.",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "all_interview",
+      "params": [],
+      "result": {
+        "name": "all_interview_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "updated_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "id": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "job_title": {
+                "type": "string",
+                "description": "Название вакансии"
+              },
+              "date": {
+                "type": "string",
+                "description": "Дата начала собеседования в формате ISO 8601"
+              },
+              "name": {
+                "type": "string",
+                "description": "Имя кандидата"
+              }
+            },
+            "required": [
+              "name",
+              "date",
+              "job_title",
+              "id",
+              "updated_at",
+              "created_at"
+            ],
+            "x-cl-class": "INTERVIEW-DETAILS",
+            "x-cl-package": "ATS/API/APPLICANTS"
+          }
+        }
+      },
+      "summary": "Отдаёт HR список дат на которые запланированы собеседования.",
+      "description": "Если метод запрашивает пользователь, не имеющий HR роли, то отдаёт ошибку.",
       "paramStructure": "by-name"
     }
   ],

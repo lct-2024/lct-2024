@@ -54,6 +54,8 @@
   (:import-from #:ats/models/applicant-skill
                 #:get-skills-simple
                 #:update-skills-simple)
+  (:import-from #:local-time
+                #:timestamp)
   (:export
    #:notify-applicant))
 (in-package #:ats/api/applicants)
@@ -668,6 +670,10 @@ where id = ?"
       (%move-to-the-next-step job-id applicant-id))))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Работа с назначением собеседований
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
 (define-rpc-method (ats-api set-interview-date) (job-id applicant-id interview-date)
   (:summary "Сохраняет дату интервью")
   (:param job-id integer "ID вакансии")
@@ -703,3 +709,67 @@ update ats.job_applicant
    and applicant_id = ?"
                         (list job-id applicant-id))
       (values t))))
+
+
+(deftable interview-details ()
+  ((job-title :initarg :job-title
+              :type string
+              :col-type :text
+              :documentation "Название вакансии")
+   (date :initarg :date
+         :type timestamp
+         :col-type :timestamptz
+         :documentation "Дата начала собеседования в формате ISO 8601")
+   (name :initarg :name
+         :type string
+         :col-type :text
+         :documentation "Имя кандидата")))
+
+
+(defun user-interviews (user-id)
+  (with-connection ()
+    (mito:select-by-sql 'interview-details
+                        "
+select j.title
+     , ja.interview_date as date
+     , ap.name
+  from ats.job as j
+  join ats.job_applicant as ja on j.id = ja.job_id
+  join ats.applicant as ap on ja.applicant_id = ap.id
+ where ap.user_id = ?
+   and ja.interview_date is not null
+ order by ja.interview_date
+"
+                        :binds (list user-id))))
+
+
+(define-rpc-method (ats-api my-interview) ()
+  (:summary "Отдаёт Соискателю список дат на которые запланированы собеседования.")
+  (:result (soft-list-of interview-details))
+  
+  (with-session ((user-id))
+    (user-interviews user-id)))
+
+
+(defun hr-interviews ()
+  (with-connection ()
+    (mito:select-by-sql 'interview-details
+                        "
+select j.title
+     , ja.interview_date as date
+  from ats.job as j
+  join ats.job_applicant as ja on j.id = ja.job_id
+  join ats.applicant as ap on ja.applicant_id = ap.id
+ where ja.interview_date is not null
+ order by ja.interview_date
+")))
+
+
+(define-rpc-method (ats-api all-interview) ()
+  (:summary "Отдаёт HR список дат на которые запланированы собеседования.")
+  (:description "Если метод запрашивает пользователь, не имеющий HR роли, то отдаёт ошибку.")
+  (:result (soft-list-of interview-details))
+  
+  (with-session ((user-id scopes))
+    (require-scope user-id scopes "ats.job.edit" "view interview list")
+    (hr-interviews)))
