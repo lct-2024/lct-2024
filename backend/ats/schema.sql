@@ -155,7 +155,7 @@ CREATE TABLE ats.job_applicant (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     job_id BIGINT NOT NULL references ats.job on delete cascade,
     type TEXT NOT NULL,
-    applicant_id BIGINT NOT NULL references ats.job on delete cascade,
+    applicant_id BIGINT NOT NULL references ats.applicant on delete cascade,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ
 );

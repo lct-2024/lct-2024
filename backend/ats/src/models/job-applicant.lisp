@@ -5,6 +5,7 @@
                 #:soft-list-of
                 #:dict)
   (:import-from #:mito
+                #:select-dao
                 #:deftable
                 #:object-id
                 #:dao-table-class)
@@ -13,11 +14,16 @@
   (:import-from #:ats/models/job
                 #:job)
   (:import-from #:ats/models/applicant
+                #:applicant-email
                 #:applicant)
   (:import-from #:40ants-pg/transactions
                 #:with-transaction)
   (:import-from #:ats/models/application-step
                 #:application-step)
+  (:import-from #:40ants-pg/connection
+                #:with-connection)
+  (:import-from #:alexandria
+                #:random-elt)
   (:export
    #:bind-job-to-applicants
    #:get-job-applicants))
@@ -58,13 +64,14 @@
             (applicant obj))))
 
 
-(defun apply-to-the-job (job applicant-id &key (type "parsed"))
+(defun apply-to-the-job (job applicant-id &key (type "parsed") step)
   (or (mito:find-dao 'job-applicant
                      :job job
                      :applicant-id applicant-id)
       (mito:create-dao 'job-applicant
                        :job job
                        :type type
+                       :application-step step
                        :applicant-id applicant-id)))
 
 
@@ -84,3 +91,24 @@ join ats.job_applicant on applicant.id = job_applicant.applicant_id
 where job_applicant.job_id = ?
 order by applicant.name collate \"ru_RU\""
                       :binds (list (mito:object-id job))))
+
+
+
+(defun make-random-applications ()
+  "Симулируем то, что разные кандидаты находятся на разных этапах"
+  (with-connection ()
+    (loop with all-jobs = (select-dao 'job)
+          with all-steps = (select-dao 'application-step)
+          for applicant in (select-dao 'applicant)
+          for current-applications = (mito:find-dao 'job-applicant
+                                                    :applicant applicant)
+          for email = (applicant-email applicant)
+          when (and (not (member email '("hr@example.com" "manager@example.com")))
+                    (null current-applications))
+          do (let ((random-jobs (random-sample:random-sample all-jobs 3))
+                   (random-step (when (< (random 100) 80)
+                                  (random-elt all-steps))))
+               (with-transaction
+                 (loop for job in random-jobs
+                       do (apply-to-the-job job (object-id applicant)
+                                            :step random-step)))))))
