@@ -10,6 +10,7 @@ const NewsPage = () => {
     const news = useSelector((state) => state.news.data);
     const status = useSelector((state) => state.news.status);
     const error = useSelector((state) => state.news.error);
+    const chatId = news ? news.chat_id : null;
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -52,7 +53,7 @@ const NewsPage = () => {
                     </div>
                 </div>
             </div>
-            <Comments contentId='newsId' contentType='news' />
+            <Comments contentId='newsId' text="новостях" chatId={chatId} contentType='news' />
             <Footer />
         </section>
     );
