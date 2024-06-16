@@ -392,6 +392,20 @@
             "type": "boolean"
           },
           "summary": "Показать все вакансии, даже те что уже закрыты."
+        },
+        {
+          "name": "category",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Категория к которой отностится вакансия. Получить список категорий можно через метод ats.get_job_categories."
+        },
+        {
+          "name": "city",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Город. Список городов в которых есть вакансии можно получить из ats.get_job_cities."
         }
       ],
       "result": {
@@ -665,6 +679,7 @@
         }
       },
       "summary": "Отдаёт все вакансии",
+      "description": "Если вакансии смотрит соискатель, то они сортируются начиная от наиболее подходищих под его резюме.",
       "paramStructure": "by-name"
     },
     {
@@ -2658,7 +2673,7 @@
                 ],
                 "x-cl-class": "APPLICANT",
                 "x-cl-package": "ATS/MODELS/APPLICANT",
-                "description": "Пользователь, к которому привязана запись об образовании."
+                "description": "Пользователь, к которому привязана рекомендация."
               },
               "applicant_id": {
                 "type": "object",
@@ -2836,7 +2851,7 @@
                 ],
                 "x-cl-class": "APPLICANT",
                 "x-cl-package": "ATS/MODELS/APPLICANT",
-                "description": "Пользователь, к которому привязана запись об образовании."
+                "description": "Пользователь, к которому привязана рекомендация."
               },
               "applicant_id": {
                 "type": "object",
@@ -3057,7 +3072,7 @@
               ],
               "x-cl-class": "APPLICANT",
               "x-cl-package": "ATS/MODELS/APPLICANT",
-              "description": "Пользователь, к которому привязана запись об образовании."
+              "description": "Пользователь, к которому привязана рекомендация."
             },
             "applicant_id": {
               "type": "object",
@@ -3269,7 +3284,7 @@
               ],
               "x-cl-class": "APPLICANT",
               "x-cl-package": "ATS/MODELS/APPLICANT",
-              "description": "Пользователь, к которому привязана запись об образовании."
+              "description": "Пользователь, к которому привязана рекомендация."
             },
             "applicant_id": {
               "type": "object",
@@ -4909,6 +4924,36 @@
         }
       },
       "summary": "Статистику по количеству кандидатов на каждом из этапов воронки найма",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "get_job_categories",
+      "params": [],
+      "result": {
+        "name": "get_job_categories_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "summary": "Отдаёт список категорий к которым может относиться вакансия",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "get_job_cities",
+      "params": [],
+      "result": {
+        "name": "get_job_cities_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "summary": "Отдаёт все города для которых открыты вакансии.",
       "paramStructure": "by-name"
     }
   ],
