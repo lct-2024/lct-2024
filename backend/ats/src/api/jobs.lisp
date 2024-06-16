@@ -141,6 +141,7 @@
 
 (define-rpc-method (ats-api get-jobs) (&key show-all)
   (:summary "Отдаёт все вакансии")
+  (:description "Если вакансии смотрит соискатель, то они сортируются начиная от наиболее подходищих под его резюме.")
   (:param show-all boolean "Показать все вакансии, даже те что уже закрыты.")
   (:result (serapeum:soft-list-of job))
   (with-connection ()
