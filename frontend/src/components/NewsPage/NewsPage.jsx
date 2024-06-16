@@ -45,7 +45,7 @@ const NewsPage = () => {
                                 <img src={item.image} alt="фото новости" />
                                 <div className={style.about}>
                                     <h4>{item.short_title}</h4>
-                                    <p>{item.short_html}</p>
+                                    <p dangerouslySetInnerHTML={{ __html: item.short_html }}></p>
                                 </div>
                             </div>
                         ))}
