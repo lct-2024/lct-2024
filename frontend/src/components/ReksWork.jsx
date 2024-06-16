@@ -78,7 +78,7 @@ const ReksWork = () => {
                         </div>
                     </div>
                 </div>
-                <h2>Преимущества работы в «рексофт»</h2>
+                <h2 className={style.fix}>Преимущества работы в «рексофт»</h2>
                 <div className={style.mainText}>
                     <div className={style.smallBlock}>
                         <div className={selectedFilter === 'Интересные задачи и передовые технологии' ? style.activeFilter : ''} onClick={() => handleFilterClick('Интересные задачи и передовые технологии')}>

@@ -42,10 +42,10 @@ const NewsPage = () => {
                     <div className={style.news}>
                         {news.map((item, i) => (
                             <div className={style.newsBlock} key={i}>
-                                <img src="bl2.png" alt="фото новости" />
+                                <img src={item.image} alt="фото новости" />
                                 <div className={style.about}>
                                     <h4>{item.short_title}</h4>
-                                    <p>{item.text}</p>
+                                    <p>{item.short_html}</p>
                                 </div>
                             </div>
                         ))}

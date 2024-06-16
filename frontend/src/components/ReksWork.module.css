@@ -136,3 +136,7 @@
     flex-direction: column;
     justify-content: space-evenly;
 }
+
+.fix {
+    margin-bottom: -85px !important;
+}

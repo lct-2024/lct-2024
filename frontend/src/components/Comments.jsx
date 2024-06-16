@@ -39,7 +39,7 @@ const Comments = ({ text, chatId }) => {
             return comments.map((comment, i) => (
                 <div className={style.comment} key={i}>
                     <div>
-                        <h4>{user.fio}</h4>
+                        <h4>{user.fio || "Вы не зарегистрированы"}</h4>
                         <p>{new Date(comment.created_at).toLocaleString()}</p>
                     </div>
                     <p>{comment.message}</p>
