@@ -3,22 +3,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchOrCreateChat, postMessage } from '../store/commentsSlice';
 import style from './Comments.module.css';
 
-const Comments = ({ text, contentId, contentType }) => {
+const Comments = ({ text, contentId, contentType, chatId }) => {
     const [newCommentText, setNewCommentText] = useState('');
     const [showInput, setShowInput] = useState(false);
     const user = useSelector((state) => state.auth.user || null);
     const dispatch = useDispatch();
     const authToken = useSelector((state) => state.auth.token);
-    const chatId = useSelector((state) => state.comments.chatId);
     const comments = useSelector((state) => state.comments.comments);
     const status = useSelector((state) => state.comments.status);
     const error = useSelector((state) => state.comments.error);
 
     useEffect(() => {
-        if (authToken) {
-            dispatch(fetchOrCreateChat({ contentId, contentType }));
+        if (authToken && chatId) {
+            dispatch(fetchOrCreateChat({ contentId: chatId, contentType: 'chat' }));
         }
-    }, [authToken, dispatch, contentId, contentType]);
+    }, [dispatch, authToken, chatId]);
 
     const handleShowInput = () => {
         setShowInput(true);
@@ -28,7 +27,7 @@ const Comments = ({ text, contentId, contentType }) => {
         if (newCommentText.trim() === '') return;
 
         try {
-            dispatch(postMessage({ message: newCommentText }));
+            await dispatch(postMessage({ message: newCommentText, chatId }));
             setNewCommentText('');
             setShowInput(false);
         } catch (error) {

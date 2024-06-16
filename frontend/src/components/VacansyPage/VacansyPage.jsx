@@ -127,7 +127,7 @@ const VacansyPage = () => {
                     </div>
                 </div>
                 {vacansies.length === 0 ? <h1 style={{ margin: "0 auto" }}>Загрузка...</h1> : <VacansyList hideBody='false' vacansies={vacansies} />}
-                <Comments text="вакансиях" />
+                <Comments text="вакансиях" chatId={21212212} />
                 <Footer />
             </div>
         </section >

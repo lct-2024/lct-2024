@@ -3,47 +3,44 @@ import style from './VacansyInfo.module.css';
 import Footer from '../Footer';
 import Navigation from '../Navigation';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchOrCreateChat, postMessage } from '../../store/commentsSlice';
 import ApplyForm from './ApplyForm';
 import Comments from '../Comments';
 import axios from 'axios';
 
 const VacansyInfo = () => {
     const { id } = useParams();
-    const vacansies = useSelector(state => state.vacansies.data);
-    const vacansy = vacansies.find((v) => v.id.toString() === id);
+    const dispatch = useDispatch();
     const [selectedFilter, setSelectedFilter] = useState("О проекте");
     const [btnText, setBtnText] = useState("Откликнуться");
     const [btnClicked, setBtnClicked] = useState(false);
     const [showAlarm, setShowAlarm] = useState(false);
     const [itsHr, setItsHr] = useState(false);
-    const [appliedJobs, setAppliedJobs] = useState([]);
-    let token = localStorage.getItem('authToken') || null;
+
+    const token = localStorage.getItem('authToken') || null;
+    const vacansies = useSelector(state => state.vacansies.data);
+    const vacansy = vacansies.find(v => v.id.toString() === id);
+    const chatId = vacansy ? vacansy.chat_id : null;
+    const comments = useSelector(state => state.comments.comments);
+    const status = useSelector(state => state.comments.status);
+    const error = useSelector(state => state.comments.error);
 
     useEffect(() => {
-        // Fetch applied jobs to check if the user has already applied to this job
-        axios.post('https://ats.lct24.dev.40ants.com/api/get_my_jobs', {
-            jsonrpc: '2.0',
-            method: 'get_my_jobs',
-            params: {},
-            id: 1
-        },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `${token}`,
-                }
-            })
-            .then(response => {
-                setAppliedJobs(response.data.result);
-                const alreadyApplied = response.data.result.some(job => job.id.toString() === id);
-                if (alreadyApplied) {
-                    setBtnText("Вы уже откликнулись");
-                    setBtnClicked(true);
-                }
-            })
-            .catch(error => console.error('Error fetching applied jobs:', error));
-    }, [id, token]);
+        if (token && chatId) {
+            dispatch(fetchOrCreateChat({ contentId: id, contentType: 'vacancy' }));
+        }
+    }, [dispatch, token, chatId, id]);
+
+    useEffect(() => {
+        // Check if user has already applied to this job
+        if (comments.length > 0) {
+            setShowAlarm(true);
+            setTimeout(() => {
+                setShowAlarm(false);
+            }, 2000);
+        }
+    }, [comments]);
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter === selectedFilter ? null : filter);
@@ -56,7 +53,7 @@ const VacansyInfo = () => {
         setBtnText("Вы откликнулись");
 
         try {
-            const response = await axios.post(
+            await axios.post(
                 'https://ats.lct24.dev.40ants.com/api/apply_to_the_job',
                 {
                     jsonrpc: '2.0',
@@ -74,13 +71,10 @@ const VacansyInfo = () => {
                 }
             );
 
-            if (response.data.result) {
-                console.log('Отклик успешно отправлен');
-            } else {
-                console.error('Ошибка при отправке отклика');
-            }
+            console.log('Отклик успешно отправлен');
+
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Ошибка при отправке отклика:', error);
         }
     };
 
@@ -96,9 +90,9 @@ const VacansyInfo = () => {
             case 'Критерии':
                 return (
                     <div className={style.desc}>
-                        <p> Языки: {vacansy.programming_languages.map((item) => item.title).join(', ')}</p>
+                        <p> Языки: {vacansy.programming_languages.map(item => item.title).join(', ')}</p>
                         <p> Направление вакансии: {vacansy.category}</p>
-                        <p> Навыки: {vacansy.skills.map((item) => item.title).join(', ')}</p>
+                        <p> Навыки: {vacansy.skills.map(item => item.title).join(', ')}</p>
                     </div>
                 );
             case 'Обязанности':
@@ -118,15 +112,6 @@ const VacansyInfo = () => {
                 return <div className={style.desc}></div>;
         }
     };
-
-    useEffect(() => {
-        if (btnClicked) {
-            setShowAlarm(true);
-            setTimeout(() => {
-                setShowAlarm(false);
-            }, 2000);
-        }
-    }, [btnClicked]);
 
     if (!vacansy) {
         return <div>Вакансия не найдена</div>;
@@ -192,7 +177,7 @@ const VacansyInfo = () => {
                         </div>
                     </div>
                     <div className={style.lastSect}>
-                        <Comments text="вакансии" chatId={vacansy.chat_id} />
+                        <Comments text="вакансии" key={vacansy.id} chatId={chatId} />
                     </div>
                     {itsHr && <ApplyForm jobId={vacansy.id} />}
                 </div>
