@@ -6,7 +6,7 @@ import style from './Comments.module.css';
 const Comments = ({ text, chatId }) => {
     const [newCommentText, setNewCommentText] = useState('');
     const [showInput, setShowInput] = useState(false);
-    const user = useSelector((state) => state.auth.user);
+    const user = useSelector((state) => state.auth.user || null);
     const dispatch = useDispatch();
     const comments = useSelector((state) => state.comments.comments);
     const status = useSelector((state) => state.comments.status);
