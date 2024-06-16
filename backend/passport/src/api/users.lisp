@@ -15,6 +15,8 @@
                 #:save-dao
                 #:find-dao)
   (:import-from #:passport/models/user
+                #:user-metadata
+                #:user-email
                 #:get-user-roles-and-scopes
                 #:user-password-hash
                 #:get-user-by
@@ -135,6 +137,28 @@
        (return-error (format nil "Email ~A уже занят."
                              email)
                      :code 2)))))
+
+
+(define-rpc-method (passport-api set-metadata) (metadata)
+  (:summary "Обновляет метаданные текущего пользователя")
+  (:param metadata hash-table "Словарь с дополнительной информацией о пользователе, нужной остальным сервисам сайта.")
+  
+  (:result user)
+  
+  (with-connection ()
+    (with-session (user-id)
+     (let* ((user (mito:find-dao 'user
+                                 :id user-id)))
+       (unless user
+         (return-error (format nil "User with id ~A not found."
+                               user-id)))
+       
+       (auth-log "User changed metadata: ~A" (user-email user))
+       
+       (setf (user-metadata user)
+             metadata)
+       
+       (values user)))))
 
 
 (defmethod openrpc-server:slots-to-exclude ((obj (eql (find-class 'user-profile))))

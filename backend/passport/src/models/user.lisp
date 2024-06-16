@@ -50,7 +50,7 @@
    (metadata :col-type :jsonb
              :type hash-table
              :initform (dict)
-             :reader user-metadata
+             :accessor user-metadata
              :inflate #'decode-json
              :deflate #'encode-json
              :documentation "Словарь с дополнительной информацией о пользователе."))
