@@ -4999,6 +4999,371 @@
       },
       "summary": "Отдаёт все проекты для которых открыты вакансии.",
       "paramStructure": "by-name"
+    },
+    {
+      "name": "get_subscriptions",
+      "params": [],
+      "result": {
+        "name": "get_subscriptions_result",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "updated_at": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "id": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "applicant": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                    "x-cl-class": "T",
+                    "x-cl-package": "COMMON-LISP"
+                  },
+                  "updated_at": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                    "x-cl-class": "T",
+                    "x-cl-package": "COMMON-LISP"
+                  },
+                  "id": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                    "x-cl-class": "T",
+                    "x-cl-package": "COMMON-LISP"
+                  },
+                  "user_id": {
+                    "type": "integer",
+                    "description": "ID пользователя из микросервиса Passport."
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "experience": {
+                    "type": "string",
+                    "description": "Описание опыта работы кандидата."
+                  },
+                  "about": {
+                    "type": "string",
+                    "description": "Общее описание кандидата, его увелечения, свойства характера и прочее."
+                  },
+                  "portfolio": {
+                    "type": "string",
+                    "description": "Ссылка на портфолио."
+                  },
+                  "salary": {
+                    "type": "string",
+                    "description": "Желаемая зарплата"
+                  },
+                  "contacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "value",
+                        "type"
+                      ],
+                      "x-cl-class": "CONTACT",
+                      "x-cl-package": "ATS/MODELS/APPLICANT"
+                    },
+                    "description": "Список контактов в виде словарей с ключами \"type\" и \"value\", где значениями являются строки. Например: [{\"telegram\": \"telegram-nick\"}]."
+                  },
+                  "chat_id": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "description": "ID чата, привязанного к объекту."
+                  },
+                  "system_chat_id": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "description": "ID чата, с системными сообщениями пользователя."
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "id",
+                  "updated_at",
+                  "created_at"
+                ],
+                "x-cl-class": "APPLICANT",
+                "x-cl-package": "ATS/MODELS/APPLICANT"
+              },
+              "applicant_id": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "x-cl-class": "T",
+                "x-cl-package": "COMMON-LISP"
+              },
+              "filters": {
+                "type": "object"
+              },
+              "last_processed_job_id": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "last_processed_job_id",
+              "filters",
+              "applicant_id",
+              "applicant",
+              "id",
+              "updated_at",
+              "created_at"
+            ],
+            "x-cl-class": "SUBSCRIPTION",
+            "x-cl-package": "ATS/MODELS/SUBSCRIPTION",
+            "description": "Хранит информацию о подписках пользователей на новые вакансии."
+          }
+        }
+      },
+      "summary": "Отдаёт подписки текущего пользователя",
+      "paramStructure": "by-name"
+    },
+    {
+      "name": "add_subscription",
+      "params": [
+        {
+          "name": "category",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Категория"
+        },
+        {
+          "name": "project",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Проект"
+        },
+        {
+          "name": "speciality",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Специальность"
+        },
+        {
+          "name": "city",
+          "schema": {
+            "type": "string"
+          },
+          "summary": "Город в котором идёт найм"
+        }
+      ],
+      "result": {
+        "name": "add_subscription_result",
+        "schema": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "x-cl-class": "T",
+                  "x-cl-package": "COMMON-LISP"
+                },
+                "updated_at": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "x-cl-class": "T",
+                  "x-cl-package": "COMMON-LISP"
+                },
+                "id": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "x-cl-class": "T",
+                  "x-cl-package": "COMMON-LISP"
+                },
+                "applicant": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "object",
+                      "properties": {},
+                      "required": [],
+                      "x-cl-class": "T",
+                      "x-cl-package": "COMMON-LISP"
+                    },
+                    "updated_at": {
+                      "type": "object",
+                      "properties": {},
+                      "required": [],
+                      "x-cl-class": "T",
+                      "x-cl-package": "COMMON-LISP"
+                    },
+                    "id": {
+                      "type": "object",
+                      "properties": {},
+                      "required": [],
+                      "x-cl-class": "T",
+                      "x-cl-package": "COMMON-LISP"
+                    },
+                    "user_id": {
+                      "type": "integer",
+                      "description": "ID пользователя из микросервиса Passport."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "experience": {
+                      "type": "string",
+                      "description": "Описание опыта работы кандидата."
+                    },
+                    "about": {
+                      "type": "string",
+                      "description": "Общее описание кандидата, его увелечения, свойства характера и прочее."
+                    },
+                    "portfolio": {
+                      "type": "string",
+                      "description": "Ссылка на портфолио."
+                    },
+                    "salary": {
+                      "type": "string",
+                      "description": "Желаемая зарплата"
+                    },
+                    "contacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "type"
+                        ],
+                        "x-cl-class": "CONTACT",
+                        "x-cl-package": "ATS/MODELS/APPLICANT"
+                      },
+                      "description": "Список контактов в виде словарей с ключами \"type\" и \"value\", где значениями являются строки. Например: [{\"telegram\": \"telegram-nick\"}]."
+                    },
+                    "chat_id": {
+                      "oneOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "string"
+                        }
+                      ],
+                      "description": "ID чата, привязанного к объекту."
+                    },
+                    "system_chat_id": {
+                      "oneOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "string"
+                        }
+                      ],
+                      "description": "ID чата, с системными сообщениями пользователя."
+                    }
+                  },
+                  "required": [
+                    "user_id",
+                    "id",
+                    "updated_at",
+                    "created_at"
+                  ],
+                  "x-cl-class": "APPLICANT",
+                  "x-cl-package": "ATS/MODELS/APPLICANT"
+                },
+                "applicant_id": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "x-cl-class": "T",
+                  "x-cl-package": "COMMON-LISP"
+                },
+                "filters": {
+                  "type": "object"
+                },
+                "last_processed_job_id": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "last_processed_job_id",
+                "filters",
+                "applicant_id",
+                "applicant",
+                "id",
+                "updated_at",
+                "created_at"
+              ],
+              "x-cl-class": "SUBSCRIPTION",
+              "x-cl-package": "ATS/MODELS/SUBSCRIPTION",
+              "description": "Хранит информацию о подписках пользователей на новые вакансии."
+            }
+          ]
+        }
+      },
+      "summary": "Добавляет подписку на новые вакансии.",
+      "paramStructure": "by-name"
     }
   ],
   "openrpc": "1.0.0",
