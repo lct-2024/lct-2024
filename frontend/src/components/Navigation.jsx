@@ -1,15 +1,20 @@
 import React, { useState } from 'react'
 import style from "./Navigation.module.css"
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../store/authSlice';
 const Navigation = () => {
 
     const user = useSelector((state) => state.auth.user);
+    const dispatch = useDispatch();
     const [menuOpen, setMenuOpen] = useState(false);
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
+    };
+
+    const handleLogout = () => {
+        dispatch(logout());
     };
 
     return (
@@ -32,7 +37,7 @@ const Navigation = () => {
                                 <Link to="/profile">Профиль</Link>
                                 <Link to="/resume">Резюме</Link>
                                 <Link to="/responses">Отклики</Link>
-                                <Link to="/schedule">Расписание</Link>
+                                <Link to="/login" onClick={handleLogout}>Выйти</Link>
                             </div>
                         )}
                     </div>
