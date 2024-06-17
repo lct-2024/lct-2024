@@ -13,7 +13,8 @@ const UserProfile = () => {
     const [alerts, setAlerts] = useState([]);
     const [appliedJobs, setAppliedJobs] = useState([]);
     const [showCount, setShowCount] = useState(3);
-    const [showModal, setShowModal] = useState(false)
+    const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.post('https://ats.lct24.dev.40ants.com/api/get_my_jobs', {
@@ -28,8 +29,14 @@ const UserProfile = () => {
                     Authorization: `${localStorage.getItem('authToken')}`,
                 }
             })
-            .then(response => setAppliedJobs(response.data.result))
-            .catch(error => console.error('Error fetching applied jobs:', error));
+            .then(response => {
+                setAppliedJobs(response.data.result || []);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching applied jobs:', error);
+                setLoading(false);
+            });
     }, []);
 
     const handleLoadMore = () => {
@@ -97,25 +104,29 @@ const UserProfile = () => {
                     </div>
                     <div className={style.alerts}>
                         <p className={style.title}>Отклики</p>
-                        {appliedJobs.length === 0 ? (
-                            <p>Нет откликов на вакансии</p>
+                        {loading ? (
+                            <p>Loading...</p>
                         ) : (
-                            appliedJobs.slice(0, showCount).map((job) => (
-                                <div key={job.id} className={style.alert}>
-                                    <div>
-                                        <p className={style.title2}>{job.title}</p>
-                                        <p>Дедлайн: {job.active_to ? new Date(job.active_to).toLocaleString() : "Не указан"}</p>
+                            appliedJobs.length === 0 ? (
+                                <p>Нет откликов на вакансии</p>
+                            ) : (
+                                appliedJobs.slice(0, showCount).map((job) => (
+                                    <div key={job.id} className={style.alert}>
+                                        <div>
+                                            <p className={style.title2}>{job.title}</p>
+                                            <p>Дедлайн: {job.active_to ? new Date(job.active_to).toLocaleString() : "Не указан"}</p>
+                                        </div>
+                                        <p>Проект: {job.project?.title}</p>
+                                        <p>Город: {job.city}</p>
+                                        <p>Вид занятости: {job.type_of_employment}</p>
+                                        <p>Специализация: {job.programming_languages?.map((item) => item.title).join(', ')}</p>
+                                        <div>
+                                            <p>Зарплата: {job.salary ? job.salary : "Не указана"}</p>
+                                            <p>Процент соответствия резюме: {job.resume_matching_score}%</p>
+                                        </div>
                                     </div>
-                                    <p>Проект: {job.project.title}</p>
-                                    <p>Город: {job.city}</p>
-                                    <p>Вид занятости: {job.type_of_employment}</p>
-                                    <p>Специализация: {job.programming_languages.map((item) => item.title).join(', ')}</p>
-                                    <div>
-                                        <p>Зарплата: {job.salary ? job.salary : "Не указана"}</p>
-                                        <p>Процент соответствия резюме: {job.resume_matching_score}%</p>
-                                    </div>
-                                </div>
-                            ))
+                                ))
+                            )
                         )}
                         <button onClick={handleLoadMore} className={style.btn2}>Загрузить ещё</button>
                     </div>
