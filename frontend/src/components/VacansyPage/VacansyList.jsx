@@ -9,7 +9,7 @@ const VacansyList = ({ btnShow, hideBody, isHR }) => {
     const [showCount, setShowCount] = useState(5);
 
     const handleVacancyClick = (vacansy) => {
-        { !isHR && navigate(`/vacansy-info/${vacansy.id}`) };
+        { isHR == null ? navigate(`/vacansy-info/${vacansy.id}`) : navigate(`/vacansy-info-hr/${vacansy.id}`) };
     };
 
     const handleLoadMore = () => {

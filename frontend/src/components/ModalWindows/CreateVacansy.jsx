@@ -178,7 +178,7 @@ const CreateVacansy = ({ onClose }) => {
                         />
                     </div>
                     <button className={style.save} onClick={handleSubmit} type="submit">
-                        Сохранить
+                        Создать
                     </button>
                 </div>
             </div>

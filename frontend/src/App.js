@@ -13,6 +13,7 @@ import UserProfile from "./components/UserProfile/UserProfile";
 import NewsPage from "./components/NewsPage/NewsPage";
 import ResumePage from "./components/ResumePage/ResumePage";
 import ProjectsPageHr from "./components/ProjectsPage/ProjectsPageHr";
+import VacansyInfoHR from "./components/VacansyPage/VacansyInfoHR";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/vacansy-page" element={isHR ? <VacancyPageHr isHR={isHR} /> : <VacancyPage />} />
         <Route path="/vacansy-info/:id" element={<VacansyInfo isHR={isHR} />} />
+        {isHR != null ? <Route path="/vacansy-info-hr/:id" element={<VacansyInfoHR isHR={isHR} />} /> : ""}
         <Route path="/projects-page" element={isHR ? <ProjectsPageHr /> : <ProjectsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Registration />} />
