@@ -129,9 +129,6 @@
 .block div {
     padding: 0;
     height: 400px;
-}
-
-.block div {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -139,4 +136,29 @@
 
 .fix {
     margin-bottom: -85px !important;
+}
+
+@media (max-width: 720px) {
+    .main h2 {
+        margin: 0;
+        text-align: center;
+    }
+
+    .block h3 {
+        font-size: 30px;
+        margin-top: 20px;
+    }
+
+    .block h4 {
+        font-size: 20px;
+    }
+
+    .block {
+        flex-direction: column-reverse;
+    }
+
+    .block div {
+        width: 390px;
+        height: 300px;
+    }
 }

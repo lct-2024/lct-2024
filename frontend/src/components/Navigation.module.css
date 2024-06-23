@@ -63,3 +63,27 @@
 .dropdownContent a:hover {
     background-color: #ddd;
 }
+
+@media (max-width: 520px) {
+
+    .items {
+        width: 100%;
+    }
+
+    .main img {
+        display: none;
+    }
+
+    .main a {
+        font-size: 10px;
+    }
+
+    .main button {
+        font-size: 10px;
+    }
+
+    .main svg {
+        width: 20px;
+    }
+
+}

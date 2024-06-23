@@ -9,7 +9,7 @@ import ApplyForm from './ApplyForm';
 import Comments from '../Comments';
 import axios from 'axios';
 
-const VacansyInfo = () => {
+const VacansyInfo = ({ isHr }) => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const [selectedFilter, setSelectedFilter] = useState("О проекте");
@@ -33,7 +33,6 @@ const VacansyInfo = () => {
     }, [dispatch, token, chatId, id]);
 
     useEffect(() => {
-        // Check if user has already applied to this job
         if (comments.length > 0) {
             setShowAlarm(true);
             setTimeout(() => {

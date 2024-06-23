@@ -3,8 +3,8 @@ import style from "./Navigation.module.css"
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice';
-const Navigation = () => {
 
+const Navigation = () => {
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const [menuOpen, setMenuOpen] = useState(false);

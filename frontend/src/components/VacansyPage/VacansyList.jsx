@@ -3,13 +3,13 @@ import style from './VacansyList.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-const VacansyList = ({ btnShow, hideBody }) => {
+const VacansyList = ({ btnShow, hideBody, isHR }) => {
     const navigate = useNavigate();
     const vacansies = useSelector(state => state.vacansies.data);
     const [showCount, setShowCount] = useState(5);
 
     const handleVacancyClick = (vacansy) => {
-        navigate(`/vacansy-info/${vacansy.id}`);
+        { !isHR && navigate(`/vacansy-info/${vacansy.id}`) };
     };
 
     const handleLoadMore = () => {
@@ -21,7 +21,7 @@ const VacansyList = ({ btnShow, hideBody }) => {
             <div className={style.list}>
                 {vacansies.slice(0, showCount).map((vacansy) => (
                     <div key={vacansy.id} className={!hideBody ? style.hide : style.vacansy}
-                        onClick={() => handleVacancyClick(vacansy)}>
+                        onClick={() => handleVacancyClick(vacansy)} style={{ cursor: {} }}>
                         <h2>{vacansy.title}</h2>
                         {!hideBody ? ""
                             : <>
@@ -33,7 +33,7 @@ const VacansyList = ({ btnShow, hideBody }) => {
                                         <p>{vacansy.city}</p>
                                         <p>{vacansy.category}</p>
                                     </div>
-                                    <p>Совпадение с резюме {vacansy.resume_matching_score}%</p>
+                                    {!isHR ? <p>Совпадение с резюме {vacansy.resume_matching_score}%</p> : <p></p>}
                                 </div>
                             </>}
                     </div>

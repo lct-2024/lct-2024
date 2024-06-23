@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuthToken, setUser } from "./store/authSlice";
 import MainPage from "./components/MainPage/MainPage";
 import VacancyPage from "./components/VacansyPage/VacansyPage";
+import VacancyPageHr from "./components/VacansyPage/VacansyPageHr";
 import ProjectsPage from "./components/ProjectsPage/ProjectsPage";
 import Login from "./components/AuthPage/Login";
 import Registration from "./components/AuthPage/Registration";
@@ -11,6 +12,7 @@ import VacansyInfo from "./components/VacansyPage/VacansyInfo";
 import UserProfile from "./components/UserProfile/UserProfile";
 import NewsPage from "./components/NewsPage/NewsPage";
 import ResumePage from "./components/ResumePage/ResumePage";
+import ProjectsPageHr from "./components/ProjectsPage/ProjectsPageHr";
 
 function App() {
   const dispatch = useDispatch();
@@ -26,16 +28,18 @@ function App() {
     }
   }, [dispatch]);
 
+  const isHR = user && user.roles && user.roles.includes('hr');
+
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/vacansy-page" element={<VacancyPage />} />
-        <Route path="/vacansy-info/:id" element={<VacansyInfo />} />
-        <Route path="/projects-page" element={<ProjectsPage />} />
+        <Route path="/vacansy-page" element={isHR ? <VacancyPageHr isHR={isHR} /> : <VacancyPage />} />
+        <Route path="/vacansy-info/:id" element={<VacansyInfo isHR={isHR} />} />
+        <Route path="/projects-page" element={isHR ? <ProjectsPageHr /> : <ProjectsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Registration />} />
-        {user && <Route path="/profile" element={<UserProfile />} />}
+        {user && <Route path="/profile" element={<UserProfile isHR={isHR} />} />}
         <Route path="/news" element={<NewsPage />} />
         <Route path="/resume" element={<ResumePage />} />
         <Route path="*" element={<h1 style={{ margin: "auto" }}>Вернитесь на <Link to="/">главную страницу</Link></h1>} />

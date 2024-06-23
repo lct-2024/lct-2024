@@ -1,0 +1,152 @@
+.main {
+    width: 100%;
+    background: url(../../../public/nav_back.png);
+    background-position: right;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.head {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 240px;
+    padding: 80px 0;
+}
+
+.head h1 {
+    font-weight: 400;
+    font-size: 40px;
+    margin: 0 auto;
+}
+
+.body {
+    display: flex;
+    justify-content: space-between;
+    height: 1700px;
+    padding: 100px 0;
+    width: 1480px;
+}
+
+
+.body h2 {
+    margin: 10px 0;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #D9D9D9;
+    border: none;
+    padding: 20px;
+    width: 280px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.search {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-left: 140px;
+}
+
+.search input {
+    width: 280px;
+    height: 30px;
+    font-size: 16px;
+    padding: 15px;
+    border: 1px solid black;
+}
+
+.dropbtn {
+    padding: 16px;
+    font-size: 16px;
+    height: 80px;
+    background-color: white !important;
+    border: none;
+    display: flex;
+    align-items: center;
+    width: 330px;
+    justify-content: space-between;
+}
+
+.dropdown {
+    display: inline;
+    position: relative;
+    width: 300px;
+    height: 100px;
+}
+
+.dropContent {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 312px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropContent p {
+    text-align: center;
+    color: black;
+    padding: 20px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+
+.dropContent p:hover {
+    cursor: pointer;
+    background-color: #ddd;
+}
+
+.btns {
+    display: flex;
+    align-items: center;
+}
+
+.btns button {
+    width: 240px;
+    height: 63px;
+    font-size: 24px;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.create {
+    padding: 20px;
+    background-color: #E9ECF1;
+    border: none;
+    width: 320px;
+    margin: 20px 0;
+    font-size: 20px;
+}
+
+@media (min-width: 1600px) {
+
+    .search input {
+        width: 420px;
+    }
+
+    .dropbtn {
+        width: 460px;
+    }
+
+    .body {
+        margin-left: 150px;
+    }
+
+    .create {
+        width: 440px;
+    }
+}

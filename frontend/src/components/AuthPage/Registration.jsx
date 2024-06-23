@@ -51,7 +51,7 @@ const Registration = () => {
     };
 
     return (
-        <>
+        <div className={style.wrap}>
             <div className={style.main}>
                 <div className='container'>
                     <div className={style.head}>
@@ -99,7 +99,7 @@ const Registration = () => {
                 {errorMessage && <p className={style.error}>{errorMessage}</p>}
             </div>
             <Footer />
-        </>
+        </div>
     );
 }
 

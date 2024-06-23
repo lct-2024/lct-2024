@@ -51,3 +51,16 @@
 .items svg {
     cursor: pointer;
 }
+
+@media (max-width: 720px) {
+
+    .footer img {
+        width: 55px;
+    }
+
+    .footer a {
+        margin: 0 3px;
+        font-size: 10px;
+        width: 100%;
+    }
+}

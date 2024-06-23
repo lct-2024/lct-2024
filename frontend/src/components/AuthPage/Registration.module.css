@@ -4,6 +4,13 @@
     background-position: right;
 }
 
+.wrap {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+}
+
 .head {
     display: flex;
     flex-direction: column;
@@ -49,4 +56,16 @@
     height: 50px;
     font-size: 16px;
     background-color: #D9D9D9;
+}
+
+@media (max-width: 720px) {
+
+    .body p {
+        width: 380px;
+        text-align: center;
+    }
+
+    .body input {
+        width: 300px;
+    }
 }

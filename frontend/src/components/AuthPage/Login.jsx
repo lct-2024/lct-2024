@@ -58,7 +58,7 @@ const Login = () => {
     };
 
     return (
-        <>
+        <div className={style.wrap}>
             <div className={style.main}>
                 <div className='container'>
                     <div className={style.head}>
@@ -92,7 +92,7 @@ const Login = () => {
                 </form>
             </div>
             <Footer />
-        </>
+        </div>
     );
 };
 

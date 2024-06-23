@@ -99,3 +99,52 @@
 .all:hover {
     background-color: #33599A;
 }
+
+@media (max-width: 520px) {
+
+    .main {
+        background-position: 2780px;
+    }
+
+    .sect {
+        height: 400px;
+        padding: 80px 0 50px 0;
+    }
+
+    .sect h2 {
+        width: 380px;
+        font-size: 22px;
+    }
+
+    .all {
+        width: 200px;
+        padding: 5px;
+    }
+
+    .search input {
+        font-size: 12px;
+        width: 305px;
+        height: 20px;
+        margin-left: 10px;
+    }
+
+    .search div {
+        display: none;
+    }
+
+    .search button {
+        width: 60px;
+        height: 50px;
+    }
+
+    .btns {
+        margin-left: 10px;
+    }
+
+    .btns button {
+        width: 80px;
+        font-size: 10px;
+        height: 40px;
+    }
+
+}

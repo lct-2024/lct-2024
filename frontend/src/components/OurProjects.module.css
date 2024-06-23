@@ -128,3 +128,51 @@
 .smallBlock2 div {
     height: 400px;
 }
+
+@media (max-width: 520px) {
+
+    .block h4 {
+        font-size: 13px;
+    }
+
+    .block h3 {
+        font-weight: 900;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    .btn {
+        height: 20px;
+        width: 200px;
+    }
+
+    .main h2 {
+        font-size: 30px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .smallBlock div {
+        width: 170px;
+        padding: 10px;
+    }
+
+    .smallBlock2 div {
+        height: 160px;
+        width: 100px;
+    }
+
+
+    .smallBlock span {
+        font-size: 40px;
+    }
+
+    .smallBlock2 p {
+        font-size: 12px;
+    }
+
+    .smallBlock p {
+        font-size: 14px;
+    }
+
+}

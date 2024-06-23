@@ -39,7 +39,27 @@
     font-size: 24px;
 }
 
-.sect a {
-    font-size: 32px;
-    color: gray;
+
+@media (max-width: 720px) {
+    .sect {
+        height: 100%;
+        flex-direction: column-reverse;
+    }
+
+    .sect h2 {
+        margin-left: 30px;
+        font-size: 20px;
+        width: 400px;
+    }
+
+    .sect p {
+        margin-left: 30px;
+        width: 300px;
+        font-size: 16px;
+    }
+
+    .video {
+        height: 300px !important;
+    }
+
 }
