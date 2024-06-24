@@ -107,9 +107,9 @@
 (define-rpc-method (ats-api create-news-post) (title text 
                                                      &key
                                                      project-id)
-  (:summary "Добавляет в базу новую вакансию")
-  (:param title string "Название вакансии")
-  (:param text string "Описание вакансии")
+  (:summary "Создать новый пост в блог")
+  (:param title string "Название поста")
+  (:param text string "Тест поста в формате Markdown")
   (:param project-id integer "ID проекта к которому относится новость. Можно получить методом get_projects.")
   (:result news-post)
   

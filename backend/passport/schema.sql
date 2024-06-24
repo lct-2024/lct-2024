@@ -148,7 +148,7 @@ insert into passport.user_role (user_id, role_id, created_at, updated_at)
 select u.id, r.id, now(), now()
 from passport.user as u
 cross join passport.role as r
-where u.email like 'hr@example.com' and r.name = 'hr';
+where u.email like 'test-hr@example.com' and r.name = 'hr';
 
 -- Наделяем полномочиями учётку Нанимающего Менеджера
 insert into passport.user_role (user_id, role_id, created_at, updated_at)

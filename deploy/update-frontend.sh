@@ -9,9 +9,9 @@ cd ${WORK_DIR}
 
 LOG_FILE=/tmp/lct24-frontend-build.log
 
-echo "Pulling: $(date)" >> $LOG_FILE
+# echo "Pulling: $(date)" >> $LOG_FILE
 
-git pull >> $LOG_FILE 2>&1
+# git pull >> $LOG_FILE 2>&1
 
 echo "Building" >> $LOG_FILE
 

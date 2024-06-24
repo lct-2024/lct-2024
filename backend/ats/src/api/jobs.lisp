@@ -140,8 +140,49 @@
                       :programming-languages programming-languages)
         (values job)))))
 
+(defvar *applicant* nil)
 
 (defun get-jobs-with-filter (&key city category applicant project speciality show-all)
+  (let* ((query "
+with scores as (
+  select *
+   from ats.score
+  where applicant_id = ?
+)
+select j.*
+  from ats.job as j
+  join ats.speciality as s on j.speciality_id = s.id
+  join ats.project as p on j.project_id = p.id
+  left join scores on j.id = scores.job_id
+where (? = 0 or active)
+  and (? = 0 or city = ?)
+  and (? = 0 or category = ?)
+  and (? = 0 or s.title = ?)
+  and (? = 0 or p.title = ?)
+order by scores.total desc
+")
+
+         (binds (list
+                 ;; тут нельзя поступить как с другими фильтрами, потому что если
+                 ;; applicant нет, нам надо чтобы в scores не было строк вообще
+                 (if applicant
+                     (object-id applicant)
+                     -1)
+                 (if (not show-all) 1 0)
+                 (if city 1 0) city
+                 (if category 1 0) category
+                 (if speciality 1 0) speciality
+                 (if project 1 0) project)))
+    (let ((results (mito:select-by-sql 'ats/models/job::job
+                                       query
+                                       :binds binds)))
+      (mito:include-foreign-objects 'project results)
+      (mito:include-foreign-objects 'speciality results)
+      (values results))))
+
+
+
+(defun get-jobs-with-filter-old (&key city category applicant project speciality show-all)
   (let* ((filters (remove-if #'null
                              (list (unless show-all
                                      '(:= :active 1))
@@ -149,23 +190,26 @@
                                      `(:= :city ,city))
                                    (when category
                                      `(:= :category ,category))
-                                   (when applicant
-                                    `(:= :score.applicant_id
-                                         ,(object-id applicant)))
+                                   ;; (when applicant
+                                   ;;   `(:or (:is-null :score.applicant_id)
+                                   ;;         (:= :score.applicant_id
+                                   ;;             ,(object-id applicant))))
                                    (when speciality
-                                    `(:= :speciality.title
-                                         ,speciality))
+                                     `(:= :speciality.title
+                                          ,speciality))
                                    (when project
-                                    `(:= :project.title
-                                         ,project)))))
+                                     `(:= :project.title
+                                          ,project)))))
          (filter-expression
            `(:and (:= 1 1)
                   ,@filters))
          (join-score-if-needed
-           (when applicant
-             (left-join :ats.score
-                        :on (:= :job.id
-                             :score.job_id))))
+           nil
+           ;; (when applicant
+           ;;   (left-join :ats.score
+           ;;              :on (:= :job.id
+           ;;                   :score.job_id)))
+           )
          (join-speciality-if-needed
            (when speciality
              (left-join :ats.speciality
@@ -183,8 +227,9 @@
       join-speciality-if-needed
       join-project-if-needed
       (where filter-expression)
-      (when applicant
-        (order-by (:desc :score.total))))))
+      ;; (when applicant
+      ;;   (order-by (:desc :score.total)))
+      )))
 
 
 (define-rpc-method (ats-api get-jobs) (&key category city project speciality show-all)
